@@ -591,10 +591,16 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       <label class="form-lbl" style="margin-top:4px;">Godzina (opcjonalnie)</label>
       <input type="time" class="form-sel" id="tm-time" style="margin-bottom:14px;">
       <label class="form-lbl">Trener / Trenerzy</label>
-      <div class="trainer-check-list" id="tm-trainers-list"></div>
-      <div style="display:flex;gap:7px;margin-bottom:14px;">
-        <input id="tm-t-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Lub dodaj nowego trenera..." maxlength="60"/>
-        <button onclick="addTrainerFromModal()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
+      <div id="tm-trainers-summary" onclick="tmToggleTrainers()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--offwhite);margin-bottom:4px;min-height:42px;transition:border-color .15s;" onmouseover="this.style.borderColor='#aaa'" onmouseout="this.style.borderColor=''">
+        <div id="tm-trainers-chips" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;"></div>
+        <span id="tm-trainers-arrow" style="font-size:11px;color:var(--text-muted);flex-shrink:0;margin-left:8px;">▼</span>
+      </div>
+      <div id="tm-trainers-drop" style="display:none;margin-bottom:10px;">
+        <div class="trainer-check-list" id="tm-trainers-list" style="max-height:220px;"></div>
+        <div style="display:flex;gap:7px;margin-top:6px;">
+          <input id="tm-t-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Lub dodaj nowego trenera..." maxlength="60"/>
+          <button onclick="addTrainerFromModal()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
+        </div>
       </div>
       <label class="form-lbl">Priorytet szkolenia</label>
       <select class="form-sel" id="tm-priority">
@@ -1149,6 +1155,11 @@ function openTrainingModal(ds,preModId,editId=null){
   const partSec=document.getElementById('tm-participants-section');
   if(editId!==null){partSec.style.display='block';renderTmParticipants();}
   else{partSec.style.display='none';}
+  // Reset trainer dropdown
+  const tmDrop=document.getElementById('tm-trainers-drop');
+  const tmArrow=document.getElementById('tm-trainers-arrow');
+  if(tmDrop)tmDrop.style.display='none';
+  if(tmArrow)tmArrow.textContent='▼';
   // Collision check
   document.getElementById('tm-collision-warn').style.display='none';
   if(ds)checkCollisions(ds);
@@ -1475,9 +1486,26 @@ function getTrainerIds(t){
 }
 function renderTrainerChecks(ds,existingTr){
   const el=document.getElementById('tm-trainers-list');
-  if(!trainers.length){el.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--text-muted);">Brak trenerów — dodaj poniżej</div>';return;}
+  if(!trainers.length){el.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--text-muted);">Brak trenerów — dodaj poniżej</div>';updateTrainerChips();return;}
   const checked=existingTr?new Set(getTrainerIds(existingTr)):new Set();
-  el.innerHTML=trainers.map(tr=>`<label class="trainer-check-item"><input type="checkbox" value="${tr.id}"${checked.has(tr.id)?' checked':''}>${trainerAvatar(tr,24)}<span style="font-size:13px;font-weight:300;color:var(--text);">${escHtml(tr.name)}</span></label>`).join('');
+  el.innerHTML=trainers.map(tr=>`<label class="trainer-check-item"><input type="checkbox" value="${tr.id}" onchange="updateTrainerChips()"${checked.has(tr.id)?' checked':''}>${trainerAvatar(tr,24)}<span style="font-size:13px;font-weight:300;color:var(--text);">${escHtml(tr.name)}</span></label>`).join('');
+  updateTrainerChips();
+}
+function updateTrainerChips(){
+  const chips=document.getElementById('tm-trainers-chips');if(!chips)return;
+  const checked=Array.from(document.querySelectorAll('#tm-trainers-list input[type=checkbox]:checked'));
+  if(!checked.length){chips.innerHTML='<span style="color:var(--text-muted);font-style:italic;font-size:13px;">Brak trenera</span>';return;}
+  const names=checked.map(cb=>trainers.find(x=>x.id===parseInt(cb.value))?.name).filter(Boolean);
+  const avatars=checked.slice(0,4).map(cb=>{const tr=trainers.find(x=>x.id===parseInt(cb.value));return tr?trainerAvatar(tr,22):''}).join('');
+  const label=names.map(n=>n.split(' ')[0]).join(', ')+(checked.length>4?` +${checked.length-4}`:'');
+  chips.innerHTML=`${avatars}<span style="font-size:13px;color:var(--text);margin-left:6px;">${escHtml(label)}</span>`;
+}
+function tmToggleTrainers(){
+  const drop=document.getElementById('tm-trainers-drop');
+  const arrow=document.getElementById('tm-trainers-arrow');
+  const open=drop.style.display==='none';
+  drop.style.display=open?'block':'none';
+  arrow.textContent=open?'▲':'▼';
 }
 function addTrainerFromModal(){
   const inp=document.getElementById('tm-t-input');const name=inp.value.trim();if(!name)return;
@@ -1488,7 +1516,7 @@ function addTrainerFromModal(){
   // auto-check the new trainer
   const cb=document.querySelector(`#tm-trainers-list input[value="${id}"]`);
   if(cb)cb.checked=true;
-  renderTrainers();saveToStorage();
+  updateTrainerChips();renderTrainers();saveToStorage();
 }
 function removeTrainer(id){trainers=trainers.filter(t=>t.id!==id);renderTrainers();saveToStorage();}
 function renderTrainers(){

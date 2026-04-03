@@ -151,6 +151,34 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .mod-card-footer{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .mod-card-time{font-size:11px;color:var(--text-muted);}
 .mod-card-cta{font-size:11px;font-weight:500;color:var(--red);text-transform:uppercase;letter-spacing:1px;}
+/* Catalog view */
+.mod-catalog-item{background:var(--white);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;border-left:4px solid transparent;}
+.mod-catalog-item.cat-Mindset{border-left-color:#8b5cf6;}
+.mod-catalog-item.cat-Skill{border-left-color:var(--amber);}
+.mod-catalog-item.cat-Kultura{border-left-color:var(--green);}
+.mci-header{padding:16px 20px;display:flex;align-items:flex-start;gap:14px;}
+.mci-info{flex:1;min-width:0;}
+.mci-name{font-size:16px;font-weight:400;color:var(--text);line-height:1.4;margin-bottom:4px;}
+.mci-desc{font-size:12px;font-weight:300;color:var(--text-muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.mci-actions{display:flex;gap:6px;flex-shrink:0;margin-top:2px;}
+.mci-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:400;color:var(--text-muted);cursor:pointer;font-family:'Roboto',sans-serif;transition:all .2s;white-space:nowrap;}
+.mci-btn:hover{border-color:var(--text);color:var(--text);}
+.mci-btn.primary{background:var(--red);border-color:var(--red);color:#fff;}.mci-btn.primary:hover{opacity:.85;}
+.mci-sessions{border-top:1px solid var(--border);}
+.mci-session-row{display:flex;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--offwhite);transition:background .15s;}
+.mci-session-row:hover{background:var(--offwhite);}
+.mci-session-row:last-child{border-bottom:none;}
+.mci-session-row.is-past{opacity:.6;}
+.mci-s-date{font-size:12px;font-weight:500;color:var(--text);min-width:72px;white-space:nowrap;}
+.mci-s-time{font-size:11px;font-weight:500;color:var(--red);min-width:40px;}
+.mci-s-meta{flex:1;font-size:12px;font-weight:300;color:var(--text-muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.mci-s-actions{display:flex;gap:4px;flex-shrink:0;}
+.mci-s-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:3px 9px;font-size:11px;color:var(--text-muted);cursor:pointer;font-family:'Roboto',sans-serif;transition:all .2s;white-space:nowrap;}
+.mci-s-btn:hover{border-color:var(--text);color:var(--text);}
+.mci-add-row{padding:8px 20px;}
+.mci-add-btn{background:none;border:1px dashed var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:300;color:var(--text-muted);cursor:pointer;font-family:'Roboto',sans-serif;transition:all .2s;width:100%;text-align:left;}
+.mci-add-btn:hover{border-color:var(--red);color:var(--red);}
+.mci-empty{padding:10px 20px 14px;font-size:12px;color:var(--text-muted);font-style:italic;}
 .overlay{position:fixed;inset:0;background:rgba(18,22,53,0.6);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;}
 .overlay.open{display:flex;}
 @media(max-width:480px){.overlay.open{align-items:flex-end;}.modal{border-radius:16px 16px 0 0!important;width:100%!important;max-width:100%!important;max-height:92vh;}}
@@ -416,17 +444,13 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       <div class="modules-panel">
         <div class="mp-title">Szkolenia</div>
         <div class="mp-sub">Program Matrycy Szkoleniowej The Company 2026 · kliknij szkolenie aby zobaczyć szczegóły lub edytować</div>
-        <div class="mod-filter-bar" style="display:flex;align-items:center;">
-          <button class="mod-filter-btn f-all active" data-mf="all" onclick="filterModTab(this)">Wszystkie (18)</button>
-          <button class="mod-filter-btn f-Mindset" data-mf="Mindset" onclick="filterModTab(this)">Mindset (3)</button>
-          <button class="mod-filter-btn f-Skill" data-mf="Skill" onclick="filterModTab(this)">Skill (11)</button>
-          <button class="mod-filter-btn f-Kultura" data-mf="Kultura" onclick="filterModTab(this)">Kultura (4)</button>
-          <div class="view-toggle">
-            <button class="view-toggle-btn active" id="view-grid-btn" onclick="setModView('grid')" title="Kafelki">⊞</button>
-            <button class="view-toggle-btn" id="view-list-btn" onclick="setModView('list')" title="Lista">☰</button>
-          </div>
+        <div class="mod-filter-bar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <button class="mod-filter-btn f-all active" data-mf="all" onclick="filterModTab(this)">Wszystkie</button>
+          <button class="mod-filter-btn f-Mindset" data-mf="Mindset" onclick="filterModTab(this)">Mindset</button>
+          <button class="mod-filter-btn f-Skill" data-mf="Skill" onclick="filterModTab(this)">Skill</button>
+          <button class="mod-filter-btn f-Kultura" data-mf="Kultura" onclick="filterModTab(this)">Kultura</button>
+          <button onclick="openModuleDetail(null)" style="margin-left:auto;background:var(--navy);border:none;border-radius:8px;padding:7px 16px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#fff;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">+ Dodaj szkolenie</button>
         </div>
-        <button onclick="openModuleDetail(null)" style="background:var(--navy);border:none;border-radius:8px;padding:8px 18px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#fff;cursor:pointer;transition:opacity .2s;margin-bottom:24px;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">+ Dodaj szkolenie</button>
         <div id="modules-by-cat"></div>
       </div>
     </div>
@@ -885,6 +909,7 @@ function switchTab(name){
   document.getElementById('panel-'+name).classList.add('active');
   document.getElementById('tab-'+(TAB_IDS[name]||name)).classList.add('active');
   if(name==='trainers')renderTrainerPanel();
+  if(name==='modules')renderModuleCards();
   if(name==='dashboard')renderDashboard();
   if(name==='employees')loadEmployees();
 }
@@ -1075,7 +1100,7 @@ function deleteCurrentTraining(){
   const mod=getModuleData(t.moduleId);
   openDC(`Usunąć szkolenie<br><strong>${mod?escHtml(mod.nazwa):t.date}</strong>?`,()=>{
     trainings=trainings.filter(x=>x.id!==selTrainingId);
-    closeTrainingModal();renderCalendar();renderDashboard();saveToStorage();
+    closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();saveToStorage();
   });
 }
 function saveTraining(){
@@ -1092,9 +1117,9 @@ function saveTraining(){
   }else{
     trainings.push({id:Date.now(),date:selDate,moduleId:mid,trainerIds,priority,time,uczestnicy:[]});
   }
-  closeTrainingModal();renderCalendar();renderDashboard();saveToStorage();
+  closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();saveToStorage();
 }
-function removeTraining(id){trainings=trainings.filter(t=>t.id!==id);renderCalendar();renderDashboard();saveToStorage();}
+function removeTraining(id){trainings=trainings.filter(t=>t.id!==id);renderCalendar();renderDashboard();renderModuleCards();saveToStorage();}
 
 function trainerAvatar(t,size){
   if(t.photo)return`<img src="${t.photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
@@ -1253,19 +1278,52 @@ function renderModuleCards(){
   const el=document.getElementById('modules-by-cat');
   const allMods=getAllModules();
   const cats=modTabFilter==='all'?['Mindset','Skill','Kultura']:[modTabFilter];
-  // Update filter bar counts dynamically
-  const total=allMods.length;
-  const countMindset=allMods.filter(m=>m.kategoria==='Mindset').length;
-  const countSkill=allMods.filter(m=>m.kategoria==='Skill').length;
-  const countKultura=allMods.filter(m=>m.kategoria==='Kultura').length;
-  const fAll=document.querySelector('.mod-filter-btn.f-all');if(fAll)fAll.textContent=`Wszystkie (${total})`;
-  const fMindset=document.querySelector('.mod-filter-btn.f-Mindset');if(fMindset)fMindset.textContent=`Mindset (${countMindset})`;
-  const fSkill=document.querySelector('.mod-filter-btn.f-Skill');if(fSkill)fSkill.textContent=`Skill (${countSkill})`;
-  const fKultura=document.querySelector('.mod-filter-btn.f-Kultura');if(fKultura)fKultura.textContent=`Kultura (${countKultura})`;
-  const listCls=modViewMode==='list'?' list-view':'';
   el.innerHTML=cats.map(cat=>{
     const mods=allMods.filter(m=>m.kategoria===cat);
-    return`<div class="cat-section"><div class="cat-hdr"><span class="cat-tag ${cat}">${cat}</span></div><div class="modules-cards${listCls}">${mods.map(m=>`<div class="mod-card cat-${m.kategoria}" onclick="openModuleDetail(${m.id})"><div class="mod-card-name">${m.nazwa}</div><div class="mod-card-desc">${m.opis}</div><div class="mod-card-footer"><div class="mod-card-time">⏱ 3 godziny</div><div class="mod-card-cta">Szczegóły →</div></div></div>`).join('')}</div></div>`;
+    if(!mods.length)return'';
+    const items=mods.map(m=>{
+      const sessions=trainings.filter(t=>t.moduleId===m.id).slice().sort((a,b)=>a.date.localeCompare(b.date));
+      const future=sessions.filter(t=>t.date>=TODAY_STR);
+      const past=sessions.filter(t=>t.date<TODAY_STR);
+      const totalSessions=sessions.length;
+      const sessHtml=sessions.map(t=>{
+        const d=new Date(t.date);
+        const dateStr=d.toLocaleDateString('pl-PL',{day:'numeric',month:'short'});
+        const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
+        const partCount=(t.uczestnicy||[]).length;
+        const meta=[tNames.length?'👤 '+tNames.map(escHtml).join(', '):null, partCount?`👥 ${partCount}`:null].filter(Boolean).join(' · ');
+        const isPastRow=t.date<TODAY_STR;
+        return`<div class="mci-session-row${isPastRow?' is-past':''}">
+          <div class="mci-s-date">${escHtml(dateStr)}</div>
+          <div class="mci-s-time">${t.time?escHtml(t.time):''}</div>
+          <div class="mci-s-meta">${meta||'—'}</div>
+          <div class="mci-s-actions">
+            <button class="mci-s-btn" onclick="event.stopPropagation();openEditTraining(${t.id})">Edytuj</button>
+            <button class="mci-s-btn" onclick="event.stopPropagation();openParticipantsModal(${t.id})">👥${partCount?` ${partCount}`:''}</button>
+          </div>
+        </div>`;
+      }).join('');
+      const countBadge=totalSessions?`<span style="font-size:11px;font-weight:400;color:var(--text-muted);margin-left:8px;">${totalSessions} ${totalSessions===1?'termin':'terminów'}</span>`:'';
+      return`<div class="mod-catalog-item cat-${m.kategoria}">
+        <div class="mci-header">
+          <div class="mci-info">
+            <div class="mci-name">${escHtml(m.nazwa)}${countBadge}</div>
+            ${m.opis?`<div class="mci-desc">${escHtml(m.opis)}</div>`:''}
+          </div>
+          <div class="mci-actions">
+            <button class="mci-btn" onclick="event.stopPropagation();openModuleDetail(${m.id})">Edytuj opis</button>
+          </div>
+        </div>
+        <div class="mci-sessions">
+          ${sessHtml}
+          ${!totalSessions?`<div class="mci-empty">Brak zaplanowanych terminów</div>`:''}
+          <div class="mci-add-row">
+            <button class="mci-add-btn" onclick="openTrainingModal(null,${m.id},null)">+ Zaplanuj termin</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return`<div class="cat-section"><div class="cat-hdr"><span class="cat-tag ${cat}">${cat}</span></div>${items}</div>`;
   }).join('');
 }
 

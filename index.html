@@ -168,6 +168,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .tp-training-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
 .tp-training-item:last-child{border-bottom:none;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px;}
+.dtb-part-btn{display:block;width:100%;margin-top:4px;background:rgba(255,255,255,0.12);border:none;border-radius:3px;color:rgba(255,255,255,0.8);font-family:'Roboto',sans-serif;font-size:9px;font-weight:400;padding:2px 5px;cursor:pointer;text-align:left;transition:background .15s;line-height:1.4;}
+.dtb-part-btn:hover{background:rgba(255,255,255,0.22);}
 .priority-badge{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:500;padding:1px 5px;border-radius:3px;margin-top:2px;}
 .priority-badge.wysoki{background:rgba(220,20,60,0.12);color:var(--red);}
 .priority-badge.sredni{background:rgba(245,158,11,0.12);color:var(--amber);}
@@ -187,11 +189,17 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 <header>
   <div class="logo">the <strong>company</strong><span class="logo-dot">.</span></div>
   <div class="tab-nav">
-    <button class="tab-btn active" id="tab-mod" onclick="switchTab('modules')">Moduły szkoleniowe</button>
+    <button class="tab-btn active" id="tab-mod" onclick="switchTab('modules')">Szkolenia</button>
     <button class="tab-btn" id="tab-cal" onclick="switchTab('calendar')">Kalendarz</button>
     <button class="tab-btn" id="tab-trainers" onclick="switchTab('trainers')">Trenerzy</button>
   </div>
-  <div style="width:1px;"></div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div id="sync-status" style="font-size:11px;font-weight:300;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:5px;cursor:pointer;" onclick="openGhSettings()" title="Konfiguracja synchronizacji z GitHub">
+      <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;"></span>
+      <span id="sync-label">GitHub sync</span>
+    </div>
+    <button onclick="openGhSettings()" style="background:none;border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:rgba(255,255,255,0.5);font-family:'Roboto',sans-serif;font-size:11px;font-weight:400;padding:4px 10px;cursor:pointer;transition:all .2s;" onmouseover="this.style.color='var(--white)';this.style.borderColor='rgba(255,255,255,0.4)'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.borderColor='rgba(255,255,255,0.15)'">⚙ Sync</button>
+  </div>
 </header>
 <!-- PAGE TITLE BAR -->
 <div style="background:var(--white);border-bottom:1px solid var(--border);padding:10px 32px;display:flex;align-items:center;gap:12px;flex-shrink:0;">
@@ -216,7 +224,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       </div>
       <div class="sb-ribbon">
         <button class="sb-ribbon-btn active" data-sbt="trainers" onclick="switchSbTab('trainers')">Trenerzy</button>
-        <button class="sb-ribbon-btn" data-sbt="modules" onclick="switchSbTab('modules')">Moduły</button>
+        <button class="sb-ribbon-btn" data-sbt="modules" onclick="switchSbTab('modules')">Szkolenia</button>
       </div>
       <div class="sb-tab-panel active" id="sbt-trainers" style="padding:16px 20px;overflow-y:auto;">
         <div id="trainers-list"></div>
@@ -275,8 +283,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </div>
     <div class="tab-panel active" id="panel-modules">
       <div class="modules-panel">
-        <div class="mp-title">Moduły szkoleniowe</div>
-        <div class="mp-sub">Program Matrycy Szkoleniowej The Company 2026 · 18 modułów · 3h każdy · kliknij aby zobaczyć szczegóły</div>
+        <div class="mp-title">Szkolenia</div>
+        <div class="mp-sub">Program Matrycy Szkoleniowej The Company 2026 · kliknij szkolenie aby zobaczyć szczegóły lub edytować</div>
         <div class="mod-filter-bar">
           <button class="mod-filter-btn f-all active" data-mf="all" onclick="filterModTab(this)">Wszystkie (18)</button>
           <button class="mod-filter-btn f-Mindset" data-mf="Mindset" onclick="filterModTab(this)">Mindset (3)</button>
@@ -490,6 +498,24 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   </div>
 </div>
 
+<div class="overlay" id="gh-settings-overlay" onclick="closeIfBg(event,'gh-settings-overlay')">
+  <div class="modal" style="width:480px;">
+    <button class="modal-x" onclick="document.getElementById('gh-settings-overlay').classList.remove('open')">×</button>
+    <div class="modal-ttl">Synchronizacja z GitHub</div>
+    <p style="font-size:13px;font-weight:300;color:var(--text-muted);margin-bottom:18px;line-height:1.6;">Dane (szkolenia, trenerzy, moduły) będą zapisywane jako plik <code style="background:var(--offwhite);padding:1px 5px;border-radius:3px;">data.json</code> w repozytorium GitHub — dostępne z każdej przeglądarki i urządzenia.</p>
+    <label class="form-lbl">GitHub Personal Access Token (PAT)</label>
+    <input id="gh-token-input" class="form-sel" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+    <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;">Token musi mieć uprawnienie <strong>repo → contents write</strong>. <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--red);">Wygeneruj token →</a></div>
+    <label class="form-lbl">Gałąź (branch)</label>
+    <input id="gh-branch-input" class="form-sel" value="main" placeholder="main">
+    <div id="gh-status-msg" style="font-size:12px;margin-bottom:12px;min-height:18px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-gray" onclick="document.getElementById('gh-settings-overlay').classList.remove('open')">Anuluj</button>
+      <button class="btn btn-red" onclick="saveGhSettings()">Zapisz i zsynchronizuj</button>
+    </div>
+  </div>
+</div>
+
 <script>
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
@@ -522,6 +548,7 @@ const BLOCKED_EXTRA=new Set(["2026-05-02","2026-11-02","2026-11-12","2026-11-13"
 const RAW_EVENTS={"2026-01-08":["BNI+1 Warszawa zoom"],"2026-01-11":["STD - Narty CC"],"2026-01-12":["STD - Narty CC"],"2026-01-13":["CC2 Warszawa + CC4 Warszawa, CC1 Kraków","BNI+2 Warszawa na żywo","STD - Narty CC"],"2026-01-14":["CC1 Warszawa + Zarządy","BNI+1 Kraków / BNI+1 Lublin na żywo","STD - Narty CC"],"2026-01-15":["CC5 Warszawa + CC3 Warszawa","W1","Rada Biznesu TT"],"2026-01-16":["Integracja CC2 Kraków"],"2026-01-17":["Integracja CC2 Kraków"],"2026-01-18":["Integracja CC2 Kraków"],"2026-01-19":["Odprawa TC"],"2026-01-20":["WEF"],"2026-01-21":["WEF"],"2026-01-22":["CC1 Katowice na żywo","BNI+1 Katowice na żywo","WEF"],"2026-01-23":["WEF"],"2026-01-26":["Odprawa The Company Q4 2025"],"2026-01-27":["CC3 Kraków - spotkanie wewnętrzne"],"2026-01-29":["BNI+1 Warszawa na żywo","TTT1"],"2026-01-30":["TTT1"],"2026-02-05":["CC3 Warszawa","BNI+1 Warszawa zoom"],"2026-02-06":["BNI+1 Lublin Integracja"],"2026-02-07":["BNI+1 Lublin Integracja"],"2026-02-09":["Odprawa CC"],"2026-02-10":["CC2 Warszawa na żywo","BNI+2 Warszawa na żywo"],"2026-02-11":["BNI+1 Lublin Online / BNI+1 Katowice online"],"2026-02-12":["CC1 Katowice na żywo","Warsztaty Exec Team"],"2026-02-13":["Warsztaty Exec Team","Odprawa BNI+"],"2026-02-16":["Spotkanie Rada MŚP TT Zoom"],"2026-02-17":["W2","Deregulacja Zoom"],"2026-02-18":["CC2 Kraków, CC1 Warszawa","US Team in PL","BNI+1 Kraków"],"2026-02-19":["CC5 Warszawa","US Team in PL","BNI+2 Warszawa / BNI+1 Warszawa"],"2026-02-20":["US Team in PL"],"2026-02-22":["STD - Narty CC"],"2026-02-23":["STD - Narty CC / IFA"],"2026-02-24":["CC4 Warszawa; CC3 Kraków","STD - Narty CC / IFA"],"2026-02-25":["STD - Narty CC / Kongres"],"2026-02-26":["The Company Talks (Swadźba)","Kongres Klimatyczny"],"2026-02-27":["Kongres Klimatyczny"],"2026-03-02":["Rada Biznesu TT"],"2026-03-03":["BNI+2 Warszawa na żywo"],"2026-03-04":["BNI+1 Katowice na żywo"],"2026-03-05":["Kongres 60 Mln Miami","Akademia Dyrektora"],"2026-03-06":["Kongres 60 Mln Miami","Akademia Dyrektora"],"2026-03-11":["BNI+1 Kraków / BNI+1 Lublin","GOLF Malta"],"2026-03-12":["US Team in PL","BNI+1 Warszawa zoom","Moduł CD","GOLF Malta"],"2026-03-13":["US Team in PL","Moduł CD","Business Weekend Narvil"],"2026-03-14":["US Team in PL","Business Weekend Narvil"],"2026-03-15":["US Team in PL","Business Weekend Narvil"],"2026-03-16":["Team USA w Polsce"],"2026-03-17":["W3","Team USA"],"2026-03-18":["Team USA"],"2026-03-19":["CC1 Katowice zoom, CC3 Warszawa zoom","TTT2","Team USA"],"2026-03-20":["TTT2","Team USA"],"2026-03-24":["BNI+2 Warszawa zoom"],"2026-03-25":["CC1 Kraków, CC2 Kraków, CC3 Kraków"],"2026-03-26":["The Company Talks Nowak","BNI+1 Warszawa na żywo","MSP","Monthly Review"],"2026-04-01":["LTT"],"2026-04-02":["LTT"],"2026-04-08":["BNI+1 Kraków"],"2026-04-09":["BNI+1 Warszawa zoom"],"2026-04-10":["GOLF Marbella","Odprawa AI"],"2026-04-11":["GOLF Marbella"],"2026-04-13":["Team USA"],"2026-04-14":["CC1 Kraków","BNI+2 Warszawa + CC","Team USA"],"2026-04-15":["CC2 Kraków","BNI+1 Katowice na żywo","Rada MŚP","Monthly Review","Team USA"],"2026-04-16":["CC1 Katowice na żywo","Team USA"],"2026-04-17":["Team USA"],"2026-04-20":["Odprawa kwartalna TC","Adam i Ryszard w Dubaju"],"2026-04-21":["CC3 Kraków","BNI PLUS Talks","W4","AMG Experience"],"2026-04-22":["Spotkanie CC Warszawa","AMG Experience","Adam Dubaj"],"2026-04-23":["Spotkanie CC Warszawa","BNI+1 Warszawa na żywo","Adam Dubaj"],"2026-04-24":["BNI+1 Lublin urodziny","Adam Dubaj"],"2026-04-25":["BNI+1 Lublin urodziny"],"2026-04-27":["Adam w NY"],"2026-04-28":["BNI PLUS Talks","BNI+2 Warszawa zoom","MSP","Adam NY"],"2026-04-29":["BNI PLUS Talks","Adam NY"],"2026-04-30":["Adam NY"],"2026-05-05":["STD BNI PLUS Talks"],"2026-05-06":["STD BNI PLUS Talks"],"2026-05-07":["STD BNI PLUS Talks","BNI+1 Katowice Integracja"],"2026-05-08":["BNI+1 Katowice Integracja"],"2026-05-09":["BNI+1 Katowice Integracja"],"2026-05-11":["Odprawa CC kwiecień"],"2026-05-12":["CC3 Warszawa","Rada MSP zoom"],"2026-05-13":["CC2 Kraków","BNI+1 Lublin"],"2026-05-14":["CC1 Katowice na żywo","Moduł AB"],"2026-05-15":["Integracja CC1/CC3 Kraków","Moduł AB","Fuleda CC+","Odprawa BNI+"],"2026-05-16":["Integracja CC1/CC3 Kraków","Fuleda CC+"],"2026-05-17":["Integracja CC1/CC3 Kraków","Fuleda CC+"],"2026-05-19":["CC2 Warszawa na żywo","Szkolenia Chrapkowicz"],"2026-05-20":["CC4 Warszawa","CC CEO","BNI+1 Kraków","W5","Monthly Review"],"2026-05-21":["Spotkanie CC+","Rada Biznesu TT"],"2026-05-25":["BNI+2 Warszawa Integracja Zagraniczna"],"2026-05-26":["BNI+2 Warszawa Integracja"],"2026-05-27":["The Company Talks Dela"],"2026-05-28":["BNI+1 Warszawa na żywo","MSP"],"2026-05-29":["STD TOP CHARITY","Wall Street Karpacz"],"2026-05-30":["STD TOP CHARITY","Wall Street Karpacz"],"2026-05-31":["STD TOP CHARITY","Wall Street Karpacz"],"2026-06-08":["Rada MSP zoom","CC Global Convention Dubai"],"2026-06-09":["CC1 Kraków","CC Global Convention Dubai"],"2026-06-10":["CC5 Warszawa","BNI+1 Kraków / BNI+1 Lublin","W6","Dubai"],"2026-06-11":["BNI+1 Lublin","Dubai"],"2026-06-12":["BNI+1 Lublin","Odprawa BNI+"],"2026-06-13":["BNI+1 Lublin","LeMans"],"2026-06-14":["BNI+1 Lublin","LeMans"],"2026-06-15":["Odprawa CC maj"],"2026-06-16":["CC3 Warszawa","CC CEO","BNI+2 Forum Zarządów"],"2026-06-17":["CC1 Warszawa, CC2 Kraków","BNI+1 Katowice na żywo"],"2026-06-18":["CC1 Katowice / CC2 Warszawa","Moduł CD"],"2026-06-19":["Integracja CC5 Warszawa","Moduł CD"],"2026-06-20":["Integracja CC5 Warszawa","GOLF Polska"],"2026-06-23":["CC4 Warszawa; CC3 Kraków"],"2026-06-24":["The Company Talks","BNI+ Lublin"],"2026-06-25":["The Company Talks","BNI+1 Warszawa zoom","MSP","Warsztat Q2"],"2026-06-26":["Warsztat Q2"],"2026-06-29":["Rada Biznesu TT"],"2026-06-30":["The Company Talks BW"],"2026-07-03":["STD Business Weekend"],"2026-07-04":["STD Business Weekend"],"2026-07-05":["STD Business Weekend"],"2026-07-08":["BNI+1 Kraków / BNI+ Lublin"],"2026-07-09":["BNI+1 Warszawa online"],"2026-07-13":["Odprawa kwartalna TC"],"2026-07-14":["BNI+2 Warszawa / BNI+1 Warszawa","W1"],"2026-07-15":["BNI+1 Katowice","Monthly Review"],"2026-07-20":["BNI+1 Warszawa na żywo"],"2026-07-22":["BNI+ Lublin Kolacja","MSP"],"2026-08-05":["BNI+1 Kraków / BNI+1 Lublin"],"2026-08-06":["CC5 Warszawa","Moduł AB"],"2026-08-07":["BNI+2 Warszawa Integracja","Moduł AB","Odprawa BNI+"],"2026-08-08":["BNI+2 Warszawa Integracja"],"2026-08-10":["Odprawa CC lipiec"],"2026-08-11":["BNI+2 Warszawa na żywo","W2"],"2026-08-12":["BNI+1 Kraków Kolacja"],"2026-08-19":["BNI+1 Kraków / BNI+1 Katowice online","Monthly Review"],"2026-08-20":["BNI+1 Warszawa na żywo"],"2026-08-27":["MSP"],"2026-08-28":["Integracja CC3 Warszawa"],"2026-08-29":["Integracja CC3 Warszawa"],"2026-09-01":["The Company Talks"],"2026-09-02":["The Company Talks","Forum Ekonomiczne Karpacz"],"2026-09-03":["The Company Talks","Integracja The Company"],"2026-09-04":["Integracja The Company"],"2026-09-05":["GOLF Polska"],"2026-09-07":["Rada MSP","Odprawa CC sierpień"],"2026-09-08":["CC4 Warszawa, CC1 Kraków"],"2026-09-09":["CC1 Warszawa","BNI+1 Kraków / BNI+1 Lublin"],"2026-09-10":["CC5 Warszawa","BNI+1 Warszawa zoom","Moduł CD"],"2026-09-11":["Moduł CD","Drift Masters","Odprawa BNI+"],"2026-09-12":["Drift Masters"],"2026-09-15":["CC2 Warszawa","W3"],"2026-09-16":["CC2 Kraków","BNI+1 Katowice na żywo"],"2026-09-17":["Spotkanie CC+","CC1 Katowice na żywo","Konferencja BNI","Rada Biznesu TT"],"2026-09-18":["Ogólnopolska Konferencja BNI"],"2026-09-22":["CC3 Warszawa z BNI+; CC3 Kraków","BNI+2 Warszawa z CC3"],"2026-09-23":["The Company Talks"],"2026-09-24":["The Company Talks","Integracja BNI+1 Warszawa","MSP","Warsztat Q3"],"2026-09-25":["Integracja BNI+1 Warszawa","Warsztat Q3"],"2026-09-26":["Integracja BNI+1 Warszawa","AMG Budapest"],"2026-09-27":["Integracja BNI+1","AMG Budapest"],"2026-09-28":["AMG Budapest"],"2026-09-29":["The Company Talks"],"2026-09-30":["The Company Talks"],"2026-10-01":["The Company Talks","TTT cz.1","Akademia Dyrektora"],"2026-10-02":["TTT cz.1","Akademia Dyrektora"],"2026-10-05":["Odprawa kwartalna TC"],"2026-10-06":["The Company Talks","Rada MSP"],"2026-10-07":["CC5 Warszawa","BNI+1 Lublin"],"2026-10-08":["The Company Talks","BNI+1 Warszawa zoom"],"2026-10-09":["Integracja CC1 Kraków","Odprawa AI"],"2026-10-10":["Integracja CC1 Kraków"],"2026-10-12":["Rada Biznesu TT"],"2026-10-13":["Integracja CC2 Warszawa","BNI+2 Warszawa na żywo","W4"],"2026-10-14":["CC4 Warszawa online, CC2 Kraków, integracja CC2 Warszawa"],"2026-10-15":["Integracja CC2 Warszawa","The Company Talks","Moduł AB"],"2026-10-16":["BNI+1 Katowice Integracja Zagraniczna","Moduł AB"],"2026-10-17":["BNI+1 Katowice Integracja"],"2026-10-18":["BNI+1 Katowice Integracja"],"2026-10-19":["BNI+1 Katowice Integracja"],"2026-10-20":["CC3 Warszawa; CC3 Kraków","MSP"],"2026-10-21":["The Company Talks","Monthly Review"],"2026-10-22":["CC1 Katowice na żywo","BNI+1 Warszawa na żywo","Szkolenie Grzesiak"],"2026-10-23":["GOLF Turcja","Szkolenie Grzesiak"],"2026-10-24":["GOLF Turcja"],"2026-10-25":["GOLF Turcja"],"2026-10-27":["The Company Talks","Forum Krynica"],"2026-10-28":["The Company Talks","Forum Krynica"],"2026-10-29":["The Company Talks","Forum Krynica"],"2026-11-03":["CC1 Kraków"],"2026-11-04":["CC1 Warszawa, CC2 Kraków","BNI+1 Kraków / BNI+1 Lublin na żywo"],"2026-11-05":["CC2 Warszawa","BNI+1 Warszawa online"],"2026-11-06":["Odprawa BNI+ październik"],"2026-11-16":["Rada MSP zoom","Warsztat Scaling UP","Odprawa CC październik"],"2026-11-17":["CC3 Warszawa; CC3 Kraków","BNI+2 Warszawa z CC","W5","Warsztat Scaling UP"],"2026-11-18":["The Company Talks","BNI+1 Katowice na żywo","BNI Global Convention","Monthly Review"],"2026-11-19":["The Company Talks","TTT cz.2","BNI Global Convention"],"2026-11-20":["CC1 Katowice Wyjazd","TTT cz.2","BNI Global Convention"],"2026-11-21":["CC1 Katowice Wyjazd","BNI Global Convention"],"2026-11-22":["CC1 Katowice Wyjazd"],"2026-11-24":["BNI+2 Warszawa zoom z BNI+1 Lublin","MSP"],"2026-11-25":["The Company Talks"],"2026-11-26":["BNI+1 Warszawa na żywo"],"2026-12-01":["The Company Talks"],"2026-12-02":["BNI+1 Kraków"],"2026-12-03":["Spotkanie CC+","Moduł CD","Rada Biznesu TT"],"2026-12-04":["Moduł CD","BW"],"2026-12-05":["BW"],"2026-12-06":["BW"],"2026-12-07":["Odprawa CC listopad"],"2026-12-08":["CC3 Kraków","BNI+2 Warszawa na żywo"],"2026-12-09":["CC2 Kraków, CC1 Warszawa","BNI+1 Lublin świąteczne","W6"],"2026-12-10":["CC3 Warszawa, CC1 Katowice na żywo"],"2026-12-11":["Odprawa BNI+ listopad"],"2026-12-14":["Rada MSP zoom"],"2026-12-15":["CC5 Warszawa","MSP"],"2026-12-16":["CC4 Warszawa","BNI+1 Katowice świąteczne","Monthly Review"],"2026-12-17":["The Company Talks","BNI+1 Warszawa na żywo"],"2026-12-18":["Podsumowanie Roku i Wigilia"]};
 
 const MONTHS_PL=["Styczeń","Luty","Marzec","Kwiecień","Maj","Czerwiec","Lipiec","Sierpień","Wrzesień","Październik","Listopad","Grudzień"];
+const MONTHS_LOC=["Styczniu","Lutym","Marcu","Kwietniu","Maju","Czerwcu","Lipcu","Sierpniu","Wrześniu","Październiku","Listopadzie","Grudniu"];
 const DAYS_PL=["Pn","Wt","Śr","Cz","Pt","So","Nd"];
 const TCOLS=["#DC143C","#22c55e","#f59e0b","#8b5cf6","#06b6d4","#f97316","#ec4899","#10b981"];
 
@@ -551,6 +578,7 @@ function saveToStorage(){
     localStorage.setItem(LS_MODULE_EXTRAS,JSON.stringify(moduleExtras));
     localStorage.setItem(LS_CUSTOM_MODULES,JSON.stringify(customModules));
   }catch(e){}
+  if(getGhToken())pushToGitHub(false);
 }
 function loadFromStorage(){
   try{
@@ -618,6 +646,16 @@ function switchSbTab(name){
 function init(){
   loadFromStorage();
   renderMonthTabs();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();
+  // Try to load fresher data from GitHub (async, refreshes UI when done)
+  if(getGhToken()){
+    setSyncStatus('pending','Wczytuję…');
+    loadFromGitHub().then(ok=>{
+      if(ok){renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();}
+      else setSyncStatus('err','Błąd sync');
+    });
+  }else if(localStorage.getItem(LS_GH_TOKEN)===''){
+    setSyncStatus('off','Tylko lokalnie');
+  }
 }
 
 const TAB_IDS={modules:'mod',calendar:'cal',trainers:'trainers','module-detail':'mod'};
@@ -684,6 +722,10 @@ function renderCalendar(){
     if(ccBlk){
       cell.addEventListener('click',()=>openInfoModal(ds));
     }
+    if(past&&hasTrain){
+      cell.style.cursor='pointer';
+      cell.addEventListener('click',()=>openParticipantsModal(ds));
+    }
 
     let html=`<div class="day-num">${d}</div>`;
     if(isToday)html+=`<div class="day-today-lbl">Dziś</div>`;
@@ -705,9 +747,11 @@ function renderCalendar(){
       const t=trainings[ds];
       const mod=getModuleData(t.moduleId);
       const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
-      html+=`<div class="day-training-badge"><span class="dtb-text">📚 ${mod?escHtml(mod.nazwa):'?'}</span><button class="dtb-remove" onclick="event.stopPropagation();removeTraining('${ds}')">×</button></div>`;
+      const partCount=(t.uczestnicy||[]).length;
+      html+=`<div class="day-training-badge"><span class="dtb-text">📚 ${mod?escHtml(mod.nazwa):'?'}</span>${!past?`<button class="dtb-remove" onclick="event.stopPropagation();removeTraining('${ds}')">×</button>`:''}</div>`;
       if(tNames.length)html+=`<div class="dtb-trainer">👤 ${tNames.map(escHtml).join(', ')}</div>`;
       if(t.priority){const pL={wysoki:'Wysoki',sredni:'Średni',niski:'Niski'};html+=`<div class="priority-badge ${t.priority}">● ${pL[t.priority]||t.priority}</div>`;}
+      html+=`<button class="dtb-part-btn" onclick="event.stopPropagation();openParticipantsModal('${ds}')">👥 Uczestnicy${partCount?` (${partCount})`:''}</button>`;
     }
     cell.innerHTML=html;grid.appendChild(cell);
   }
@@ -972,7 +1016,7 @@ function renderModuleDetailView(id){
   });
   past.sort((a,b)=>b.ds.localeCompare(a.ds));
   future.sort((a,b)=>a.ds.localeCompare(b.ds));
-  const fmtFuture=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div></div>`;
+  const fmtFuture=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div><button onclick="openParticipantsModal('${i.ds}')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Uczestnicy${i.uczestnicy.length?` (${i.uczestnicy.length})`:''}</button></div>`;
   const fmtPast=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div><button onclick="openParticipantsModal('${i.ds}')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Uczestnicy ${i.uczestnicy.length?`(${i.uczestnicy.length})`:''}</button></div>`;
   document.getElementById('mds-future').innerHTML=future.length?future.map(fmtFuture).join(''):`<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak zaplanowanych szkoleń</div>`;
   document.getElementById('mds-past').innerHTML=past.length?past.map(fmtPast).join(''):`<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak przeprowadzonych szkoleń</div>`;
@@ -1327,11 +1371,15 @@ function calcMonthSlots(m){
   return count;
 }
 
+function slotForm(n){
+  if(n===1)return'wolny slot szkoleniowy';
+  if(n>=2&&n<=4)return'wolne sloty szkoleniowe';
+  return'wolnych slotów szkoleniowych';
+}
 function updateMonthSlots(){
   const el=document.getElementById('month-slots-display');if(!el)return;
   const n=calcMonthSlots(curMonth);
-  const monthName=MONTHS_PL[curMonth];
-  el.innerHTML=`<div class="month-slots-info">📅 <strong>${n}</strong> wolnych slotów szkoleniowych w <strong>${monthName}</strong></div>`;
+  el.innerHTML=`<div class="month-slots-info">📅 <strong>${n}</strong> ${slotForm(n)} w <strong>${MONTHS_LOC[curMonth]}</strong></div>`;
 }
 
 function renderMonthlySummary(){
@@ -1352,6 +1400,97 @@ function renderMonthlySummary(){
     return`<div class="ms-item"><div class="ms-date">${escHtml(dateLabel)}</div><div class="ms-mod">${mod?escHtml(mod.nazwa):'—'}${priorityBadge}</div><div class="ms-trainer">${tNames.length?'👤 '+tNames.map(escHtml).join(', '):''}</div></div>`;
   }).join('');
   el.innerHTML=`<div class="monthly-summary-title">Szkolenia zaplanowane w ${escHtml(MONTHS_PL[curMonth])}</div>${rows}`;
+}
+
+// ── GitHub Sync ───────────────────────────────────────────────────
+const GH_REPO='pwyczolkowski-ux/tc-matryca-szkoleniowa-2026';
+const LS_GH_TOKEN='tc_gh_token';
+const LS_GH_BRANCH='tc_gh_branch';
+let ghSyncing=false;
+let ghSyncTimer=null;
+
+function getGhToken(){return localStorage.getItem(LS_GH_TOKEN)||'';}
+function getGhBranch(){return localStorage.getItem(LS_GH_BRANCH)||'main';}
+
+function setSyncStatus(state,msg){
+  const dot=document.getElementById('sync-dot');
+  const lbl=document.getElementById('sync-label');
+  if(!dot||!lbl)return;
+  const colors={ok:'#22c55e',err:'#DC143C',pending:'#f59e0b',off:'rgba(255,255,255,0.2)'};
+  dot.style.background=colors[state]||colors.off;
+  lbl.textContent=msg||'GitHub sync';
+}
+
+function openGhSettings(){
+  document.getElementById('gh-token-input').value=getGhToken();
+  document.getElementById('gh-branch-input').value=getGhBranch();
+  document.getElementById('gh-status-msg').textContent='';
+  document.getElementById('gh-settings-overlay').classList.add('open');
+}
+
+function saveGhSettings(){
+  const token=document.getElementById('gh-token-input').value.trim();
+  const branch=document.getElementById('gh-branch-input').value.trim()||'main';
+  localStorage.setItem(LS_GH_TOKEN,token);
+  localStorage.setItem(LS_GH_BRANCH,branch);
+  const msg=document.getElementById('gh-status-msg');
+  if(!token){msg.style.color='var(--text-muted)';msg.textContent='Token usunięty — dane będą zapisywane tylko lokalnie.';setSyncStatus('off','Tylko lokalnie');return;}
+  msg.style.color='var(--text-muted)';msg.textContent='⏳ Synchronizuję…';
+  pushToGitHub(true).then(ok=>{
+    if(ok){msg.style.color='var(--green)';msg.textContent='✓ Dane zsynchronizowane pomyślnie!';setTimeout(()=>document.getElementById('gh-settings-overlay').classList.remove('open'),1200);}
+    else{msg.style.color='var(--red)';msg.textContent='✗ Błąd synchronizacji. Sprawdź token i uprawnienia.';}
+  });
+}
+
+function buildDataPayload(){
+  return{trainings,trainers,moduleExtras,customModules,savedAt:new Date().toISOString()};
+}
+
+async function pushToGitHub(immediate=false){
+  const token=getGhToken();if(!token)return false;
+  if(!immediate){
+    if(ghSyncTimer)clearTimeout(ghSyncTimer);
+    ghSyncTimer=setTimeout(()=>pushToGitHub(true),2000);
+    return true;
+  }
+  if(ghSyncing)return false;
+  ghSyncing=true;
+  setSyncStatus('pending','Synchronizuję…');
+  try{
+    const branch=getGhBranch();
+    const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/data.json`;
+    const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
+    // Get current SHA if file exists
+    let sha=null;
+    try{
+      const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});
+      if(r.ok){const j=await r.json();sha=j.sha;}
+    }catch(e){}
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(buildDataPayload(),null,2))));
+    const body={message:'sync: aktualizacja danych matrycy szkoleniowej',content,branch};
+    if(sha)body.sha=sha;
+    const r=await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
+    if(r.ok||r.status===201){setSyncStatus('ok','Zsynchronizowane');ghSyncing=false;return true;}
+    else{const err=await r.json();console.error('GH sync error:',err);setSyncStatus('err','Błąd sync');ghSyncing=false;return false;}
+  }catch(e){console.error('GH sync error:',e);setSyncStatus('err','Błąd sync');ghSyncing=false;return false;}
+}
+
+async function loadFromGitHub(){
+  const branch=getGhBranch();
+  const url=`https://raw.githubusercontent.com/${GH_REPO}/${branch}/data.json?t=${Date.now()}`;
+  try{
+    const r=await fetch(url);
+    if(!r.ok)return false;
+    const d=await r.json();
+    if(!d.trainings&&!d.trainers)return false;
+    if(d.trainings)trainings=d.trainings;
+    if(d.trainers)trainers=d.trainers;
+    if(d.moduleExtras)moduleExtras=d.moduleExtras;
+    if(d.customModules)customModules=d.customModules;
+    saveToStorage();// mirror to localStorage as cache
+    setSyncStatus('ok','Zsynchronizowane');
+    return true;
+  }catch(e){return false;}
 }
 
 // ── Export / Import ────────────────────────────────────────────────

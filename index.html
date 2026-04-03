@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matryca Szkoleniowa 2026 — the company.</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#121635;--navy-light:#1e2450;--red:#DC143C;--white:#ffffff;--offwhite:#f5f6fa;--gray:#8890aa;--border:#e2e6f0;--text:#1a1e3e;--text-muted:#8890aa;--green:#22c55e;--green-soft:rgba(34,197,94,0.10);--green-border:rgba(34,197,94,0.25);--amber:#f59e0b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Roboto',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+header{background:var(--navy);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;flex-shrink:0;position:sticky;top:0;z-index:200;}
+.logo{font-weight:300;font-size:20px;color:var(--white);letter-spacing:.5px;}.logo strong{font-weight:700;}.logo-dot{color:var(--red);}
+.tab-nav{display:flex;gap:0;align-items:center;}
+.tab-btn{background:none;border:none;color:rgba(255,255,255,0.5);font-family:'Roboto',sans-serif;font-size:13px;font-weight:400;padding:0 20px;height:60px;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:1px;}
+.tab-btn:hover{color:rgba(255,255,255,0.85);}.tab-btn.active{color:var(--white);border-bottom-color:var(--red);}
+.header-legend{display:flex;gap:16px;align-items:center;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.5);}
+.leg-dot{width:9px;height:9px;border-radius:2px;}
+.app-shell{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:280px;min-width:280px;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;}
+.sb-section{padding:20px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.sb-title{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--red);margin-bottom:14px;}
+.slots-box{background:var(--navy-light);border:1px solid rgba(220,20,60,0.3);border-radius:10px;padding:18px;text-align:center;}
+.slots-num{font-size:52px;font-weight:100;color:var(--white);line-height:1;}
+.slots-lbl{font-size:11px;font-weight:400;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px;}
+.slots-sub{font-size:11px;font-weight:300;color:rgba(255,255,255,0.3);margin-top:6px;}
+.trainer-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px 10px;margin-bottom:6px;}
+.t-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.t-name{flex:1;font-size:13px;font-weight:300;color:var(--white);}
+.t-remove{background:none;border:none;color:rgba(255,255,255,0.25);cursor:pointer;font-size:16px;padding:0 2px;transition:color .2s;}
+.t-remove:hover{color:var(--red);}
+.t-empty{font-size:12px;color:rgba(255,255,255,0.3);text-align:center;padding:8px 0;}
+.t-add{display:flex;gap:7px;margin-top:8px;}
+.t-input{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:7px 10px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--white);outline:none;transition:border-color .2s;}
+.t-input:focus{border-color:var(--red);}.t-input::placeholder{color:rgba(255,255,255,0.3);}
+.t-add-btn{background:var(--red);border:none;border-radius:6px;color:var(--white);font-size:20px;width:36px;cursor:pointer;transition:opacity .2s;}
+.t-add-btn:hover{opacity:.8;}
+.sb-filter{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;}
+.sf-btn{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:400;border:1px solid rgba(255,255,255,0.15);cursor:pointer;background:transparent;color:rgba(255,255,255,0.5);transition:all .2s;}
+.sf-btn.active{background:var(--red);border-color:var(--red);color:var(--white);}
+.sf-btn:hover:not(.active){color:var(--white);border-color:rgba(255,255,255,0.3);}
+.sb-modules{display:flex;flex-direction:column;gap:5px;overflow-y:auto;flex:1;}
+.sb-mod{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:9px 10px;cursor:pointer;transition:all .2s;border-left:3px solid transparent;}
+.sb-mod:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.15);}
+.sb-mod.cat-Mindset{border-left-color:#8b5cf6;}.sb-mod.cat-Skill{border-left-color:var(--amber);}.sb-mod.cat-Kultura{border-left-color:var(--green);}
+.sb-mod-name{font-size:12px;font-weight:400;color:var(--white);line-height:1.3;}
+.sb-mod-cat{font-size:10px;font-weight:300;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+.main{flex:1;overflow-y:auto;background:var(--offwhite);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.cal-panel{padding:28px;}
+.month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 20px;}
+.mnav-btn{background:var(--offwhite);border:1px solid var(--border);border-radius:8px;width:38px;height:38px;font-size:20px;cursor:pointer;color:var(--text);transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.mnav-btn:hover{background:var(--red);border-color:var(--red);color:var(--white);}
+.month-title-wrap{text-align:center;}
+.month-name{font-size:24px;font-weight:300;color:var(--text);}.month-name span{font-weight:500;color:var(--red);}
+.month-tabs{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+.mq-tab{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:300;cursor:pointer;border:1px solid var(--border);color:var(--text-muted);background:transparent;transition:all .2s;}
+.mq-tab:hover{color:var(--text);border-color:#c0c5d8;}.mq-tab.active{background:var(--red);border-color:var(--red);color:var(--white);}
+.mq-tab.past{opacity:0.35;cursor:default;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-hdr{text-align:center;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);padding:8px 0;}
+.cal-hdr.wknd{color:rgba(220,20,60,0.6);}
+.cal-day{background:var(--white);border:1px solid var(--border);border-radius:8px;min-height:100px;padding:8px;position:relative;transition:all .2s;overflow:hidden;}
+.cal-day.clickable{cursor:pointer;}
+.cal-day.clickable:hover{border-color:#c0c5d8;box-shadow:0 2px 8px rgba(0,0,0,0.08);transform:translateY(-1px);}
+.cal-day.empty{background:transparent;border-color:transparent;}
+.cal-day.is-past{background:#f2f3f7;opacity:.65;cursor:default;}
+.cal-day.is-weekend{background:#ebebf0;border-color:#dddde8;}.cal-day.is-weekend .day-num{color:#aaa;}
+.cal-day.is-holiday{background:rgba(220,20,60,0.05);border-color:rgba(220,20,60,0.15);}
+.cal-day.is-blocked-cc{background:#fffbf0;border-color:rgba(245,158,11,0.25);cursor:pointer;}
+.cal-day.is-blocked-cc:hover{background:#fff5dc;border-color:rgba(245,158,11,0.45);box-shadow:0 2px 8px rgba(0,0,0,0.07);transform:translateY(-1px);}
+.cal-day.recommended{background:var(--green-soft);border-color:var(--green-border);}
+.cal-day.recommended.clickable:hover{background:rgba(34,197,94,0.18);border-color:rgba(34,197,94,0.4);}
+.cal-day.has-training{background:rgba(220,20,60,0.05);border-color:rgba(220,20,60,0.35);border-width:2px;}
+.cal-day.is-today{box-shadow:0 0 0 2px var(--red);}
+.cal-day.drag-over{background:rgba(220,20,60,0.1)!important;border-color:var(--red)!important;}
+.day-num{font-size:16px;font-weight:300;color:var(--text);line-height:1;margin-bottom:3px;}
+.cal-day.is-past .day-num{color:var(--text-muted);}
+.cal-day.is-holiday .day-num{color:var(--red);}
+.day-holiday-lbl{font-size:9px;font-weight:500;color:var(--red);text-transform:uppercase;letter-spacing:.5px;line-height:1.2;margin-bottom:3px;}
+.day-blocked-lbl{font-size:9px;font-weight:500;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.day-rec-lbl{font-size:9px;font-weight:500;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.day-events{display:flex;flex-direction:column;gap:2px;margin-top:3px;}
+.day-evt{font-size:9px;font-weight:300;color:var(--text-muted);border-left:2px solid #d0d4e8;padding-left:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;line-height:1.3;}
+.day-evt.cc-blocked{border-left-color:var(--amber);color:#a07000;}
+.day-training-badge{margin-top:5px;background:var(--red);border-radius:4px;padding:4px 7px;color:var(--white);font-size:10px;font-weight:400;display:flex;align-items:flex-start;gap:4px;}
+.dtb-text{flex:1;line-height:1.3;}
+.dtb-remove{background:none;border:none;color:rgba(255,255,255,0.6);font-size:13px;cursor:pointer;padding:0;flex-shrink:0;line-height:1;}
+.dtb-remove:hover{color:var(--white);}
+.dtb-trainer{font-size:10px;color:var(--red);margin-top:3px;font-weight:400;}
+.modules-panel{padding:28px;}
+.mp-title{font-size:28px;font-weight:300;color:var(--text);margin-bottom:6px;}
+.mp-sub{font-size:14px;color:var(--text-muted);font-weight:300;margin-bottom:24px;}
+.cat-section{margin-bottom:32px;}
+.cat-hdr{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;gap:10px;color:var(--text);}
+.cat-hdr::after{content:'';flex:1;height:1px;background:var(--border);}
+.cat-tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;}
+.cat-tag.Mindset{background:rgba(139,92,246,0.1);color:#8b5cf6;}.cat-tag.Skill{background:rgba(245,158,11,0.1);color:var(--amber);}.cat-tag.Kultura{background:rgba(34,197,94,0.1);color:var(--green);}
+.modules-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.mod-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px 20px;cursor:pointer;transition:all .2s;border-left:4px solid transparent;}
+.mod-card.cat-Mindset{border-left-color:#8b5cf6;}.mod-card.cat-Skill{border-left-color:var(--amber);}.mod-card.cat-Kultura{border-left-color:var(--green);}
+.mod-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.10);transform:translateY(-2px);border-color:#c5cad8;}
+.mod-card-num{display:none;}
+.mod-filter-bar{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+.mod-filter-btn{padding:7px 18px;border-radius:24px;font-size:13px;font-weight:400;border:1px solid var(--border);cursor:pointer;background:var(--white);color:var(--text-muted);transition:all .2s;font-family:'Roboto',sans-serif;}
+.mod-filter-btn:hover{border-color:#b0b5cc;color:var(--text);}
+.mod-filter-btn.active{color:var(--white);border-color:transparent;}
+.mod-filter-btn.active.f-all{background:var(--navy);}
+.mod-filter-btn.active.f-Mindset{background:#8b5cf6;}
+.mod-filter-btn.active.f-Skill{background:var(--amber);}
+.mod-filter-btn.active.f-Kultura{background:var(--green);}
+.mod-card-name{font-size:15px;font-weight:400;color:var(--text);line-height:1.4;margin-bottom:8px;}
+.mod-card-desc{font-size:12px;font-weight:300;color:var(--text-muted);line-height:1.6;}
+.mod-card-footer{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.mod-card-time{font-size:11px;color:var(--text-muted);}
+.mod-card-cta{font-size:11px;font-weight:500;color:var(--red);text-transform:uppercase;letter-spacing:1px;}
+.overlay{position:fixed;inset:0;background:rgba(18,22,53,0.6);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:14px;width:500px;max-width:95vw;padding:28px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.25);max-height:90vh;overflow-y:auto;}
+.modal-x{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--text-muted);font-size:22px;cursor:pointer;transition:color .2s;}
+.modal-x:hover{color:var(--text);}
+.modal-ttl{font-size:20px;font-weight:300;color:var(--text);margin-bottom:4px;}
+.modal-date-lbl{font-size:13px;color:var(--red);font-weight:500;margin-bottom:18px;}
+.form-lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);display:block;margin-bottom:6px;}
+.form-sel{width:100%;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:14px;font-weight:300;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:14px;cursor:pointer;}
+.form-sel:focus{border-color:var(--red);}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.btn{flex:1;padding:11px;border-radius:8px;border:none;font-family:'Roboto',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-red{background:var(--red);color:var(--white);}.btn-red:hover{opacity:.85;}
+.btn-gray{background:var(--offwhite);border:1px solid var(--border);color:var(--text);}.btn-gray:hover{background:var(--border);}
+.ee-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:7px;}
+.ee-item{font-size:12px;font-weight:300;background:var(--offwhite);border-radius:5px;padding:5px 10px;color:var(--text-muted);margin-bottom:4px;}
+.mod-detail-cat{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.mod-detail-cat.Mindset{background:rgba(139,92,246,0.1);color:#8b5cf6;}.mod-detail-cat.Skill{background:rgba(245,158,11,0.1);color:var(--amber);}.mod-detail-cat.Kultura{background:rgba(34,197,94,0.1);color:var(--green);}
+.mod-detail-name{font-size:22px;font-weight:300;color:var(--text);line-height:1.4;margin-bottom:8px;}
+.mod-detail-orig{font-size:12px;color:var(--text-muted);font-style:italic;margin-bottom:16px;}
+.mod-detail-desc{font-size:14px;font-weight:300;color:var(--text);line-height:1.7;margin-bottom:20px;}
+.mod-detail-meta{display:flex;gap:20px;border-top:1px solid var(--border);padding-top:16px;flex-wrap:wrap;}
+.mod-meta-item{font-size:12px;color:var(--text-muted);}
+.mod-meta-val{font-size:14px;font-weight:500;color:var(--text);margin-top:3px;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">the <strong>company</strong><span class="logo-dot">.</span></div>
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tab-mod" onclick="switchTab('modules')">Moduły szkoleniowe</button>
+    <button class="tab-btn" id="tab-cal" onclick="switchTab('calendar')">Kalendarz</button>
+  </div>
+  <div style="width:1px;"></div>
+</header>
+<!-- PAGE TITLE BAR -->
+<div style="background:var(--white);border-bottom:1px solid var(--border);padding:10px 32px;display:flex;align-items:center;gap:12px;flex-shrink:0;">
+  <div style="width:4px;height:28px;background:var(--red);border-radius:2px;flex-shrink:0;"></div>
+  <div>
+    <div style="font-size:17px;font-weight:400;color:var(--text);letter-spacing:.3px;">Propozycja matrycy szkoleniowej 2026</div>
+    <div style="font-size:11px;font-weight:300;color:var(--text-muted);margin-top:2px;">Corporate Connections Poland · 18 modułów · Dyrektorzy & Koordynatorzy</div>
+  </div>
+</div>
+<div class="app-shell">
+  <div class="sidebar">
+    <div class="sb-section">
+      <div class="sb-title">Wolne sloty</div>
+      <div class="slots-box">
+        <div class="slots-num" id="slots-num">—</div>
+        <div class="slots-lbl">dostępnych terminów</div>
+        <div class="slots-sub">Czwartki i piątki · 2026</div>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-title">Trenerzy</div>
+      <div id="trainers-list"></div>
+      <div class="t-add">
+        <input class="t-input" id="t-input" placeholder="Imię i nazwisko trenera" maxlength="60"/>
+        <button class="t-add-btn" onclick="addTrainer()">+</button>
+      </div>
+    </div>
+    <div class="sb-section" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div class="sb-title">Moduły</div>
+      <div class="sb-filter">
+        <button class="sf-btn active" data-cat="all" onclick="filterSb(this)">Wszystkie</button>
+        <button class="sf-btn" data-cat="Mindset" onclick="filterSb(this)">Mindset</button>
+        <button class="sf-btn" data-cat="Skill" onclick="filterSb(this)">Skill</button>
+        <button class="sf-btn" data-cat="Kultura" onclick="filterSb(this)">Kultura</button>
+      </div>
+      <div class="sb-modules" id="sb-modules"></div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="tab-panel" id="panel-calendar">
+      <div class="cal-panel">
+        <div class="month-nav">
+          <button class="mnav-btn" onclick="changeMonth(-1)">&#8249;</button>
+          <div class="month-title-wrap">
+            <div class="month-name" id="month-name">Kwiecień <span>2026</span></div>
+            <div class="month-tabs" id="month-tabs"></div>
+          </div>
+          <button class="mnav-btn" onclick="changeMonth(1)">&#8250;</button>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div id="training-count" style="font-size:13px;color:var(--text-muted);font-weight:300;"></div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="clearCalendar()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:400;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.borderColor='#DC143C';this.style.color='#DC143C'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
+              🗑 Wyczyść kalendarz
+            </button>
+            <button onclick="generatePDF()" id="pdf-btn" style="background:#121635;border:none;border-radius:6px;padding:6px 16px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:500;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+              ⬇ Wygeneruj Matrycę PDF
+            </button>
+          </div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+    </div>
+    <div class="tab-panel active" id="panel-modules">
+      <div class="modules-panel">
+        <div class="mp-title">Moduły szkoleniowe</div>
+        <div class="mp-sub">Program Matrycy Szkoleniowej The Company 2026 · 18 modułów · 3h każdy · kliknij aby zobaczyć szczegóły</div>
+        <div class="mod-filter-bar">
+          <button class="mod-filter-btn f-all active" data-mf="all" onclick="filterModTab(this)">Wszystkie (18)</button>
+          <button class="mod-filter-btn f-Mindset" data-mf="Mindset" onclick="filterModTab(this)">Mindset (3)</button>
+          <button class="mod-filter-btn f-Skill" data-mf="Skill" onclick="filterModTab(this)">Skill (11)</button>
+          <button class="mod-filter-btn f-Kultura" data-mf="Kultura" onclick="filterModTab(this)">Kultura (4)</button>
+        </div>
+        <div id="modules-by-cat"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="training-overlay" onclick="closeIfBg(event,'training-overlay')">
+  <div class="modal">
+    <button class="modal-x" onclick="closeTrainingModal()">×</button>
+    <div class="modal-ttl" id="tm-title">Zaplanuj szkolenie</div>
+    <div class="modal-date-lbl" id="tm-date"></div>
+    <div id="tm-existing" style="display:none;margin-bottom:16px;">
+      <div class="ee-title">Istniejące wydarzenia tego dnia</div>
+      <div id="tm-event-list"></div>
+    </div>
+    <label class="form-lbl">Moduł szkoleniowy</label>
+    <select class="form-sel" id="tm-module"><option value="">— wybierz moduł —</option></select>
+    <label class="form-lbl">Trener / Trenerzy</label>
+    <select class="form-sel" id="tm-trainer"><option value="">— wybierz trenera —</option></select>
+    <div class="modal-actions">
+      <button class="btn btn-gray" onclick="closeTrainingModal()">Anuluj</button>
+      <button class="btn btn-red" onclick="saveTraining()">Zaplanuj szkolenie</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="info-overlay" onclick="closeIfBg(event,'info-overlay')">
+  <div class="modal" style="width:440px;">
+    <button class="modal-x" onclick="document.getElementById('info-overlay').classList.remove('open')">×</button>
+    <div class="modal-ttl" id="info-title">Co się dzieje tego dnia?</div>
+    <div class="modal-date-lbl" id="info-date"></div>
+    <div id="info-reason" style="font-size:13px;font-weight:400;color:var(--amber);background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:10px 14px;margin-bottom:16px;"></div>
+    <div class="ee-title">Zaplanowane wydarzenia</div>
+    <div id="info-events"></div>
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn btn-gray" onclick="document.getElementById('info-overlay').classList.remove('open')">Zamknij</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="mod-overlay" onclick="closeIfBg(event,'mod-overlay')">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModModal()">×</button>
+    <div class="mod-detail-cat" id="md-cat"></div>
+    <div class="mod-detail-name" id="md-name"></div>
+    <div class="mod-detail-orig" id="md-orig"></div>
+    <div class="mod-detail-desc" id="md-desc"></div>
+    <div class="mod-detail-meta">
+      <div class="mod-meta-item">Czas trwania<div class="mod-meta-val">3 godziny</div></div>
+      <div class="mod-meta-item">Grupa docelowa<div class="mod-meta-val">Dyrektorzy / Koordynatorzy</div></div>
+      <div class="mod-meta-item">Trener<div class="mod-meta-val" id="md-trainer">Do ustalenia</div></div>
+    </div>
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn btn-gray" onclick="closeModModal()">Zamknij</button>
+      <button class="btn btn-red" onclick="closeModModal();switchTab('calendar')">Przejdź do kalendarza</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+const TODAY_STR=TODAY.toISOString().slice(0,10);
+
+const MODULES=[
+{id:1,kategoria:"Mindset",nazwa:"Źródła wewnętrznej motywacji",opis:"Znajdź swoje DLACZEGO zanim skończy Ci się JAK. Ikigai, Simon Sinek, coachingowe koło wartości — narzędzia do mapowania tego, co napędza Cię do działania.",oryginalny:"Skąd biorę energię? Mapa wewnętrznej motywacji"},
+{id:2,kategoria:"Mindset",nazwa:"Praca na swoich mocnych stronach",opis:"Talenty to nie przypadek — to strategia. Warsztat oparty o CliftonStrengths / VIA: odkryj swoje naturalne zasoby i naucz się przekuwać je w wyniki.",oryginalny:"Graj swoimi kartami. Jak odkryć i wykorzystać mocne strony"},
+{id:3,kategoria:"Mindset",nazwa:"Mindset 10x",opis:"Od incremental thinking do 10x Rule. Jak przestać optymalizować detale i szukać prawdziwych przełomów. Techniki kreatywnego myślenia o skali.",oryginalny:"Myśl 10x. Jak przestać optymalizować, a zacząć skalować"},
+{id:4,kategoria:"Skill",nazwa:"Domykanie sprzedaży",opis:"Typowe blokady w finalizacji, techniki pytań zamykających, radzenie sobie z obiekcjami. Ćwiczenia na żywych scenariuszach sprzedażowych.",oryginalny:"Zamknij sprzedaż. Jak finalizować bez presji"},
+{id:5,kategoria:"Skill",nazwa:"Personal branding",opis:"LinkedIn, storytelling, spójny przekaz. Jak zbudować wizerunek eksperta, który przyciąga a nie odpycha — w sieci i na sali. Praktyczne narzędzia budowy marki osobistej.",oryginalny:"Marka, którą widać. Personal branding w sieci i na sali"},
+{id:6,kategoria:"Skill",nazwa:"Storytelling w biznesie",opis:"Struktura narracji, haki, emocje i dane. Jak opowiedzieć historię klienta, grupy i samego siebie tak, żeby słuchacz chciał więcej. Warsztaty narracyjne.",oryginalny:"Historia, która sprzedaje. Storytelling w biznesie"},
+{id:7,kategoria:"Skill",nazwa:"Komunikacja z różnymi typami osobowości",opis:"DISC w praktyce — jak dostosować styl rozmowy do D, I, S, C. Mniej konfliktów, więcej domkniętych sprzedaży i lepszy onboarding nowych Członków.",oryginalny:"Mów do człowieka, nie do stanowiska"},
+{id:8,kategoria:"Skill",nazwa:"Techniki asertywnej komunikacji",opis:"Jak stawiać granice, wyrażać potrzeby i odmawiać bez agresji i bez uległości. Asertywność jako narzędzie lidera — nie tylko osobista kompetencja.",oryginalny:"Powiedz to wprost. Techniki asertywnej komunikacji"},
+{id:9,kategoria:"Skill",nazwa:"Sprzedaj wizję The Company",opis:"Narracja TC w różnych kontekstach — BI, zimna rozmowa, event. Jak nie sprzedawać składki, a sprzedawać ratunek przed samotnością przedsiębiorcy.",oryginalny:"Sprzedaj wizję. Jak rozmawiać o TC z przedsiębiorcami"},
+{id:10,kategoria:"Skill",nazwa:"Model sprzedaży CC",opis:"Specyfika sprzedaży w CC — długie cykle, wysokie składki, kwalifikacja. One-pager do BI, struktura rozmowy, zamknięcie. Pipeline oparty na relacjach.",oryginalny:"Model sprzedażowy CC. Pipeline oparty na relacjach"},
+{id:11,kategoria:"Skill",nazwa:"Feedback — jak udzielać informacji zwrotnej",opis:"Feedback jako narzędzie retencji i kultury. SBI model, rozmowa z niezaangażowanym Członkiem, rozmowa z nieefektywnym Zarządem Grupy. Role-play.",oryginalny:"Trudna rozmowa. Jak dać feedback który zmienia, nie rani"},
+{id:12,kategoria:"Skill",nazwa:"KPI grupy — czytanie danych",opis:"Frekwencja, aktywność 1-na-1, rekomendacje, risk members — jak zbudować prosty dashboard i reagować zanim stracisz Członka.",oryginalny:"Dane, nie emocje. Jak czytać KPI grupy i reagować szybko"},
+{id:13,kategoria:"Skill",nazwa:"Opieka nad Członkiem od A do Z",opis:"Cały cykl życia: BI → onboarding → pierwsze 90 dni → aktywizacja → monitoring → odnowienie. Procesy i checklistry dla każdego etapu.",oryginalny:"Opieka nad Członkiem od pierwszego kontaktu do przedłużenia"},
+{id:14,kategoria:"Skill",nazwa:"Member-driven sales",opis:"Jak angażować Członków w pozyskiwanie leadów. Mechanika member-driven sales, skrypty zapraszania, jak przeprowadzić przez cały proces zaproszenia.",oryginalny:"Twoi Członkowie są Twoim działem sprzedaży"},
+{id:15,kategoria:"Kultura",nazwa:"Forum CC",opis:"Praktyczny warsztat dla dyrektorów — struktura Forum w Grupie, moderacja, budowanie głębokiego zaufania między Członkami. Forum jako narzędzie retencji.",oryginalny:"Forum jako narzędzie retencji. Jak prowadzić Forum w Grupie"},
+{id:16,kategoria:"Kultura",nazwa:"Praca z Zarządem Grupy",opis:"Role Prezydenta, VP, Sekretarza i Skarbnika w praktyce. Jak dyrektor wspiera, ale nie zastępuje zarządu. Narzędzia, rytm spotkań, accountability.",oryginalny:"Zarząd Grupy jako silnik organizacji. Jak z nim pracować"},
+{id:17,kategoria:"Kultura",nazwa:"Member-Driven Organization",opis:"Czym różni się dyrektor-serwisant od dyrektora-lidera. Jak przesunąć ciężar aktywności na Członków i zbudować samonapędzającą się Grupę.",oryginalny:"Jak oddać grupę członkom"},
+{id:18,kategoria:"Skill",nazwa:"Motywacja Członków do działania",opis:"Psychologia motywacji w środowisku peer-to-peer. Jak rozpoznać typy motywacji w Grupie i dobrać do nich konkretne działania dyrektora.",oryginalny:"Zapal grupę do działania. Motywacja bez nacisku"},
+];
+
+const HOLIDAYS={"2026-01-01":"Nowy Rok","2026-01-06":"Święto Trzech Króli","2026-04-03":"Wielki Piątek","2026-04-05":"Wielkanoc","2026-04-06":"Wielkanoc (pon.)","2026-05-01":"Święto Pracy","2026-05-03":"Święto Konstytucji","2026-05-24":"Zielone Świątki","2026-06-04":"Boże Ciało","2026-08-15":"Wniebowzięcie NMP","2026-11-01":"Wszystkich Świętych","2026-11-11":"Święto Niepodległości","2026-12-25":"Boże Narodzenie","2026-12-26":"Boże Narodzenie"};
+const BLOCKED_EXTRA=new Set(["2026-05-02","2026-11-02","2026-11-12","2026-11-13","2026-12-24","2026-12-31"]);
+
+const RAW_EVENTS={"2026-01-08":["BNI+1 Warszawa zoom"],"2026-01-11":["STD - Narty CC"],"2026-01-12":["STD - Narty CC"],"2026-01-13":["CC2 Warszawa + CC4 Warszawa, CC1 Kraków","BNI+2 Warszawa na żywo","STD - Narty CC"],"2026-01-14":["CC1 Warszawa + Zarządy","BNI+1 Kraków / BNI+1 Lublin na żywo","STD - Narty CC"],"2026-01-15":["CC5 Warszawa + CC3 Warszawa","W1","Rada Biznesu TT"],"2026-01-16":["Integracja CC2 Kraków"],"2026-01-17":["Integracja CC2 Kraków"],"2026-01-18":["Integracja CC2 Kraków"],"2026-01-19":["Odprawa TC"],"2026-01-20":["WEF"],"2026-01-21":["WEF"],"2026-01-22":["CC1 Katowice na żywo","BNI+1 Katowice na żywo","WEF"],"2026-01-23":["WEF"],"2026-01-26":["Odprawa The Company Q4 2025"],"2026-01-27":["CC3 Kraków - spotkanie wewnętrzne"],"2026-01-29":["BNI+1 Warszawa na żywo","TTT1"],"2026-01-30":["TTT1"],"2026-02-05":["CC3 Warszawa","BNI+1 Warszawa zoom"],"2026-02-06":["BNI+1 Lublin Integracja"],"2026-02-07":["BNI+1 Lublin Integracja"],"2026-02-09":["Odprawa CC"],"2026-02-10":["CC2 Warszawa na żywo","BNI+2 Warszawa na żywo"],"2026-02-11":["BNI+1 Lublin Online / BNI+1 Katowice online"],"2026-02-12":["CC1 Katowice na żywo","Warsztaty Exec Team"],"2026-02-13":["Warsztaty Exec Team","Odprawa BNI+"],"2026-02-16":["Spotkanie Rada MŚP TT Zoom"],"2026-02-17":["W2","Deregulacja Zoom"],"2026-02-18":["CC2 Kraków, CC1 Warszawa","US Team in PL","BNI+1 Kraków"],"2026-02-19":["CC5 Warszawa","US Team in PL","BNI+2 Warszawa / BNI+1 Warszawa"],"2026-02-20":["US Team in PL"],"2026-02-22":["STD - Narty CC"],"2026-02-23":["STD - Narty CC / IFA"],"2026-02-24":["CC4 Warszawa; CC3 Kraków","STD - Narty CC / IFA"],"2026-02-25":["STD - Narty CC / Kongres"],"2026-02-26":["The Company Talks (Swadźba)","Kongres Klimatyczny"],"2026-02-27":["Kongres Klimatyczny"],"2026-03-02":["Rada Biznesu TT"],"2026-03-03":["BNI+2 Warszawa na żywo"],"2026-03-04":["BNI+1 Katowice na żywo"],"2026-03-05":["Kongres 60 Mln Miami","Akademia Dyrektora"],"2026-03-06":["Kongres 60 Mln Miami","Akademia Dyrektora"],"2026-03-11":["BNI+1 Kraków / BNI+1 Lublin","GOLF Malta"],"2026-03-12":["US Team in PL","BNI+1 Warszawa zoom","Moduł CD","GOLF Malta"],"2026-03-13":["US Team in PL","Moduł CD","Business Weekend Narvil"],"2026-03-14":["US Team in PL","Business Weekend Narvil"],"2026-03-15":["US Team in PL","Business Weekend Narvil"],"2026-03-16":["Team USA w Polsce"],"2026-03-17":["W3","Team USA"],"2026-03-18":["Team USA"],"2026-03-19":["CC1 Katowice zoom, CC3 Warszawa zoom","TTT2","Team USA"],"2026-03-20":["TTT2","Team USA"],"2026-03-24":["BNI+2 Warszawa zoom"],"2026-03-25":["CC1 Kraków, CC2 Kraków, CC3 Kraków"],"2026-03-26":["The Company Talks Nowak","BNI+1 Warszawa na żywo","MSP","Monthly Review"],"2026-04-01":["LTT"],"2026-04-02":["LTT"],"2026-04-08":["BNI+1 Kraków"],"2026-04-09":["BNI+1 Warszawa zoom"],"2026-04-10":["GOLF Marbella","Odprawa AI"],"2026-04-11":["GOLF Marbella"],"2026-04-13":["Team USA"],"2026-04-14":["CC1 Kraków","BNI+2 Warszawa + CC","Team USA"],"2026-04-15":["CC2 Kraków","BNI+1 Katowice na żywo","Rada MŚP","Monthly Review","Team USA"],"2026-04-16":["CC1 Katowice na żywo","Team USA"],"2026-04-17":["Team USA"],"2026-04-20":["Odprawa kwartalna TC","Adam i Ryszard w Dubaju"],"2026-04-21":["CC3 Kraków","BNI PLUS Talks","W4","AMG Experience"],"2026-04-22":["Spotkanie CC Warszawa","AMG Experience","Adam Dubaj"],"2026-04-23":["Spotkanie CC Warszawa","BNI+1 Warszawa na żywo","Adam Dubaj"],"2026-04-24":["BNI+1 Lublin urodziny","Adam Dubaj"],"2026-04-25":["BNI+1 Lublin urodziny"],"2026-04-27":["Adam w NY"],"2026-04-28":["BNI PLUS Talks","BNI+2 Warszawa zoom","MSP","Adam NY"],"2026-04-29":["BNI PLUS Talks","Adam NY"],"2026-04-30":["Adam NY"],"2026-05-05":["STD BNI PLUS Talks"],"2026-05-06":["STD BNI PLUS Talks"],"2026-05-07":["STD BNI PLUS Talks","BNI+1 Katowice Integracja"],"2026-05-08":["BNI+1 Katowice Integracja"],"2026-05-09":["BNI+1 Katowice Integracja"],"2026-05-11":["Odprawa CC kwiecień"],"2026-05-12":["CC3 Warszawa","Rada MSP zoom"],"2026-05-13":["CC2 Kraków","BNI+1 Lublin"],"2026-05-14":["CC1 Katowice na żywo","Moduł AB"],"2026-05-15":["Integracja CC1/CC3 Kraków","Moduł AB","Fuleda CC+","Odprawa BNI+"],"2026-05-16":["Integracja CC1/CC3 Kraków","Fuleda CC+"],"2026-05-17":["Integracja CC1/CC3 Kraków","Fuleda CC+"],"2026-05-19":["CC2 Warszawa na żywo","Szkolenia Chrapkowicz"],"2026-05-20":["CC4 Warszawa","CC CEO","BNI+1 Kraków","W5","Monthly Review"],"2026-05-21":["Spotkanie CC+","Rada Biznesu TT"],"2026-05-25":["BNI+2 Warszawa Integracja Zagraniczna"],"2026-05-26":["BNI+2 Warszawa Integracja"],"2026-05-27":["The Company Talks Dela"],"2026-05-28":["BNI+1 Warszawa na żywo","MSP"],"2026-05-29":["STD TOP CHARITY","Wall Street Karpacz"],"2026-05-30":["STD TOP CHARITY","Wall Street Karpacz"],"2026-05-31":["STD TOP CHARITY","Wall Street Karpacz"],"2026-06-08":["Rada MSP zoom","CC Global Convention Dubai"],"2026-06-09":["CC1 Kraków","CC Global Convention Dubai"],"2026-06-10":["CC5 Warszawa","BNI+1 Kraków / BNI+1 Lublin","W6","Dubai"],"2026-06-11":["BNI+1 Lublin","Dubai"],"2026-06-12":["BNI+1 Lublin","Odprawa BNI+"],"2026-06-13":["BNI+1 Lublin","LeMans"],"2026-06-14":["BNI+1 Lublin","LeMans"],"2026-06-15":["Odprawa CC maj"],"2026-06-16":["CC3 Warszawa","CC CEO","BNI+2 Forum Zarządów"],"2026-06-17":["CC1 Warszawa, CC2 Kraków","BNI+1 Katowice na żywo"],"2026-06-18":["CC1 Katowice / CC2 Warszawa","Moduł CD"],"2026-06-19":["Integracja CC5 Warszawa","Moduł CD"],"2026-06-20":["Integracja CC5 Warszawa","GOLF Polska"],"2026-06-23":["CC4 Warszawa; CC3 Kraków"],"2026-06-24":["The Company Talks","BNI+ Lublin"],"2026-06-25":["The Company Talks","BNI+1 Warszawa zoom","MSP","Warsztat Q2"],"2026-06-26":["Warsztat Q2"],"2026-06-29":["Rada Biznesu TT"],"2026-06-30":["The Company Talks BW"],"2026-07-03":["STD Business Weekend"],"2026-07-04":["STD Business Weekend"],"2026-07-05":["STD Business Weekend"],"2026-07-08":["BNI+1 Kraków / BNI+ Lublin"],"2026-07-09":["BNI+1 Warszawa online"],"2026-07-13":["Odprawa kwartalna TC"],"2026-07-14":["BNI+2 Warszawa / BNI+1 Warszawa","W1"],"2026-07-15":["BNI+1 Katowice","Monthly Review"],"2026-07-20":["BNI+1 Warszawa na żywo"],"2026-07-22":["BNI+ Lublin Kolacja","MSP"],"2026-08-05":["BNI+1 Kraków / BNI+1 Lublin"],"2026-08-06":["CC5 Warszawa","Moduł AB"],"2026-08-07":["BNI+2 Warszawa Integracja","Moduł AB","Odprawa BNI+"],"2026-08-08":["BNI+2 Warszawa Integracja"],"2026-08-10":["Odprawa CC lipiec"],"2026-08-11":["BNI+2 Warszawa na żywo","W2"],"2026-08-12":["BNI+1 Kraków Kolacja"],"2026-08-19":["BNI+1 Kraków / BNI+1 Katowice online","Monthly Review"],"2026-08-20":["BNI+1 Warszawa na żywo"],"2026-08-27":["MSP"],"2026-08-28":["Integracja CC3 Warszawa"],"2026-08-29":["Integracja CC3 Warszawa"],"2026-09-01":["The Company Talks"],"2026-09-02":["The Company Talks","Forum Ekonomiczne Karpacz"],"2026-09-03":["The Company Talks","Integracja The Company"],"2026-09-04":["Integracja The Company"],"2026-09-05":["GOLF Polska"],"2026-09-07":["Rada MSP","Odprawa CC sierpień"],"2026-09-08":["CC4 Warszawa, CC1 Kraków"],"2026-09-09":["CC1 Warszawa","BNI+1 Kraków / BNI+1 Lublin"],"2026-09-10":["CC5 Warszawa","BNI+1 Warszawa zoom","Moduł CD"],"2026-09-11":["Moduł CD","Drift Masters","Odprawa BNI+"],"2026-09-12":["Drift Masters"],"2026-09-15":["CC2 Warszawa","W3"],"2026-09-16":["CC2 Kraków","BNI+1 Katowice na żywo"],"2026-09-17":["Spotkanie CC+","CC1 Katowice na żywo","Konferencja BNI","Rada Biznesu TT"],"2026-09-18":["Ogólnopolska Konferencja BNI"],"2026-09-22":["CC3 Warszawa z BNI+; CC3 Kraków","BNI+2 Warszawa z CC3"],"2026-09-23":["The Company Talks"],"2026-09-24":["The Company Talks","Integracja BNI+1 Warszawa","MSP","Warsztat Q3"],"2026-09-25":["Integracja BNI+1 Warszawa","Warsztat Q3"],"2026-09-26":["Integracja BNI+1 Warszawa","AMG Budapest"],"2026-09-27":["Integracja BNI+1","AMG Budapest"],"2026-09-28":["AMG Budapest"],"2026-09-29":["The Company Talks"],"2026-09-30":["The Company Talks"],"2026-10-01":["The Company Talks","TTT cz.1","Akademia Dyrektora"],"2026-10-02":["TTT cz.1","Akademia Dyrektora"],"2026-10-05":["Odprawa kwartalna TC"],"2026-10-06":["The Company Talks","Rada MSP"],"2026-10-07":["CC5 Warszawa","BNI+1 Lublin"],"2026-10-08":["The Company Talks","BNI+1 Warszawa zoom"],"2026-10-09":["Integracja CC1 Kraków","Odprawa AI"],"2026-10-10":["Integracja CC1 Kraków"],"2026-10-12":["Rada Biznesu TT"],"2026-10-13":["Integracja CC2 Warszawa","BNI+2 Warszawa na żywo","W4"],"2026-10-14":["CC4 Warszawa online, CC2 Kraków, integracja CC2 Warszawa"],"2026-10-15":["Integracja CC2 Warszawa","The Company Talks","Moduł AB"],"2026-10-16":["BNI+1 Katowice Integracja Zagraniczna","Moduł AB"],"2026-10-17":["BNI+1 Katowice Integracja"],"2026-10-18":["BNI+1 Katowice Integracja"],"2026-10-19":["BNI+1 Katowice Integracja"],"2026-10-20":["CC3 Warszawa; CC3 Kraków","MSP"],"2026-10-21":["The Company Talks","Monthly Review"],"2026-10-22":["CC1 Katowice na żywo","BNI+1 Warszawa na żywo","Szkolenie Grzesiak"],"2026-10-23":["GOLF Turcja","Szkolenie Grzesiak"],"2026-10-24":["GOLF Turcja"],"2026-10-25":["GOLF Turcja"],"2026-10-27":["The Company Talks","Forum Krynica"],"2026-10-28":["The Company Talks","Forum Krynica"],"2026-10-29":["The Company Talks","Forum Krynica"],"2026-11-03":["CC1 Kraków"],"2026-11-04":["CC1 Warszawa, CC2 Kraków","BNI+1 Kraków / BNI+1 Lublin na żywo"],"2026-11-05":["CC2 Warszawa","BNI+1 Warszawa online"],"2026-11-06":["Odprawa BNI+ październik"],"2026-11-16":["Rada MSP zoom","Warsztat Scaling UP","Odprawa CC październik"],"2026-11-17":["CC3 Warszawa; CC3 Kraków","BNI+2 Warszawa z CC","W5","Warsztat Scaling UP"],"2026-11-18":["The Company Talks","BNI+1 Katowice na żywo","BNI Global Convention","Monthly Review"],"2026-11-19":["The Company Talks","TTT cz.2","BNI Global Convention"],"2026-11-20":["CC1 Katowice Wyjazd","TTT cz.2","BNI Global Convention"],"2026-11-21":["CC1 Katowice Wyjazd","BNI Global Convention"],"2026-11-22":["CC1 Katowice Wyjazd"],"2026-11-24":["BNI+2 Warszawa zoom z BNI+1 Lublin","MSP"],"2026-11-25":["The Company Talks"],"2026-11-26":["BNI+1 Warszawa na żywo"],"2026-12-01":["The Company Talks"],"2026-12-02":["BNI+1 Kraków"],"2026-12-03":["Spotkanie CC+","Moduł CD","Rada Biznesu TT"],"2026-12-04":["Moduł CD","BW"],"2026-12-05":["BW"],"2026-12-06":["BW"],"2026-12-07":["Odprawa CC listopad"],"2026-12-08":["CC3 Kraków","BNI+2 Warszawa na żywo"],"2026-12-09":["CC2 Kraków, CC1 Warszawa","BNI+1 Lublin świąteczne","W6"],"2026-12-10":["CC3 Warszawa, CC1 Katowice na żywo"],"2026-12-11":["Odprawa BNI+ listopad"],"2026-12-14":["Rada MSP zoom"],"2026-12-15":["CC5 Warszawa","MSP"],"2026-12-16":["CC4 Warszawa","BNI+1 Katowice świąteczne","Monthly Review"],"2026-12-17":["The Company Talks","BNI+1 Warszawa na żywo"],"2026-12-18":["Podsumowanie Roku i Wigilia"]};
+
+const MONTHS_PL=["Styczeń","Luty","Marzec","Kwiecień","Maj","Czerwiec","Lipiec","Sierpień","Wrzesień","Październik","Listopad","Grudzień"];
+const DAYS_PL=["Pn","Wt","Śr","Cz","Pt","So","Nd"];
+const TCOLS=["#DC143C","#22c55e","#f59e0b","#8b5cf6","#06b6d4","#f97316","#ec4899","#10b981"];
+
+let curMonth=TODAY.getMonth();
+let trainers=[];
+let trainings={};
+let sbFilter="all";
+let selDate=null;
+
+const LS_TRAININGS='tc_matryca_trainings';
+const LS_TRAINERS='tc_matryca_trainers';
+
+function saveToStorage(){
+  try{
+    localStorage.setItem(LS_TRAININGS,JSON.stringify(trainings));
+    localStorage.setItem(LS_TRAINERS,JSON.stringify(trainers));
+  }catch(e){}
+}
+function loadFromStorage(){
+  try{
+    const t=localStorage.getItem(LS_TRAININGS);
+    const tr=localStorage.getItem(LS_TRAINERS);
+    if(t)trainings=JSON.parse(t);
+    if(tr)trainers=JSON.parse(tr);
+  }catch(e){}
+}
+
+function isGroupMeetingEvent(ev){
+  const hasCC=/CC\d/.test(ev)||/CC\s/.test(ev)||(ev.startsWith("CC")&&/CC\d|CC\s/.test(ev));
+  const hasBNI=/BNI\+\d/.test(ev)||/BNI\+1|BNI\+2/.test(ev);
+  const hasTC=/Integracja The Company/i.test(ev);
+  if(!hasCC&&!hasBNI&&!hasTC)return false;
+  if(hasTC)return true;
+  // Kraków, Lublin, Wrocław never block
+  if(/Krak|Lublin|Wrocław/.test(ev))return false;
+  // Only Warszawa, Katowice, online/zoom/na żywo block
+  return /Warszawa|Katowice|online|zoom|na żywo/.test(ev)||(!(/Krak|Lublin|Wrocław/.test(ev))&&!(/Warszawa|Katowice|online|zoom|na żywo/.test(ev)));
+}
+function hasCCMeeting(d){const e=RAW_EVENTS[d];return e&&e.some(isGroupMeetingEvent);}
+function getBlockingEvts(d){const e=RAW_EVENTS[d];return e?e.filter(isGroupMeetingEvent):[];}
+function isPast(d){return d<TODAY_STR;}
+function isHoliday(d){return!!HOLIDAYS[d];}
+function isBlocked(d){return BLOCKED_EXTRA.has(d);}
+function isLongWkndAdj(d){
+  const dt=new Date(d);
+  const p=new Date(dt);p.setDate(p.getDate()-1);
+  const n=new Date(dt);n.setDate(n.getDate()+1);
+  return isHoliday(p.toISOString().slice(0,10))||isHoliday(n.toISOString().slice(0,10));
+}
+function isRecommended(d){
+  const dow=new Date(d).getDay();
+  if(dow!==4&&dow!==5)return false;
+  if(isHoliday(d)||isBlocked(d))return false;
+  if(isLongWkndAdj(d))return false;
+  if(hasCCMeeting(d))return false;
+  return true;
+}
+function fmtDs(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+
+function init(){
+  loadFromStorage();
+  renderMonthTabs();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('tab-'+(name==='calendar'?'cal':'mod')).classList.add('active');
+}
+
+function renderMonthTabs(){
+  const el=document.getElementById('month-tabs');
+  el.innerHTML=MONTHS_PL.map((m,i)=>{
+    const last=fmtDs(2026,i,new Date(2026,i+1,0).getDate());
+    const pastM=last<TODAY_STR;
+    return`<button class="mq-tab${i===curMonth?' active':''}${pastM?' past':''}" onclick="${pastM?'':'goToMonth('+i+')'}">${m.substring(0,3)}</button>`;
+  }).join('');
+}
+function goToMonth(m){curMonth=m;renderCalendar();renderMonthTabs();}
+function changeMonth(d){curMonth=Math.max(0,Math.min(11,curMonth+d));renderCalendar();renderMonthTabs();}
+
+function renderCalendar(){
+  const y=2026,m=curMonth;
+  document.getElementById('month-name').innerHTML=`${MONTHS_PL[m]} <span>${y}</span>`;
+  const grid=document.getElementById('cal-grid');grid.innerHTML='';
+  DAYS_PL.forEach((d,i)=>{const h=document.createElement('div');h.className='cal-hdr'+(i>=5?' wknd':'');h.textContent=d;grid.appendChild(h);});
+  const fd=new Date(y,m,1).getDay();
+  const pad=fd===0?6:fd-1;
+  const dcount=new Date(y,m+1,0).getDate();
+  for(let i=0;i<pad;i++){const e=document.createElement('div');e.className='cal-day empty';grid.appendChild(e);}
+  for(let d=1;d<=dcount;d++){
+    const ds=fmtDs(y,m,d);
+    const dt=new Date(y,m,d);
+    const dow=dt.getDay();
+    const wknd=dow===0||dow===6;
+    const past=isPast(ds);
+    const hol=HOLIDAYS[ds];
+    const blk=isBlocked(ds);
+    const hasTrain=!!trainings[ds];
+    const ccBlk=!past&&!hol&&!blk&&!wknd&&!hasTrain&&hasCCMeeting(ds);
+    const rec=!past&&!hol&&!blk&&!wknd&&isRecommended(ds);
+    const isToday=ds===TODAY_STR;
+    const canClick=!past&&!hol&&!blk&&!wknd&&!ccBlk;
+
+    const cell=document.createElement('div');
+    let cls='cal-day';
+    if(wknd)cls+=' is-weekend';
+    if(past)cls+=' is-past';
+    else if(hol||blk)cls+=' is-holiday';
+    else if(hasTrain)cls+=' has-training';
+    else if(ccBlk)cls+=' is-blocked-cc';
+    else if(rec)cls+=' recommended';
+    if(isToday)cls+=' is-today';
+    if(canClick)cls+=' clickable';
+    cell.className=cls;
+
+    if(canClick){
+      cell.addEventListener('click',()=>openTrainingModal(ds));
+      cell.addEventListener('dragover',e=>{e.preventDefault();cell.classList.add('drag-over');});
+      cell.addEventListener('dragleave',()=>cell.classList.remove('drag-over'));
+      cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('drag-over');openTrainingModal(ds,parseInt(e.dataTransfer.getData('moduleId')));});
+    }
+    if(ccBlk){
+      cell.addEventListener('click',()=>openInfoModal(ds));
+    }
+
+    let html=`<div class="day-num">${d}</div>`;
+    if(past&&!wknd)html+='';
+    else if(hol)html+=`<div class="day-holiday-lbl">${hol}</div>`;
+    else if(blk)html+=`<div class="day-blocked-lbl">Długi weekend</div>`;
+    else if(ccBlk&&!hasTrain)html+=`<div class="day-blocked-lbl">Zajęty — CC/BNI+</div>`;
+    else if(rec&&!hasTrain)html+=`<div class="day-rec-lbl">✓ Wolny slot</div>`;
+
+    const evts=RAW_EVENTS[ds];
+    if(evts&&evts.length>0&&!past){
+      const blkEvts=getBlockingEvts(ds);
+      html+='<div class="day-events">';
+      evts.slice(0,3).forEach(ev=>{html+=`<div class="day-evt${blkEvts.includes(ev)?' cc-blocked':''}">${ev}</div>`;});
+      if(evts.length>3)html+=`<div class="day-evt" style="color:#bbb">+${evts.length-3} więcej</div>`;
+      html+='</div>';
+    }
+    if(hasTrain){
+      const t=trainings[ds];
+      const mod=MODULES.find(x=>x.id===t.moduleId);
+      const trainer=trainers.find(x=>x.id===t.trainerId);
+      html+=`<div class="day-training-badge"><span class="dtb-text">📚 ${mod?mod.nazwa:'?'}</span><button class="dtb-remove" onclick="event.stopPropagation();removeTraining('${ds}')">×</button></div>`;
+      if(trainer)html+=`<div class="dtb-trainer">👤 ${trainer.name}</div>`;
+    }
+    cell.innerHTML=html;grid.appendChild(cell);
+  }
+  updateSlots();
+  updateTrainingCount();
+}
+
+function openTrainingModal(ds,preModId){
+  selDate=ds;
+  const d=new Date(ds);
+  document.getElementById('tm-date').textContent=d.toLocaleDateString('pl-PL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('tm-title').textContent=trainings[ds]?'Edytuj szkolenie':'Zaplanuj szkolenie';
+  const evts=RAW_EVENTS[ds];
+  const existEl=document.getElementById('tm-existing');
+  if(evts&&evts.length){existEl.style.display='block';document.getElementById('tm-event-list').innerHTML=evts.map(e=>`<div class="ee-item">${e}</div>`).join('');}
+  else existEl.style.display='none';
+  const ms=document.getElementById('tm-module');
+  ms.innerHTML='<option value="">— wybierz moduł —</option>';
+  ['Mindset','Skill','Kultura'].forEach(cat=>{
+    const og=document.createElement('optgroup');og.label=cat;
+    MODULES.filter(x=>x.kategoria===cat).forEach(mod=>{
+      const o=document.createElement('option');o.value=mod.id;o.textContent=mod.nazwa;
+      if(trainings[ds]?.moduleId===mod.id)o.selected=true;
+      if(preModId===mod.id)o.selected=true;
+      og.appendChild(o);
+    });ms.appendChild(og);
+  });
+  const ts=document.getElementById('tm-trainer');
+  ts.innerHTML='<option value="">— wybierz trenera —</option>';
+  trainers.forEach(tr=>{const o=document.createElement('option');o.value=tr.id;o.textContent=tr.name;if(trainings[ds]?.trainerId===tr.id)o.selected=true;ts.appendChild(o);});
+  document.getElementById('training-overlay').classList.add('open');
+}
+function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');selDate=null;}
+function saveTraining(){
+  if(!selDate)return;
+  const mid=parseInt(document.getElementById('tm-module').value);
+  const tid=parseInt(document.getElementById('tm-trainer').value);
+  if(!mid){alert('Wybierz moduł szkoleniowy');return;}
+  trainings[selDate]={moduleId:mid,trainerId:isNaN(tid)?null:tid};
+  closeTrainingModal();renderCalendar();saveToStorage();
+}
+function removeTraining(ds){delete trainings[ds];renderCalendar();saveToStorage();}
+
+function addTrainer(){
+  const inp=document.getElementById('t-input');const name=inp.value.trim();if(!name)return;
+  trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length]});
+  inp.value='';renderTrainers();saveToStorage();
+}
+function removeTrainer(id){trainers=trainers.filter(t=>t.id!==id);renderTrainers();saveToStorage();}
+function renderTrainers(){
+  const el=document.getElementById('trainers-list');
+  if(!trainers.length){el.innerHTML='<div class="t-empty">Brak trenerów — dodaj poniżej</div>';return;}
+  el.innerHTML=trainers.map(t=>`<div class="trainer-item"><div class="t-dot" style="background:${t.color}"></div><span class="t-name">${t.name}</span><button class="t-remove" onclick="removeTrainer(${t.id})">×</button></div>`).join('');
+}
+document.getElementById('t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainer();});
+
+function filterSb(btn){sbFilter=btn.dataset.cat;document.querySelectorAll('.sf-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSbModules();}
+function renderSbModules(){
+  const el=document.getElementById('sb-modules');
+  const list=sbFilter==='all'?MODULES:MODULES.filter(m=>m.kategoria===sbFilter);
+  el.innerHTML=list.map(m=>`<div class="sb-mod cat-${m.kategoria}" draggable="true" ondragstart="event.dataTransfer.setData('moduleId','${m.id}')" onclick="openModDetail(${m.id})"><div class="sb-mod-name">${m.nazwa}</div><div class="sb-mod-cat">${m.kategoria}</div></div>`).join('');
+}
+
+function renderModuleCards(){
+  const el=document.getElementById('modules-by-cat');
+  const cats=modTabFilter==='all'?['Mindset','Skill','Kultura']:[modTabFilter];
+  el.innerHTML=cats.map(cat=>{
+    const mods=MODULES.filter(m=>m.kategoria===cat);
+    return`<div class="cat-section"><div class="cat-hdr"><span class="cat-tag ${cat}">${cat}</span></div><div class="modules-cards">${mods.map(m=>`<div class="mod-card cat-${m.kategoria}" onclick="openModDetail(${m.id})"><div class="mod-card-name">${m.nazwa}</div><div class="mod-card-desc">${m.opis}</div><div class="mod-card-footer"><div class="mod-card-time">⏱ 3 godziny</div><div class="mod-card-cta">Szczegóły →</div></div></div>`).join('')}</div></div>`;
+  }).join('');
+}
+
+function openInfoModal(ds){
+  const d=new Date(ds);
+  document.getElementById('info-date').textContent=d.toLocaleDateString('pl-PL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('info-title').textContent='Co się dzieje tego dnia?';
+  const blkEvts=getBlockingEvts(ds);
+  document.getElementById('info-reason').textContent='⚠ Ten dzień jest zajęty';
+  const allEvts=RAW_EVENTS[ds]||[];
+  document.getElementById('info-events').innerHTML=allEvts.map(e=>`<div class="ee-item" style="${blkEvts.includes(e)?'border-left:3px solid var(--amber);':''}">${e}</div>`).join('');
+  document.getElementById('info-overlay').classList.add('open');
+}
+
+let modTabFilter='all';
+function filterModTab(btn){
+  modTabFilter=btn.dataset.mf;
+  document.querySelectorAll('.mod-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderModuleCards();
+}
+
+
+function openModDetail(id){
+  const mod=MODULES.find(m=>m.id===id);if(!mod)return;
+  document.getElementById('md-cat').textContent=mod.kategoria;
+  document.getElementById('md-cat').className=`mod-detail-cat ${mod.kategoria}`;
+  document.getElementById('md-name').textContent=mod.nazwa;
+  document.getElementById('md-orig').textContent=`Pełna nazwa: "${mod.oryginalny}"`;
+  document.getElementById('md-desc').textContent=mod.opis;
+  const entry=Object.entries(trainings).find(([,v])=>v.moduleId===id);
+  document.getElementById('md-trainer').textContent=entry?(trainers.find(t=>t.id===entry[1].trainerId)?.name||'Do ustalenia'):'Do ustalenia';
+  document.getElementById('mod-overlay').classList.add('open');
+}
+function closeModModal(){document.getElementById('mod-overlay').classList.remove('open');}
+
+function updateSlots(){
+  let count=0;
+  for(let mo=0;mo<12;mo++){const days=new Date(2026,mo+1,0).getDate();for(let d=1;d<=days;d++){const s=fmtDs(2026,mo,d);if(!isPast(s)&&isRecommended(s)&&!trainings[s])count++;}}
+  document.getElementById('slots-num').textContent=count;
+}
+
+function clearCalendar(){
+  if(!Object.keys(trainings).length)return;
+  if(confirm('Usunąć wszystkie zaplanowane szkolenia z kalendarza?')){
+    trainings={};renderCalendar();saveToStorage();
+  }
+}
+
+function updateTrainingCount(){
+  const n=Object.keys(trainings).length;
+  const el=document.getElementById('training-count');
+  if(el)el.textContent=n>0?`${n} zaplanowanych szkoleń`:'Brak zaplanowanych szkoleń';
+}
+
+function generatePDF(){
+  const entries=Object.entries(trainings).sort(([a],[b])=>a.localeCompare(b));
+  if(!entries.length){alert('Brak zaplanowanych szkoleń. Najpierw zaplanuj szkolenia w kalendarzu.');return;}
+
+  const btn=document.getElementById('pdf-btn');
+  btn.textContent='⏳ Generuję...';btn.disabled=true;
+
+  // Load jsPDF dynamically
+  if(!window.jspdf){
+    const s1=document.createElement('script');
+    s1.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s1.onload=()=>{
+      const s2=document.createElement('script');
+      s2.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
+      s2.onload=()=>buildPDF(entries,btn);
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  } else { buildPDF(entries,btn); }
+}
+
+function pl(s){
+  if(!s)return'';
+  return String(s)
+    .replace(/ą/g,'a').replace(/Ą/g,'A')
+    .replace(/ć/g,'c').replace(/Ć/g,'C')
+    .replace(/ę/g,'e').replace(/Ę/g,'E')
+    .replace(/ł/g,'l').replace(/Ł/g,'L')
+    .replace(/ń/g,'n').replace(/Ń/g,'N')
+    .replace(/ó/g,'o').replace(/Ó/g,'O')
+    .replace(/ś/g,'s').replace(/Ś/g,'S')
+    .replace(/ź/g,'z').replace(/Ź/g,'Z')
+    .replace(/ż/g,'z').replace(/Ż/g,'Z')
+    .replace(/—/g,'-').replace(/–/g,'-');
+}
+
+function buildPDF(entries,btn){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const pw=doc.internal.pageSize.getWidth();   // 297
+  const ph=doc.internal.pageSize.getHeight();  // 210
+  const ML=14, MR=14, TW=pw-ML-MR;
+  const NAVY=[18,22,53], RED=[220,20,60], WHITE=[255,255,255];
+  const LIGHT=[245,246,250], MID=[228,232,242], MUTED=[130,140,170];
+  const MONTHS=['Sty','Lut','Mar','Kwi','Maj','Cze','Lip','Sie','Wrz','Paz','Lis','Gru'];
+  const CAT_C={Mindset:[139,92,246],Skill:[200,130,10],Kultura:[22,160,80]};
+
+  // helper: draw page header bar
+  function pageHeader(){
+    doc.setFillColor(...NAVY);
+    doc.rect(0,0,pw,18,'F');
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...WHITE);
+    doc.text('the ',ML,12);
+    doc.setFont('helvetica','bold');
+    doc.text('company.',ML+doc.getTextWidth('the '),12);
+    doc.setFont('helvetica','bold');doc.setFontSize(9.5);
+    doc.text('MATRYCA SZKOLENIOWA 2026',pw/2,11,{align:'center'});
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...MUTED);
+    doc.text('Corporate Connections Poland',pw/2,15.5,{align:'center'});
+    doc.setFillColor(...RED);doc.rect(0,18,pw,0.8,'F');
+  }
+
+  // helper: draw page footer
+  function pageFooter(p,total){
+    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...MUTED);
+    doc.text(`the company.  -  Propozycja Matrycy Szkoleniowej 2026  -  strona ${p} / ${total}`,pw/2,ph-4,{align:'center'});
+  }
+
+  // helper: section title
+  function sectionTitle(text,y){
+    doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...NAVY);
+    doc.text(pl(text),ML,y);
+    doc.setDrawColor(...RED);doc.setLineWidth(0.4);
+    doc.line(ML,y+1.5,pw-MR,y+1.5);
+    return y+7;
+  }
+
+  // Build structured data
+  const byMonth={};
+  const chronological=[];
+  entries.forEach(([ds,t])=>{
+    const mod=MODULES.find(m=>m.id===t.moduleId);
+    const trainer=trainers.find(tr=>tr.id===t.trainerId);
+    const d=new Date(ds);
+    const mo=d.getMonth();
+    const dow=['Nd','Pn','Wt','Sr','Cz','Pt','So'][d.getDay()];
+    const dateShort=`${dow} ${d.getDate()}`;
+    if(!byMonth[mo])byMonth[mo]=[];
+    byMonth[mo].push({dateShort,mod,trainer});
+    chronological.push({
+      ds,
+      dateLabel:`${d.getDate()} ${MONTHS[mo]} (${dow})`,
+      fullDate:pl(d.toLocaleDateString('pl-PL',{weekday:'long',year:'numeric',month:'long',day:'numeric'})),
+      mod,trainer
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // PAGE 1 — ROCZNA TABELA
+  // ═══════════════════════════════════════════════════════════════
+  pageHeader();
+  let y=sectionTitle('TABELA ROCZNA — ZAPLANOWANE SZKOLENIA',24);
+
+  const colW=TW/12;
+  const hdrH=7;
+
+  // Month header row
+  doc.setFillColor(...NAVY);
+  doc.rect(ML,y,TW,hdrH,'F');
+  MONTHS.forEach((mn,i)=>{
+    const x=ML+i*colW;
+    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(...WHITE);
+    doc.text(mn,x+colW/2,y+4.8,{align:'center'});
+  });
+  y+=hdrH;
+
+  // Find max slots in any month
+  const maxRows=Math.max(1,...Object.values(byMonth).map(a=>a.length));
+  const cellH=10;
+
+  for(let row=0;row<maxRows;row++){
+    const bg=row%2===0?LIGHT:WHITE;
+    doc.setFillColor(...bg);
+    doc.rect(ML,y,TW,cellH,'F');
+
+    MONTHS.forEach((_,i)=>{
+      const x=ML+i*colW;
+      const item=(byMonth[i]||[])[row];
+
+      // Subtle column separator
+      if(i>0){
+        doc.setDrawColor(...MID);doc.setLineWidth(0.1);
+        doc.line(x,y,x,y+cellH);
+      }
+
+      if(item&&item.mod){
+        const cc=CAT_C[item.mod.kategoria]||NAVY;
+        // Left category stripe
+        doc.setFillColor(...cc);
+        doc.rect(x+0.8,y+0.8,1.5,cellH-1.6,'F');
+        // Date
+        doc.setFont('helvetica','bold');doc.setFontSize(6);doc.setTextColor(...cc);
+        doc.text(pl(item.dateShort),x+4,y+3.2);
+        // Module name (2 lines max)
+        doc.setFont('helvetica','normal');doc.setFontSize(5.5);doc.setTextColor(30,40,80);
+        const lines=doc.splitTextToSize(pl(item.mod.nazwa),colW-5.5);
+        doc.text(lines[0]||'',x+4,y+6);
+        if(lines[1])doc.text(lines[1],x+4,y+8.3);
+        // Trainer
+        if(item.trainer){
+          doc.setFontSize(5);doc.setTextColor(...MUTED);
+          doc.text(pl(item.trainer.name),x+4,y+cellH-1.2);
+        }
+      }
+    });
+
+    // Row bottom line
+    doc.setDrawColor(...MID);doc.setLineWidth(0.1);
+    doc.line(ML,y+cellH,ML+TW,y+cellH);
+    y+=cellH;
+
+    if(y>ph-20&&row<maxRows-1){
+      pageFooter(doc.internal.getCurrentPageInfo().pageNumber,99);
+      doc.addPage();
+      pageHeader();
+      y=24;
+      // Repeat month headers
+      doc.setFillColor(...NAVY);
+      doc.rect(ML,y,TW,hdrH,'F');
+      MONTHS.forEach((mn,i)=>{
+        const x=ML+i*colW;
+        doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(...WHITE);
+        doc.text(mn,x+colW/2,y+4.8,{align:'center'});
+      });
+      y+=hdrH;
+    }
+  }
+
+  // Outer border of table
+  doc.setDrawColor(...MID);doc.setLineWidth(0.3);
+  doc.rect(ML,31+hdrH,TW,maxRows*cellH,'S');
+
+  // ═══════════════════════════════════════════════════════════════
+  // SECTION 2 — LISTA CHRONOLOGICZNA
+  // ═══════════════════════════════════════════════════════════════
+  y+=10;
+  if(y>ph-50){
+    pageFooter(doc.internal.getCurrentPageInfo().pageNumber,99);
+    doc.addPage();pageHeader();y=24;
+  }
+  y=sectionTitle('LISTA CHRONOLOGICZNA',y);
+
+  doc.autoTable({
+    startY:y,
+    margin:{left:ML,right:MR},
+    head:[['#','Data','Modul szkoleniowy','Kategoria','Trener']],
+    body:chronological.map((item,i)=>[
+      i+1,
+      pl(item.fullDate),
+      pl(item.mod?.nazwa||'—'),
+      pl(item.mod?.kategoria||'—'),
+      pl(item.trainer?.name||'—')
+    ]),
+    styles:{
+      font:'helvetica',fontSize:8,cellPadding:{top:3,bottom:3,left:3,right:3},
+      textColor:[30,40,80],overflow:'linebreak',lineColor:MID,lineWidth:0.1
+    },
+    headStyles:{fillColor:NAVY,textColor:WHITE,fontStyle:'bold',fontSize:7.5,cellPadding:{top:3,bottom:3,left:3,right:3}},
+    alternateRowStyles:{fillColor:LIGHT},
+    columnStyles:{
+      0:{cellWidth:8,halign:'center',fontStyle:'bold'},
+      1:{cellWidth:54},
+      2:{cellWidth:undefined,minCellWidth:80},
+      3:{cellWidth:22,halign:'center'},
+      4:{cellWidth:38}
+    },
+    didParseCell:(data)=>{
+      if(data.section==='body'&&data.column.index===3){
+        const cat=data.cell.raw;
+        data.cell.styles.textColor=CAT_C[cat]||[30,40,80];
+        data.cell.styles.fontStyle='bold';
+        data.cell.styles.fontSize=7;
+      }
+    },
+    didDrawPage:()=>{}
+  });
+
+  // Add footers to all pages
+  const total=doc.internal.getNumberOfPages();
+  for(let p=1;p<=total;p++){
+    doc.setPage(p);
+    pageFooter(p,total);
+  }
+
+  doc.save('Matryca_Szkoleniowa_TC_2026.pdf');
+  btn.innerHTML='⬇ Wygeneruj Matrycę PDF';
+  btn.disabled=false;
+}
+
+function closeIfBg(e,id){if(e.target.id===id)document.getElementById(id).classList.remove('open');}
+
+init();
+</script>
+</body>
+</html>

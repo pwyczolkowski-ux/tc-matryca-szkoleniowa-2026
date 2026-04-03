@@ -344,25 +344,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           </div>
         </div>
       </div>
-      <div class="sb-ribbon">
-        <button class="sb-ribbon-btn active" data-sbt="trainers" onclick="switchSbTab('trainers')">Trenerzy</button>
-        <button class="sb-ribbon-btn" data-sbt="modules" onclick="switchSbTab('modules')">Szkolenia</button>
-      </div>
-      <div class="sb-tab-panel active" id="sbt-trainers" style="padding:16px 20px;overflow-y:auto;">
-        <div id="trainers-list"></div>
-        <button onclick="openTrainerEditModal(null)" style="width:100%;margin-top:8px;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.18);border-radius:6px;padding:9px;color:rgba(255,255,255,0.45);font-family:'Roboto',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;" onmouseover="this.style.color='var(--white)';this.style.borderColor='rgba(255,255,255,0.4)'" onmouseout="this.style.color='rgba(255,255,255,0.45)';this.style.borderColor='rgba(255,255,255,0.18)'">+ Dodaj trenera</button>
-      </div>
-      <div class="sb-tab-panel" id="sbt-modules" style="flex-direction:column;overflow:hidden;">
-        <div style="padding:16px 20px 10px;flex-shrink:0;">
-          <div class="sb-filter">
-            <button class="sf-btn active" data-cat="all" onclick="filterSb(this)">Wszystkie</button>
-            <button class="sf-btn" data-cat="Mindset" onclick="filterSb(this)">Mindset</button>
-            <button class="sf-btn" data-cat="Skill" onclick="filterSb(this)">Skill</button>
-            <button class="sf-btn" data-cat="Kultura" onclick="filterSb(this)">Kultura</button>
-          </div>
-        </div>
-        <div class="sb-modules" id="sb-modules" style="padding:0 20px 20px;"></div>
-      </div>
     </div>
   </div>
   <div class="main">
@@ -882,10 +863,11 @@ function toggleSidebar(){
   btn.textContent=sb.classList.contains('collapsed')?'›':'‹';
 }
 function switchSbTab(name){
+  const btn=document.querySelector(`.sb-ribbon-btn[data-sbt="${name}"]`);if(!btn)return;
   document.querySelectorAll('.sb-ribbon-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.sb-tab-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelector(`.sb-ribbon-btn[data-sbt="${name}"]`).classList.add('active');
-  document.getElementById('sbt-'+name).classList.add('active');
+  btn.classList.add('active');
+  const panel=document.getElementById('sbt-'+name);if(panel)panel.classList.add('active');
 }
 function init(){
   loadFromStorage();
@@ -1203,8 +1185,9 @@ function closeDC(){
   dcCallback=null;
 }
 function executeDC(){
+  const cb=dcCallback;
   closeDC();
-  if(dcCallback)dcCallback();
+  if(cb)cb();
 }
 function getTrainerIds(t){
   // migrate old single trainerId to array
@@ -1231,9 +1214,6 @@ function addTrainerFromModal(){
 }
 function removeTrainer(id){trainers=trainers.filter(t=>t.id!==id);renderTrainers();saveToStorage();}
 function renderTrainers(){
-  const el=document.getElementById('trainers-list');
-  if(!trainers.length){el.innerHTML='<div class="t-empty">Brak trenerów</div>';renderTrainerPanel();return;}
-  el.innerHTML=trainers.map(t=>`<div class="trainer-item" style="cursor:pointer;" onclick="openTrainerProfile(${t.id})">${trainerAvatar(t,28)}<span class="t-name">${escHtml(t.name)}</span><button class="t-remove" onclick="event.stopPropagation();removeTrainer(${t.id})">×</button></div>`).join('');
   renderTrainerPanel();
 }
 let trainerViewMode='grid';
@@ -1263,7 +1243,7 @@ document.getElementById('part-input').addEventListener('keydown',e=>{if(e.key===
 
 function filterSb(btn){sbFilter=btn.dataset.cat;document.querySelectorAll('.sf-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSbModules();}
 function renderSbModules(){
-  const el=document.getElementById('sb-modules');
+  const el=document.getElementById('sb-modules');if(!el)return;
   const allMods=getAllModules();
   const list=sbFilter==='all'?allMods:allMods.filter(m=>m.kategoria===sbFilter);
   el.innerHTML=list.map(m=>`<div class="sb-mod cat-${m.kategoria}" draggable="true" ondragstart="event.dataTransfer.setData('moduleId','${m.id}')" onclick="openModuleDetail(${m.id})"><div class="sb-mod-name">${m.nazwa}</div><div class="sb-mod-cat">${m.kategoria}</div></div>`).join('');

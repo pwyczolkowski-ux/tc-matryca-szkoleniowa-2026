@@ -185,7 +185,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .dur-btn:active{transform:scale(.9);}
 .dur-display{font-family:'Roboto',sans-serif;font-size:42px;font-weight:100;color:var(--white);line-height:1;min-width:60px;text-align:center;letter-spacing:2px;}
 .dur-label{font-size:10px;font-weight:400;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.35);}
-.dur-colon{font-size:42px;font-weight:100;color:rgba(255,255,255,0.3);line-height:1;margin-bottom:18px;}
 .modal-actions{display:flex;gap:10px;margin-top:20px;}
 #tm-expanded{animation:tmExpand .18s ease;}
 @keyframes tmExpand{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
@@ -544,16 +543,9 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           <label class="form-lbl">Czas trwania</label>
           <div class="dur-picker">
             <div class="dur-unit">
-              <button class="dur-btn" onclick="changeDur('h',1)">▲</button>
-              <div class="dur-display" id="dur-h">00</div>
-              <button class="dur-btn" onclick="changeDur('h',-1)">▼</button>
-              <div class="dur-label">godz</div>
-            </div>
-            <div class="dur-colon">:</div>
-            <div class="dur-unit">
-              <button class="dur-btn" onclick="changeDur('m',5)">▲</button>
-              <div class="dur-display" id="dur-m">00</div>
-              <button class="dur-btn" onclick="changeDur('m',-5)">▼</button>
+              <button class="dur-btn" onclick="changeDur(15)">▲</button>
+              <div class="dur-display" id="dur-m">0</div>
+              <button class="dur-btn" onclick="changeDur(-15)">▼</button>
               <div class="dur-label">min</div>
             </div>
           </div>
@@ -809,28 +801,16 @@ let editingTrainerId=null;
 let pendingPhotoData=null;
 let trainerProfileId=null;
 let selectedModuleId=null;
-let durH=0,durM=0;
-function changeDur(unit,delta){
-  if(unit==='h'){durH=Math.max(0,Math.min(23,durH+delta));}
-  else{durM=(durM+delta+60)%60;}
-  document.getElementById('dur-h').textContent=String(durH).padStart(2,'0');
-  document.getElementById('dur-m').textContent=String(durM).padStart(2,'0');
+let durM=0;
+function changeDur(delta){
+  durM=Math.max(0,durM+delta);
+  document.getElementById('dur-m').textContent=durM;
 }
-function getDurValue(){
-  if(durH===0&&durM===0)return'';
-  if(durH===0)return`${durM} min`;
-  if(durM===0)return`${durH}h`;
-  return`${durH}h ${durM}min`;
-}
+function getDurValue(){return durM>0?`${durM} min`:'';}
 function setDurValue(val){
-  durH=0;durM=0;
-  if(val){
-    const hm=val.match(/(\d+)\s*h/);const mm=val.match(/(\d+)\s*min/);
-    if(hm)durH=parseInt(hm[1]);
-    if(mm)durM=parseInt(mm[1]);
-  }
-  document.getElementById('dur-h').textContent=String(durH).padStart(2,'0');
-  document.getElementById('dur-m').textContent=String(durM).padStart(2,'0');
+  durM=0;
+  if(val){const m=val.match(/(\d+)/);if(m)durM=parseInt(m[1]);}
+  document.getElementById('dur-m').textContent=durM;
 }
 let modules=[];
 let pendingProfilePhotoData=null;

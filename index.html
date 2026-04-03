@@ -744,7 +744,7 @@ function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
 const TODAY_STR=`${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}`;
 
-let MODULES=[
+const SEED_MODULES=[
 {id:1,kategoria:"Mindset",nazwa:"Źródła wewnętrznej motywacji",opis:"Znajdź swoje DLACZEGO zanim skończy Ci się JAK. Ikigai, Simon Sinek, coachingowe koło wartości — narzędzia do mapowania tego, co napędza Cię do działania.",oryginalny:"Skąd biorę energię? Mapa wewnętrznej motywacji"},
 {id:2,kategoria:"Mindset",nazwa:"Praca na swoich mocnych stronach",opis:"Talenty to nie przypadek — to strategia. Warsztat oparty o CliftonStrengths / VIA: odkryj swoje naturalne zasoby i naucz się przekuwać je w wyniki.",oryginalny:"Graj swoimi kartami. Jak odkryć i wykorzystać mocne strony"},
 {id:3,kategoria:"Mindset",nazwa:"Mindset 10x",opis:"Od incremental thinking do 10x Rule. Jak przestać optymalizować detale i szukać prawdziwych przełomów. Techniki kreatywnego myślenia o skali.",oryginalny:"Myśl 10x. Jak przestać optymalizować, a zacząć skalować"},
@@ -785,23 +785,29 @@ let editingTrainerId=null;
 let pendingPhotoData=null;
 let trainerProfileId=null;
 let selectedModuleId=null;
-let moduleExtras={};
-let customModules=[];
+let modules=[];
 let pendingProfilePhotoData=null;
-const LS_MODULE_EXTRAS='tc_matryca_module_extras';
-const LS_CUSTOM_MODULES='tc_matryca_custom_modules';
+const LS_MODULES='tc_matryca_modules';
 let participantsDate=null;
 let currentEmpIdx=null;
 
 const LS_TRAININGS='tc_matryca_trainings';
 const LS_TRAINERS='tc_matryca_trainers';
 
+function migrateModules(oldExtras,oldCustom){
+  // Build unified modules[] from SEED_MODULES + legacy moduleExtras + legacy customModules
+  const merged=SEED_MODULES.map(m=>{
+    const extra=(oldExtras&&oldExtras[m.id])||{};
+    return{...m,...extra};
+  });
+  if(oldCustom&&Array.isArray(oldCustom))oldCustom.forEach(m=>merged.push(m));
+  return merged;
+}
 function saveToStorage(){
   try{
     localStorage.setItem(LS_TRAININGS,JSON.stringify(trainings));
     localStorage.setItem(LS_TRAINERS,JSON.stringify(trainers));
-    localStorage.setItem(LS_MODULE_EXTRAS,JSON.stringify(moduleExtras));
-    localStorage.setItem(LS_CUSTOM_MODULES,JSON.stringify(customModules));
+    localStorage.setItem(LS_MODULES,JSON.stringify(modules));
   }catch(e){}
   if(getGhToken())pushToGitHub(false);
 }
@@ -809,8 +815,7 @@ function loadFromStorage(){
   try{
     const t=localStorage.getItem(LS_TRAININGS);
     const tr=localStorage.getItem(LS_TRAINERS);
-    const me=localStorage.getItem(LS_MODULE_EXTRAS);
-    const cm=localStorage.getItem(LS_CUSTOM_MODULES);
+    const mo=localStorage.getItem(LS_MODULES);
     if(t){
       const parsed=JSON.parse(t);
       if(Array.isArray(parsed))trainings=parsed;
@@ -828,16 +833,20 @@ function loadFromStorage(){
       trainings=trainings.filter(tr=>tr.date&&tr.date>='2026-01-01'&&tr.date<='2026-12-31');
     }
     if(tr)trainers=JSON.parse(tr);
-    if(me)moduleExtras=JSON.parse(me);
-    if(cm)customModules=JSON.parse(cm);
-  }catch(e){}
+    if(mo){
+      modules=JSON.parse(mo);
+    }else{
+      // First load: migrate from old keys if they exist
+      const me=localStorage.getItem('tc_matryca_module_extras');
+      const cm=localStorage.getItem('tc_matryca_custom_modules');
+      modules=migrateModules(me?JSON.parse(me):null,cm?JSON.parse(cm):null);
+    }
+  }catch(e){
+    if(!modules.length)modules=migrateModules(null,null);
+  }
 }
-function getAllModules(){return[...MODULES,...customModules];}
-function getModuleData(id){
-  const base=getAllModules().find(m=>m.id===id);if(!base)return null;
-  const extra=moduleExtras[id]||{};
-  return{...base,...extra};
-}
+function getAllModules(){return modules;}
+function getModuleData(id){return modules.find(m=>m.id===id)||null;}
 
 function isGroupMeetingEvent(ev){
   const hasCC=/CC\d/.test(ev)||/CC\s/.test(ev)||(ev.startsWith("CC")&&/CC\d|CC\s/.test(ev));
@@ -1342,9 +1351,8 @@ function openModuleDetail(id){
 }
 function renderModuleDetailView(id){
   const mod=getModuleData(id);if(!mod)return;
-  const isCustom=customModules.some(m=>m.id===id);
   const delBtn=document.getElementById('mds-delete-btn');
-  if(delBtn)delBtn.style.display=isCustom?'block':'none';
+  if(delBtn)delBtn.style.display='block';
   const catEl=document.getElementById('mds-cat');
   catEl.textContent=mod.kategoria;catEl.className=`mod-detail-cat ${mod.kategoria}`;
   document.getElementById('mds-name').textContent=mod.nazwa;
@@ -1386,9 +1394,9 @@ function renderModuleDetailView(id){
 }
 function deleteCustomModule(){
   if(selectedModuleId===null)return;
-  const mod=customModules.find(m=>m.id===selectedModuleId);if(!mod)return;
+  const mod=modules.find(m=>m.id===selectedModuleId);if(!mod)return;
   openDC(`Usunąć szkolenie<br><strong>${escHtml(mod.nazwa)}</strong>?`,()=>{
-    customModules=customModules.filter(m=>m.id!==selectedModuleId);
+    modules=modules.filter(m=>m.id!==selectedModuleId);
     trainings=trainings.filter(t=>t.moduleId!==selectedModuleId);
     saveToStorage();renderModuleCards();renderSbModules();renderCalendar();renderDashboard();
     closeModuleDetail();
@@ -1419,13 +1427,11 @@ function saveModuleEdit(){
   if(selectedModuleId===null){
     // New module
     const newId=Date.now();
-    customModules.push({id:newId,kategoria:kat,nazwa,opis,oryginalny:'',korzysci,agenda});
+    modules.push({id:newId,kategoria:kat,nazwa,opis,oryginalny:'',korzysci,agenda});
     selectedModuleId=newId;
   }else{
-    // Check if built-in or custom
-    const custom=customModules.find(m=>m.id===selectedModuleId);
-    if(custom){Object.assign(custom,{nazwa,kategoria:kat,opis,korzysci,agenda});}
-    else{moduleExtras[selectedModuleId]={nazwa,opis,korzysci,agenda};}
+    const existing=modules.find(m=>m.id===selectedModuleId);
+    if(existing){Object.assign(existing,{nazwa,kategoria:kat,opis,korzysci,agenda});}
   }
   saveToStorage();
   renderModuleCards();renderSbModules();
@@ -1849,7 +1855,7 @@ function getGhBranch(){return GH_BRANCH;}
 function setSyncStatus(){}
 
 function buildDataPayload(){
-  return{trainings,trainers,moduleExtras,customModules,savedAt:new Date().toISOString()};
+  return{trainings,trainers,modules,savedAt:new Date().toISOString()};
 }
 
 async function pushToGitHub(immediate=false){
@@ -1905,8 +1911,13 @@ async function loadFromGitHub(){
       trainings=trainings.filter(tr=>tr.date&&tr.date>='2026-01-01'&&tr.date<='2026-12-31');
     }
     if(d.trainers)trainers=d.trainers;
-    if(d.moduleExtras)moduleExtras=d.moduleExtras;
-    if(d.customModules)customModules=d.customModules;
+    if(d.modules){
+      modules=d.modules;
+    }else if(d.moduleExtras||d.customModules){
+      modules=migrateModules(d.moduleExtras||null,d.customModules||null);
+    }else if(!modules.length){
+      modules=migrateModules(null,null);
+    }
     saveToStorage();// mirror to localStorage as cache
     setSyncStatus('ok','Zsynchronizowane');
     return true;
@@ -1915,7 +1926,7 @@ async function loadFromGitHub(){
 
 // ── Export / Import ────────────────────────────────────────────────
 function exportData(){
-  const data={trainings,trainers,moduleExtras,customModules,exportedAt:new Date().toISOString()};
+  const data={trainings,trainers,modules,exportedAt:new Date().toISOString()};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=`matryca_szkoleniowa_2026_${TODAY_STR}.json`;a.click();
@@ -1931,8 +1942,8 @@ function importData(input){
       if(!confirm('Zastąpić bieżące dane danymi z pliku?'))return;
       if(d.trainings)trainings=d.trainings;
       if(d.trainers)trainers=d.trainers;
-      if(d.moduleExtras)moduleExtras=d.moduleExtras;
-      if(d.customModules)customModules=d.customModules;
+      if(d.modules){modules=d.modules;}
+      else if(d.moduleExtras||d.customModules){modules=migrateModules(d.moduleExtras||null,d.customModules||null);}
       saveToStorage();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();
       alert('Dane zostały wczytane pomyślnie.');
     }catch(err){alert('Błąd odczytu pliku: '+err.message);}

@@ -1638,12 +1638,21 @@ function renderModuleCards(){
     const mods=allMods.filter(m=>m.kategoria===cat);
     if(!mods.length)return'';
     const items=mods.map(m=>{
-      const count=trainings.filter(t=>t.moduleId===m.id).length;
-      const countTxt=count===0?'brak terminów':count===1?'1 termin':`${count} terminy/terminów`;
+      const all=trainings.filter(t=>t.moduleId===m.id);
+      const planned=all.filter(t=>t.date>=TODAY_STR).length;
+      const done=all.filter(t=>t.date<TODAY_STR).length;
+      let countTxt,countStyle='';
+      if(!all.length){countTxt='brak terminów';countStyle='color:var(--text-muted);';}
+      else{
+        const parts=[];
+        if(planned)parts.push(`<span style="color:var(--navy);font-weight:500;">${planned} zaplanowane</span>`);
+        if(done)parts.push(`<span style="color:var(--green);font-weight:500;">${done} zrealizowane</span>`);
+        countTxt=parts.join('<span style="color:var(--border);margin:0 4px;">·</span>');
+      }
       return`<div class="mod-list-item" onclick="openModuleDetail(${m.id})">
         <span class="cat-tag ${m.kategoria}" style="flex-shrink:0;">${m.kategoria}</span>
         <span class="mod-list-name">${escHtml(m.nazwa)}</span>
-        <span class="mod-list-count">${countTxt}</span>
+        <span class="mod-list-count" style="${countStyle}">${countTxt}</span>
         <span class="mod-list-arrow">›</span>
       </div>`;
     }).join('');

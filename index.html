@@ -932,10 +932,10 @@ function migrateModules(oldExtras,oldCustom){
   return merged;
 }
 function saveToStorage(){
-  if(getGhToken())pushToGitHub(false);
+  if(getGhToken()){pushToGitHub(false);pushTrainersFile();pushTrainingsFile();}
 }
 function saveParticipants(trainingId){
-  pushToGitHub(true);
+  pushTrainingsFile();
   pushSessionToGitHub(trainingId);
 }
 function loadFromStorage(){
@@ -1336,7 +1336,7 @@ function deleteCurrentTraining(){
     const deleted=t;
     trainings=trainings.filter(x=>x.id!==selTrainingId);
     closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();
-    pushToGitHub(true);deleteSessionFromGitHub(deleted);
+    pushTrainingsFile();deleteSessionFromGitHub(deleted);
   });
 }
 function refreshModuleIfOpen(){
@@ -1406,14 +1406,14 @@ function saveTraining(){
     trainings.push({id:savedId,date:selDate,moduleId:mid,trainerIds,priority,time,uczestnicy:[]});
   }
   closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();
-  pushToGitHub(true);
+  pushTrainingsFile();
   if(savedId)pushSessionToGitHub(savedId);
 }
 function removeTraining(id){
   const deleted=trainings.find(t=>t.id===id);
   trainings=trainings.filter(t=>t.id!==id);
   renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();
-  pushToGitHub(true);if(deleted)deleteSessionFromGitHub(deleted);
+  pushTrainingsFile();if(deleted)deleteSessionFromGitHub(deleted);
 }
 
 function trainerAvatar(t,size){
@@ -1446,40 +1446,6 @@ function handlePhotoUpload(input){
   };
   reader.readAsDataURL(file);
 }
-function getTrainerPath(tr){return`trainers/${slugify(tr.name)}-${tr.id}.json`;}
-function buildTrainerPayload(tr){
-  return{id:tr.id,name:tr.name,rola:tr.rola||'',email:tr.email||'',telefon:tr.telefon||'',bio:tr.bio||'',color:tr.color||'',updatedAt:new Date().toISOString()};
-}
-async function pushTrainerToGitHub(trainerId){
-  const token=getGhToken();if(!token)return;
-  const tr=trainers.find(x=>x.id===trainerId);if(!tr)return;
-  try{
-    const branch=getGhBranch();
-    const path=getTrainerPath(tr);
-    const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
-    const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
-    let sha=null;
-    try{const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(buildTrainerPayload(tr),null,2))));
-    const body={message:`trainer: ${tr.name}`,content,branch};
-    if(sha)body.sha=sha;
-    await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
-  }catch(e){console.error('Trainer push error:',e);}
-}
-async function deleteTrainerFileFromGitHub(tr){
-  const token=getGhToken();if(!token)return;
-  try{
-    const branch=getGhBranch();
-    const path=getTrainerPath(tr);
-    const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
-    const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
-    const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});
-    if(!r.ok)return;
-    const j=await r.json();
-    await fetch(apiUrl,{method:'DELETE',headers,body:JSON.stringify({message:`trainer delete: ${tr.name}`,sha:j.sha,branch})});
-  }catch(e){console.error('Trainer delete error:',e);}
-}
-
 function saveTrainerEdit(){
   const name=document.getElementById('te-name').value.trim();
   if(!name){alert('Podaj imię i nazwisko trenera');return;}
@@ -1493,11 +1459,10 @@ function saveTrainerEdit(){
   }else{
     trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length],rola,email,telefon,bio,photo:pendingPhotoData||null});
   }
-  const savedId=editingTrainerId||trainers[trainers.length-1]?.id;
   const wasEditing=editingTrainerId;
   closeTrainerEditModal();
   if(wasEditing&&trainerProfileId===wasEditing)openTrainerProfile(wasEditing);
-  renderTrainers();pushToGitHub(true);if(savedId)pushTrainerToGitHub(savedId);
+  renderTrainers();pushTrainersFile();
 }
 function openTrainerProfile(id){
   trainerProfileId=id;
@@ -1591,7 +1556,7 @@ function saveTrainerFromProfile(){
   const tr=trainers.find(t=>t.id===trainerProfileId);
   if(tr){tr.name=name;tr.rola=rola;tr.email=email;tr.telefon=telefon;tr.bio=bio;if(pendingProfilePhotoData!==null)tr.photo=pendingProfilePhotoData;}
   pendingProfilePhotoData=null;
-  renderTrainers();pushToGitHub(true);if(tr)pushTrainerToGitHub(tr.id);
+  renderTrainers();pushTrainersFile();
   openTrainerProfile(trainerProfileId);
 }
 function deleteTrainerFromProfile(){
@@ -1657,10 +1622,9 @@ function addTrainerFromModal(){
   // auto-check the new trainer
   const cb=document.querySelector(`#tm-trainers-list input[value="${id}"]`);
   if(cb)cb.checked=true;
-  const newId=trainers[trainers.length-1]?.id;
-  updateTrainerChips();renderTrainers();pushToGitHub(true);if(newId)pushTrainerToGitHub(newId);
+  updateTrainerChips();renderTrainers();pushTrainersFile();
 }
-function removeTrainer(id){const deleted=trainers.find(t=>t.id===id);trainers=trainers.filter(t=>t.id!==id);renderTrainers();pushToGitHub(true);if(deleted)deleteTrainerFileFromGitHub(deleted);}
+function removeTrainer(id){trainers=trainers.filter(t=>t.id!==id);renderTrainers();pushTrainersFile();}
 function renderTrainers(){
   renderTrainerPanel();
 }
@@ -1681,10 +1645,9 @@ function renderTrainerPanel(){
   el.innerHTML=trainers.map(t=>`<div class="trainer-card" style="cursor:pointer;" onclick="openTrainerProfile(${t.id})">${trainerAvatar(t,avatarSize)}<div style="flex:1;min-width:0;"><div class="trainer-card-name">${escHtml(t.name)}</div>${t.rola?`<div style="font-size:11px;color:var(--red);font-weight:400;margin-top:1px;">${escHtml(t.rola)}</div>`:''}<div class="trainer-card-meta">${count[t.id]||0} szkoleń</div>${t.bio?`<div class="trainer-card-bio" style="font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${escHtml(t.bio)}</div>`:''}</div></div>`).join('');
 }
 function removeTrainerFull(id){
-  const deleted=trainers.find(t=>t.id===id);
   trainers=trainers.filter(t=>t.id!==id);
   Object.values(trainings).forEach(t=>{t.trainerIds=getTrainerIds(t).filter(x=>x!==id);delete t.trainerId;});
-  renderTrainers();pushToGitHub(true);if(deleted)deleteTrainerFileFromGitHub(deleted);
+  renderTrainers();pushTrainersFile();pushTrainingsFile();
 }
 document.getElementById('tm-t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainerFromModal();});
 document.getElementById('te-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveTrainerEdit();});
@@ -1846,7 +1809,7 @@ function toggleZrealizowane(id){
   const t=trainings.find(x=>x.id===id);if(!t)return;
   t.zrealizowane=!t.zrealizowane;
   renderModuleDetailView(selectedModuleId);renderModuleCards();renderDashboard();
-  pushToGitHub(true);pushSessionToGitHub(id);
+  pushTrainingsFile();pushSessionToGitHub(id);
 }
 function deleteCustomModule(){
   if(selectedModuleId===null)return;
@@ -2357,8 +2320,39 @@ function setSyncStatus(state,msg){
   else{el.style.background='#121635';el.style.color='#fff';el.textContent='⏳ '+msg;}
 }
 
+// ── Generic file push ─────────────────────────────────────────────
+async function pushJsonFile(path,data,commitMsg){
+  const token=getGhToken();if(!token)return false;
+  const branch=getGhBranch();
+  const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+  const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
+  let sha=null;
+  try{const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  const body={message:commitMsg,content,branch};if(sha)body.sha=sha;
+  const r=await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
+  return r.ok||r.status===201;
+}
+
+async function pushTrainingsFile(){
+  const token=getGhToken();
+  if(!token){setSyncStatus('err','Brak tokena — kliknij 🔑');return;}
+  setSyncStatus('pending','Zapisywanie szkoleń…');
+  const ok=await pushJsonFile('trainings/trainings.json',{trainings,updatedAt:new Date().toISOString()},'sync: szkolenia');
+  if(ok)setSyncStatus('ok','Zapisano');else setSyncStatus('err','Błąd zapisu szkoleń');
+}
+
+async function pushTrainersFile(){
+  const token=getGhToken();
+  if(!token){setSyncStatus('err','Brak tokena — kliknij 🔑');return;}
+  setSyncStatus('pending','Zapisywanie trenerów…');
+  const ok=await pushJsonFile('trainers/trainers.json',{trainers,updatedAt:new Date().toISOString()},'sync: trenerzy');
+  if(ok)setSyncStatus('ok','Zapisano');else setSyncStatus('err','Błąd zapisu trenerów');
+}
+
+// pushToGitHub remains for modules / full backup
 function buildDataPayload(){
-  return{trainings,trainers,modules,savedAt:new Date().toISOString()};
+  return{modules,savedAt:new Date().toISOString()};
 }
 
 async function pushToGitHub(immediate=false){
@@ -2373,20 +2367,11 @@ async function pushToGitHub(immediate=false){
   ghSyncing=true;ghPendingPush=false;
   setSyncStatus('pending','Zapisywanie…');
   try{
-    const branch=getGhBranch();
-    const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/data.json`;
-    const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
-    let sha=null;
-    try{const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(buildDataPayload(),null,2))));
-    const body={message:'sync: aktualizacja danych matrycy szkoleniowej',content,branch};
-    if(sha)body.sha=sha;
-    const r=await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
+    const ok=await pushJsonFile('data.json',buildDataPayload(),'sync: moduły');
     ghSyncing=false;
     if(ghPendingPush)setTimeout(()=>pushToGitHub(true),300);
-    if(r.ok||r.status===201){setSyncStatus('ok','Zapisano');return true;}
-    const err=await r.json().catch(()=>({}));
-    setSyncStatus('err',`Błąd ${r.status}: ${err.message||'nieznany'}`);
+    if(ok){setSyncStatus('ok','Zapisano');return true;}
+    setSyncStatus('err','Błąd zapisu data.json');
     return false;
   }catch(e){
     setSyncStatus('err',`Błąd sieci: ${e.message}`);
@@ -2394,46 +2379,54 @@ async function pushToGitHub(immediate=false){
   }
 }
 
-async function loadFromGitHub(){
-  const branch=getGhBranch();
+async function loadJsonFile(path){
   const token=getGhToken();
-  const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/data.json?ref=${branch}`;
+  const branch=getGhBranch();
+  const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=${branch}`;
+  const headers=token?{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}:{};
+  const r=await fetch(apiUrl,{headers,cache:'no-store'});
+  if(!r.ok){
+    if(r.status===401||r.status===403)setSyncStatus('err',`Token nieważny (${r.status}) — kliknij 🔑`);
+    return null;
+  }
+  const meta=await r.json();
+  return JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,'')))));
+}
+
+async function loadFromGitHub(){
   try{
-    const headers=token?{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}:{};
-    const r=await fetch(apiUrl,{headers,cache:'no-store'});
-    if(!r.ok){
-      if(r.status===401||r.status===403)setSyncStatus('err',`Token nieważny (${r.status}) — kliknij 🔑`);
-      return false;
-    }
-    const meta=await r.json();
-    const d=JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,'')))));
-    if(!d.trainings&&!d.trainers)return false;
-    if(d.trainings){
-      const parsed=d.trainings;
-      if(Array.isArray(parsed))trainings=parsed;
-      else{
-        trainings=Object.entries(parsed).map(([date,tr])=>({
-          id:Date.now()+Math.random(),
-          date,
-          moduleId:tr.moduleId,
-          trainerIds:tr.trainerIds||(tr.trainerId!=null?[tr.trainerId]:[]),
-          priority:tr.priority||null,
-          uczestnicy:tr.uczestnicy||[]
-        }));
+    // Wczytaj szkolenia
+    const trainingsData=await loadJsonFile('trainings/trainings.json');
+    if(trainingsData?.trainings){
+      let parsed=trainingsData.trainings;
+      if(Array.isArray(parsed)){
+        parsed=parsed.filter(tr=>tr.date&&tr.date>='2026-01-01'&&tr.date<='2026-12-31');
+        trainings=parsed;
       }
-      trainings=trainings.filter(tr=>tr.date&&tr.date>='2026-01-01'&&tr.date<='2026-12-31');
+    } else {
+      // fallback: data.json (migracja ze starego formatu)
+      const d=await loadJsonFile('data.json');
+      if(d?.trainings){
+        let parsed=d.trainings;
+        if(Array.isArray(parsed))trainings=parsed.filter(tr=>tr.date&&tr.date>='2026-01-01'&&tr.date<='2026-12-31');
+      }
     }
-    if(d.trainers)trainers=d.trainers;
-    if(d.modules){
-      modules=d.modules;modules.forEach(m=>{delete m.oryginalny;});
-    }else if(d.moduleExtras||d.customModules){
-      modules=migrateModules(d.moduleExtras||null,d.customModules||null);
-    }else if(!modules.length){
-      modules=migrateModules(null,null);
+    // Wczytaj trenerów
+    const trainersData=await loadJsonFile('trainers/trainers.json');
+    if(trainersData?.trainers){
+      trainers=trainersData.trainers;
+    } else {
+      const d=await loadJsonFile('data.json');
+      if(d?.trainers)trainers=d.trainers;
     }
+    // Wczytaj moduły z data.json
+    const d=await loadJsonFile('data.json');
+    if(d?.modules){modules=d.modules;modules.forEach(m=>{delete m.oryginalny;});}
+    else if(d?.moduleExtras||d?.customModules){modules=migrateModules(d.moduleExtras||null,d.customModules||null);}
+    else if(!modules.length){modules=migrateModules(null,null);}
     setSyncStatus('ok','Zsynchronizowane');
     return true;
-  }catch(e){return false;}
+  }catch(e){console.error('loadFromGitHub error:',e);return false;}
 }
 
 // ── Export / Import ────────────────────────────────────────────────

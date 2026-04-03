@@ -1626,15 +1626,15 @@ function renderModuleDetailView(id){
     const tNames=getTrainerIds(t).map(tid=>trainers.find(tr=>tr.id===tid)?.name).filter(Boolean);
     const partCount=(t.uczestnicy||[]).length;
     const isPast=t.date<TODAY_STR;
-    return`<div class="sess-row${isPast?' is-past':''}">
+    return`<div class="sess-row${isPast?' is-past':''}" style="cursor:pointer;" onclick="openTrainingModal('${t.date}',null,${t.id})">
       <div class="sess-date">${escHtml(dateLabel)}</div>
       <div class="sess-time">${t.time?escHtml(t.time):''}</div>
       <div class="sess-trainer">${tNames.length?'👤 '+tNames.map(escHtml).join(', '):'—'}</div>
       <div class="sess-parts">👥 ${partCount}</div>
       <div class="sess-btns">
-        <button class="sess-btn" onclick="openEditTraining(${t.id})">Edytuj</button>
-        <button class="sess-btn" onclick="openParticipantsModal(${t.id})">Uczestnicy</button>
-        <button class="sess-btn" style="color:var(--red);border-color:rgba(220,20,60,0.2);" onclick="openDC('Usunąć ten termin?',()=>{removeTraining(${t.id});renderModuleDetailView(selectedModuleId);})">Usuń</button>
+        <button class="sess-btn" onclick="event.stopPropagation();openTrainingModal('${t.date}',null,${t.id})">Edytuj</button>
+        <button class="sess-btn" onclick="event.stopPropagation();openParticipantsModal(${t.id})">Uczestnicy</button>
+        <button class="sess-btn" style="color:var(--red);border-color:rgba(220,20,60,0.2);" onclick="event.stopPropagation();openDC('Usunąć ten termin?',()=>{removeTraining(${t.id});renderModuleDetailView(selectedModuleId);})">Usuń</button>
       </div>
     </div>`;
   }).join('');

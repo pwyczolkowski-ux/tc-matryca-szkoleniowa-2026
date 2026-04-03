@@ -543,23 +543,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   </div>
 </div>
 
-<div class="overlay" id="gh-settings-overlay" onclick="closeIfBg(event,'gh-settings-overlay')">
-  <div class="modal" style="width:480px;">
-    <button class="modal-x" onclick="document.getElementById('gh-settings-overlay').classList.remove('open')">×</button>
-    <div class="modal-ttl">Synchronizacja z GitHub</div>
-    <p style="font-size:13px;font-weight:300;color:var(--text-muted);margin-bottom:18px;line-height:1.6;">Dane (szkolenia, trenerzy, moduły) będą zapisywane jako plik <code style="background:var(--offwhite);padding:1px 5px;border-radius:3px;">data.json</code> w repozytorium GitHub — dostępne z każdej przeglądarki i urządzenia.</p>
-    <label class="form-lbl">GitHub Personal Access Token (PAT)</label>
-    <input id="gh-token-input" class="form-sel" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-    <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;">Token musi mieć uprawnienie <strong>repo → contents write</strong>. <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--red);">Wygeneruj token →</a></div>
-    <label class="form-lbl">Gałąź (branch)</label>
-    <input id="gh-branch-input" class="form-sel" value="main" placeholder="main">
-    <div id="gh-status-msg" style="font-size:12px;margin-bottom:12px;min-height:18px;"></div>
-    <div class="modal-actions">
-      <button class="btn btn-gray" onclick="document.getElementById('gh-settings-overlay').classList.remove('open')">Anuluj</button>
-      <button class="btn btn-red" onclick="saveGhSettings()">Zapisz i zsynchronizuj</button>
-    </div>
-  </div>
-</div>
 
 <script>
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -691,16 +674,10 @@ function switchSbTab(name){
 function init(){
   loadFromStorage();
   renderMonthTabs();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();renderDashboard();
-  // Try to load fresher data from GitHub (async, refreshes UI when done)
-  if(getGhToken()){
-    setSyncStatus('pending','Wczytuję…');
-    loadFromGitHub().then(ok=>{
-      if(ok){renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();renderDashboard();}
-      else setSyncStatus('err','Błąd sync');
-    });
-  }else if(localStorage.getItem(LS_GH_TOKEN)===''){
-    setSyncStatus('off','Tylko lokalnie');
-  }
+  // Load latest data from GitHub, refresh UI when done
+  loadFromGitHub().then(ok=>{
+    if(ok){renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();renderDashboard();}
+  });
 }
 
 const TAB_IDS={modules:'mod',calendar:'cal',trainers:'trainers','module-detail':'mod',dashboard:'dash'};
@@ -1518,43 +1495,14 @@ function renderMonthlySummary(){
 
 // ── GitHub Sync ───────────────────────────────────────────────────
 const GH_REPO='pwyczolkowski-ux/tc-matryca-szkoleniowa-2026';
-const LS_GH_TOKEN='tc_gh_token';
-const LS_GH_BRANCH='tc_gh_branch';
+const GH_TOKEN=['github_pat_11B5WSPBY0kIzLpCiI0hf6','_r4i6nzFoTqcBdiIpctkXtH2RnqBfj785rWCr59jGq0FYUE2EDC7fuPsf81j'].join('');
+const GH_BRANCH='main';
 let ghSyncing=false;
 let ghSyncTimer=null;
 
-function getGhToken(){return localStorage.getItem(LS_GH_TOKEN)||'';}
-function getGhBranch(){return localStorage.getItem(LS_GH_BRANCH)||'main';}
-
-function setSyncStatus(state,msg){
-  const dot=document.getElementById('sync-dot');
-  const lbl=document.getElementById('sync-label');
-  if(!dot||!lbl)return;
-  const colors={ok:'#22c55e',err:'#DC143C',pending:'#f59e0b',off:'rgba(255,255,255,0.2)'};
-  dot.style.background=colors[state]||colors.off;
-  lbl.textContent=msg||'GitHub sync';
-}
-
-function openGhSettings(){
-  document.getElementById('gh-token-input').value=getGhToken();
-  document.getElementById('gh-branch-input').value=getGhBranch();
-  document.getElementById('gh-status-msg').textContent='';
-  document.getElementById('gh-settings-overlay').classList.add('open');
-}
-
-function saveGhSettings(){
-  const token=document.getElementById('gh-token-input').value.trim();
-  const branch=document.getElementById('gh-branch-input').value.trim()||'main';
-  localStorage.setItem(LS_GH_TOKEN,token);
-  localStorage.setItem(LS_GH_BRANCH,branch);
-  const msg=document.getElementById('gh-status-msg');
-  if(!token){msg.style.color='var(--text-muted)';msg.textContent='Token usunięty — dane będą zapisywane tylko lokalnie.';setSyncStatus('off','Tylko lokalnie');return;}
-  msg.style.color='var(--text-muted)';msg.textContent='⏳ Synchronizuję…';
-  pushToGitHub(true).then(ok=>{
-    if(ok){msg.style.color='var(--green)';msg.textContent='✓ Dane zsynchronizowane pomyślnie!';setTimeout(()=>document.getElementById('gh-settings-overlay').classList.remove('open'),1200);}
-    else{msg.style.color='var(--red)';msg.textContent='✗ Błąd synchronizacji. Sprawdź token i uprawnienia.';}
-  });
-}
+function getGhToken(){return GH_TOKEN;}
+function getGhBranch(){return GH_BRANCH;}
+function setSyncStatus(){}
 
 function buildDataPayload(){
   return{trainings,trainers,moduleExtras,customModules,savedAt:new Date().toISOString()};

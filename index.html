@@ -2466,8 +2466,17 @@ function openEmpProfile(email){
   document.getElementById('ep-contact').innerHTML=contact.join('');
   // Fill module select
   const sel=document.getElementById('ep-add-module');
-  sel.innerHTML='<option value="">— wybierz szkolenie —</option>'+modules.map(m=>`<option value="${escHtml(m.nazwa)}">[${escHtml(m.kategoria)}] ${escHtml(m.nazwa)}</option>`).join('');
-  // Set today as default date
+  const sortedT=trainings.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  sel.innerHTML='<option value="">— wybierz termin szkolenia —</option>'+sortedT.map(t=>{
+    const mod=getModuleData(t.moduleId);if(!mod)return'';
+    const d=new Date(t.date);
+    const dateLabel=d.toLocaleDateString('pl-PL',{day:'numeric',month:'short',year:'numeric'});
+    return`<option value="${t.id}">${escHtml(dateLabel)} — ${escHtml(mod.nazwa)}</option>`;
+  }).filter(Boolean).join('');
+  sel.onchange=function(){
+    const t=trainings.find(x=>x.id===parseInt(this.value));
+    if(t)document.getElementById('ep-add-date').value=t.date;
+  };
   document.getElementById('ep-add-date').value=TODAY_STR;
   renderEmpTrainings();
   renderEmpScheduled();
@@ -2511,10 +2520,12 @@ function openEmpAddTraining(){
   document.getElementById('ep-add-notes').value='';
 }
 function saveEmpTraining(){
-  const data=document.getElementById('ep-add-date').value;
-  const modulNazwa=document.getElementById('ep-add-module').value;
+  const trainingId=parseInt(document.getElementById('ep-add-module').value);
+  const t=trainings.find(x=>x.id===trainingId);
+  const data=t?t.date:document.getElementById('ep-add-date').value;
+  const modulNazwa=t?getModuleData(t.moduleId)?.nazwa||'':'';
   const uwagi=document.getElementById('ep-add-notes').value.trim();
-  if(!data||!modulNazwa){alert('Wybierz datę i szkolenie');return;}
+  if(!data||!modulNazwa){alert('Wybierz termin szkolenia');return;}
   const emp=employees.find(e=>e['E-mail 1 - Value']===currentEmpEmail);if(!emp)return;
   if(!emp.szkolenia)emp.szkolenia=[];
   emp.szkolenia.push({data,modulNazwa,uwagi});

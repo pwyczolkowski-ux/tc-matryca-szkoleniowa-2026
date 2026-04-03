@@ -916,17 +916,9 @@ function migrateModules(oldExtras,oldCustom){
   return merged;
 }
 function saveToStorage(){
-  try{
-    localStorage.setItem(LS_TRAININGS,JSON.stringify(trainings));
-    localStorage.setItem(LS_TRAINERS,JSON.stringify(trainers));
-    localStorage.setItem(LS_MODULES,JSON.stringify(modules));
-  }catch(e){}
   if(getGhToken())pushToGitHub(false);
 }
 function saveParticipants(trainingId){
-  try{
-    localStorage.setItem(LS_TRAININGS,JSON.stringify(trainings));
-  }catch(e){}
   pushToGitHub(true);
   pushSessionToGitHub(trainingId);
 }
@@ -1014,9 +1006,12 @@ function switchSbTab(name){
   const panel=document.getElementById('sbt-'+name);if(panel)panel.classList.add('active');
 }
 function init(){
-  loadFromStorage();
+  // Wyczyść stare dane z localStorage
+  ['tc_matryca_trainings','tc_matryca_trainers','tc_matryca_modules',
+   'tc_matryca_module_extras','tc_matryca_custom_modules'].forEach(k=>localStorage.removeItem(k));
+  // Załaduj zawsze z GitHub
+  modules=migrateModules(null,null); // seed domyślnych modułów jako fallback
   renderMonthTabs();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();renderDashboard();
-  // Load latest data from GitHub, refresh UI when done
   loadFromGitHub().then(ok=>{
     if(ok){renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();renderDashboard();}
   });
@@ -2323,7 +2318,6 @@ async function loadFromGitHub(){
     }else if(!modules.length){
       modules=migrateModules(null,null);
     }
-    saveToStorage();// mirror to localStorage as cache
     setSyncStatus('ok','Zsynchronizowane');
     return true;
   }catch(e){return false;}

@@ -57,7 +57,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .month-tabs{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
 .mq-tab{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:300;cursor:pointer;border:1px solid var(--border);color:var(--text-muted);background:transparent;transition:all .2s;}
 .mq-tab:hover{color:var(--text);border-color:#c0c5d8;}.mq-tab.active{background:var(--red);border-color:var(--red);color:var(--white);}
-.mq-tab.past{opacity:0.35;cursor:default;}
+.mq-tab.past{opacity:0.5;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
 .cal-hdr{text-align:center;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);padding:8px 0;}
 .cal-hdr.wknd{color:rgba(220,20,60,0.6);}
@@ -139,6 +139,12 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .mod-detail-meta{display:flex;gap:20px;border-top:1px solid var(--border);padding-top:16px;flex-wrap:wrap;}
 .mod-meta-item{font-size:12px;color:var(--text-muted);}
 .mod-meta-val{font-size:14px;font-weight:500;color:var(--text);margin-top:3px;}
+.day-today-lbl{font-size:9px;font-weight:700;color:var(--white);background:var(--red);border-radius:3px;padding:1px 6px;display:inline-block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
+.trainer-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;align-items:center;gap:14px;}
+.trainer-card-name{font-size:15px;font-weight:400;color:var(--text);}
+.trainer-card-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.trainer-card-remove{background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:'Roboto',sans-serif;}
+.trainer-card-remove:hover{border-color:var(--red);color:var(--red);}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px;}
 </style>
 </head>
@@ -148,6 +154,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   <div class="tab-nav">
     <button class="tab-btn active" id="tab-mod" onclick="switchTab('modules')">Moduły szkoleniowe</button>
     <button class="tab-btn" id="tab-cal" onclick="switchTab('calendar')">Kalendarz</button>
+    <button class="tab-btn" id="tab-trainers" onclick="switchTab('trainers')">Trenerzy</button>
   </div>
   <div style="width:1px;"></div>
 </header>
@@ -224,6 +231,20 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           <button class="mod-filter-btn f-Kultura" data-mf="Kultura" onclick="filterModTab(this)">Kultura (4)</button>
         </div>
         <div id="modules-by-cat"></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="panel-trainers">
+      <div class="modules-panel">
+        <div class="mp-title">Trenerzy</div>
+        <div class="mp-sub">Lista trenerów przypisanych do szkoleń</div>
+        <div id="trainers-panel-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:28px;"></div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;max-width:420px;">
+          <div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:12px;">Dodaj trenera</div>
+          <div style="display:flex;gap:8px;">
+            <input id="panel-t-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Imię i nazwisko trenera" maxlength="60"/>
+            <button onclick="addTrainerFromPanel()" style="background:var(--red);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">+</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -382,11 +403,13 @@ function init(){
   renderMonthTabs();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();
 }
 
+const TAB_IDS={modules:'mod',calendar:'cal',trainers:'trainers'};
 function switchTab(name){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  document.getElementById('tab-'+(name==='calendar'?'cal':'mod')).classList.add('active');
+  document.getElementById('tab-'+(TAB_IDS[name]||name)).classList.add('active');
+  if(name==='trainers')renderTrainerPanel();
 }
 
 function renderMonthTabs(){
@@ -394,7 +417,7 @@ function renderMonthTabs(){
   el.innerHTML=MONTHS_PL.map((m,i)=>{
     const last=fmtDs(2026,i,new Date(2026,i+1,0).getDate());
     const pastM=last<TODAY_STR;
-    return`<button class="mq-tab${i===curMonth?' active':''}${pastM?' past':''}" onclick="${pastM?'':'goToMonth('+i+')'}">${m.substring(0,3)}</button>`;
+    return`<button class="mq-tab${i===curMonth?' active':''}${pastM?' past':''}" onclick="goToMonth(${i})">${m.substring(0,3)}</button>`;
   }).join('');
 }
 function goToMonth(m){curMonth=m;renderCalendar();renderMonthTabs();}
@@ -446,6 +469,7 @@ function renderCalendar(){
     }
 
     let html=`<div class="day-num">${d}</div>`;
+    if(isToday)html+=`<div class="day-today-lbl">Dziś</div>`;
     if(past&&!wknd)html+='';
     else if(hol)html+=`<div class="day-holiday-lbl">${hol}</div>`;
     else if(blk)html+=`<div class="day-blocked-lbl">Długi weekend</div>`;
@@ -529,9 +553,27 @@ function renderTrainers(){
   const el=document.getElementById('trainers-list');
   if(!trainers.length){el.innerHTML='<div class="t-empty">Brak trenerów — dodaj poniżej</div>';return;}
   el.innerHTML=trainers.map(t=>`<div class="trainer-item"><div class="t-dot" style="background:${t.color}"></div><span class="t-name">${escHtml(t.name)}</span><button class="t-remove" onclick="removeTrainer(${t.id})">×</button></div>`).join('');
+  renderTrainerPanel();
+}
+function renderTrainerPanel(){
+  const el=document.getElementById('trainers-panel-list');if(!el)return;
+  if(!trainers.length){el.innerHTML='<div style="color:var(--text-muted);font-size:14px;font-weight:300;grid-column:1/-1;">Brak trenerów — dodaj poniżej</div>';return;}
+  const count={};Object.values(trainings).forEach(t=>{if(t.trainerId)count[t.trainerId]=(count[t.trainerId]||0)+1;});
+  el.innerHTML=trainers.map(t=>`<div class="trainer-card"><div style="width:14px;height:14px;border-radius:50%;background:${t.color};flex-shrink:0;"></div><div style="flex:1;"><div class="trainer-card-name">${escHtml(t.name)}</div><div class="trainer-card-meta">${count[t.id]||0} przypisanych szkoleń</div></div><button class="trainer-card-remove" onclick="removeTrainerFull(${t.id})">Usuń</button></div>`).join('');
+}
+function addTrainerFromPanel(){
+  const inp=document.getElementById('panel-t-input');const name=inp.value.trim();if(!name)return;
+  trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length]});
+  inp.value='';renderTrainers();saveToStorage();
+}
+function removeTrainerFull(id){
+  trainers=trainers.filter(t=>t.id!==id);
+  Object.values(trainings).forEach(t=>{if(t.trainerId===id)t.trainerId=null;});
+  renderTrainers();saveToStorage();
 }
 document.getElementById('t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainer();});
 document.getElementById('tm-t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainerFromModal();});
+document.getElementById('panel-t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainerFromPanel();});
 
 function filterSb(btn){sbFilter=btn.dataset.cat;document.querySelectorAll('.sf-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSbModules();}
 function renderSbModules(){

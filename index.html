@@ -1195,6 +1195,38 @@ function refreshModuleIfOpen(){
     renderModuleDetailView(selectedModuleId);
   }
 }
+function slugify(str){
+  return(str||'').toLowerCase()
+    .replace(/ą/g,'a').replace(/ć/g,'c').replace(/ę/g,'e').replace(/ł/g,'l')
+    .replace(/ń/g,'n').replace(/ó/g,'o').replace(/ś/g,'s').replace(/ź/g,'z').replace(/ż/g,'z')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+function getSessionPath(t){
+  const mod=getModuleData(t.moduleId);
+  return`sessions/${t.date}-${slugify(mod?.nazwa||'szkolenie')}.json`;
+}
+function buildSessionPayload(t){
+  const mod=getModuleData(t.moduleId);
+  const trainerNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
+  return{id:t.id,date:t.date,module:mod?.nazwa||'',kategoria:mod?.kategoria||'',czasTrwania:mod?.czasTrwania||'',time:t.time||null,trenerzy:trainerNames,uczestnicy:(t.uczestnicy||[]).map(name=>({name})),notatki:'',updatedAt:new Date().toISOString()};
+}
+async function pushSessionToGitHub(trainingId){
+  const token=getGhToken();if(!token)return;
+  const t=trainings.find(x=>x.id===trainingId);if(!t)return;
+  try{
+    const branch=getGhBranch();
+    const path=getSessionPath(t);
+    const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+    const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
+    let sha=null;
+    try{const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
+    const payload=buildSessionPayload(t);
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
+    const body={message:`session: ${t.date} ${payload.module}`,content,branch};
+    if(sha)body.sha=sha;
+    await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
+  }catch(e){console.error('Session push error:',e);}
+}
 function saveTraining(){
   if(!selDate){selDate=document.getElementById('tm-date-pick').value||null;}
   if(!selDate){alert('Wybierz datę szkolenia');return;}
@@ -1203,13 +1235,16 @@ function saveTraining(){
   const trainerIds=Array.from(document.querySelectorAll('#tm-trainers-list input[type=checkbox]:checked')).map(cb=>parseInt(cb.value));
   const priority=document.getElementById('tm-priority').value||null;
   const time=document.getElementById('tm-time').value||null;
+  let savedId;
   if(selTrainingId!==null){
     const t=trainings.find(x=>x.id===selTrainingId);
-    if(t){t.moduleId=mid;t.trainerIds=trainerIds;t.priority=priority;t.time=time;}
+    if(t){t.moduleId=mid;t.trainerIds=trainerIds;t.priority=priority;t.time=time;savedId=t.id;}
   }else{
-    trainings.push({id:Date.now(),date:selDate,moduleId:mid,trainerIds,priority,time,uczestnicy:[]});
+    savedId=Date.now();
+    trainings.push({id:savedId,date:selDate,moduleId:mid,trainerIds,priority,time,uczestnicy:[]});
   }
   closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();
+  if(savedId)pushSessionToGitHub(savedId);
 }
 function removeTraining(id){trainings=trainings.filter(t=>t.id!==id);renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();}
 
@@ -1630,12 +1665,14 @@ function addParticipant(){
   t.uczestnicy.push(name);inp.value='';
   renderParticipantsList();saveToStorage();
   if(selectedModuleId!==null)renderModuleDetailView(selectedModuleId);
+  pushSessionToGitHub(participantsDate);
 }
 function removeParticipant(idx){
   const t=trainings.find(x=>x.id===participantsDate);if(!t||!t.uczestnicy)return;
   t.uczestnicy.splice(idx,1);
   renderParticipantsList();saveToStorage();
   if(selectedModuleId!==null)renderModuleDetailView(selectedModuleId);
+  pushSessionToGitHub(participantsDate);
 }
 
 let modViewMode='grid';

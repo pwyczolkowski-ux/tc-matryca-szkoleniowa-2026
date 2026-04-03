@@ -207,6 +207,27 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .ms-date{font-size:13px;font-weight:500;color:var(--text);min-width:110px;}
 .ms-mod{flex:1;font-size:13px;font-weight:300;color:var(--text);}
 .ms-trainer{font-size:11px;color:var(--text-muted);}
+.emp-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap;}
+.emp-search{flex:1;min-width:200px;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;transition:border-color .2s;}
+.emp-search:focus{border-color:var(--red);}
+.emp-select{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;cursor:pointer;transition:border-color .2s;}
+.emp-select:focus{border-color:var(--red);}
+.emp-count{font-size:12px;color:var(--text-muted);white-space:nowrap;}
+.emp-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.emp-table{width:100%;border-collapse:collapse;font-size:13px;}
+.emp-table thead tr{background:var(--navy);}
+.emp-table th{padding:11px 14px;text-align:left;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.7);cursor:pointer;user-select:none;white-space:nowrap;}
+.emp-table th:hover{color:var(--white);}
+.emp-table th.sort-asc::after{content:' ▲';color:var(--red);}
+.emp-table th.sort-desc::after{content:' ▼';color:var(--red);}
+.emp-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);font-weight:300;vertical-align:middle;}
+.emp-table tbody tr:last-child td{border-bottom:none;}
+.emp-table tbody tr:hover{background:var(--offwhite);}
+.emp-table td.emp-name{font-weight:400;}
+.emp-table td.emp-email a{color:var(--red);text-decoration:none;}
+.emp-table td.emp-email a:hover{text-decoration:underline;}
+.emp-empty{padding:32px;text-align:center;color:var(--text-muted);font-size:13px;font-style:italic;}
+.emp-loading{padding:32px;text-align:center;color:var(--text-muted);font-size:13px;}
 </style>
 </head>
 <body>
@@ -217,6 +238,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <button class="tab-btn" id="tab-mod" onclick="switchTab('modules')">Szkolenia</button>
     <button class="tab-btn" id="tab-cal" onclick="switchTab('calendar')">Kalendarz</button>
     <button class="tab-btn" id="tab-trainers" onclick="switchTab('trainers')">Trenerzy</button>
+    <button class="tab-btn" id="tab-emp" onclick="switchTab('employees')">Pracownicy</button>
   </div>
   <div style="width:1px;"></div>
 </header>
@@ -346,6 +368,35 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
         <div class="mp-sub">Lista trenerów przypisanych do szkoleń</div>
         <div id="trainers-panel-list" class="trainers-grid" style="margin-bottom:28px;"></div>
         <button onclick="openTrainerEditModal(null)" style="background:var(--white);border:1px dashed var(--border);border-radius:10px;padding:16px 20px;max-width:420px;width:100%;font-family:'Roboto',sans-serif;font-size:14px;font-weight:300;color:var(--text-muted);cursor:pointer;transition:all .2s;text-align:center;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">+ Dodaj trenera</button>
+      </div>
+    </div>
+    <div class="tab-panel" id="panel-employees">
+      <div class="modules-panel">
+        <div class="mp-title">Pracownicy</div>
+        <div class="emp-toolbar">
+          <input class="emp-search" id="emp-search" placeholder="Szukaj po nazwisku, emailu, stanowisku…" oninput="renderEmployees()">
+          <select class="emp-select" id="emp-org-filter" onchange="renderEmployees()">
+            <option value="">Wszystkie organizacje</option>
+          </select>
+          <span class="emp-count" id="emp-count"></span>
+        </div>
+        <div class="emp-table-wrap">
+          <div class="emp-loading" id="emp-loading">⏳ Wczytuję pracowników…</div>
+          <table class="emp-table" id="emp-table" style="display:none;">
+            <thead>
+              <tr>
+                <th onclick="empSort('Family Name')">Nazwisko</th>
+                <th onclick="empSort('Given Name')">Imię</th>
+                <th onclick="empSort('Organization 1 - Name')">Organizacja</th>
+                <th onclick="empSort('Organization 1 - Title')">Stanowisko</th>
+                <th onclick="empSort('E-mail 1 - Value')">E-mail</th>
+                <th onclick="empSort('Phone 1 - Value')">Telefon</th>
+              </tr>
+            </thead>
+            <tbody id="emp-tbody"></tbody>
+          </table>
+          <div class="emp-empty" id="emp-empty" style="display:none;">Brak wyników dla wybranych filtrów.</div>
+        </div>
       </div>
     </div>
     <div class="tab-panel" id="panel-module-detail">
@@ -698,7 +749,7 @@ function init(){
   });
 }
 
-const TAB_IDS={modules:'mod',calendar:'cal',trainers:'trainers','module-detail':'mod',dashboard:'dash'};
+const TAB_IDS={modules:'mod',calendar:'cal',trainers:'trainers','module-detail':'mod',dashboard:'dash',employees:'emp'};
 function switchTab(name){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -706,6 +757,7 @@ function switchTab(name){
   document.getElementById('tab-'+(TAB_IDS[name]||name)).classList.add('active');
   if(name==='trainers')renderTrainerPanel();
   if(name==='dashboard')renderDashboard();
+  if(name==='employees')loadEmployees();
 }
 
 function renderMonthTabs(){
@@ -1733,6 +1785,77 @@ function buildMonthlyPDF(entries,m,btn,resetBtn){
 
   doc.save(pl('Matryca_'+MONTHS_PL[m]+'_2026.pdf'));
   btn.innerHTML='⬇ Wygeneruj matrycę miesięczną';btn.disabled=false;
+}
+
+// ── Pracownicy ────────────────────────────────────────────────────
+const JBIN_URL='https://api.jsonbin.io/v3/b/69cfe4b2aaba882197c056c4/latest';
+const JBIN_KEY=['$2a$10$utYCOI4ENRC9RdPXN','tG0yeo5NR5eOjf8HwQ99VAbjfBoQOH.s/zoK'].join('');
+let employees=[];
+let empSortCol='Family Name';
+let empSortAsc=true;
+let empLoaded=false;
+
+async function loadEmployees(){
+  if(empLoaded)return;
+  try{
+    const r=await fetch(JBIN_URL,{headers:{'X-Master-Key':JBIN_KEY,'X-Bin-Meta':false}});
+    if(!r.ok)throw new Error(r.status);
+    const d=await r.json();
+    employees=Array.isArray(d)?d:(d.record||[]);
+    empLoaded=true;
+    // Populate org filter
+    const orgs=[...new Set(employees.map(e=>e['Organization 1 - Name']).filter(Boolean))].sort();
+    const sel=document.getElementById('emp-org-filter');
+    orgs.forEach(o=>{const opt=document.createElement('option');opt.value=o;opt.textContent=o;sel.appendChild(opt);});
+    document.getElementById('emp-loading').style.display='none';
+    document.getElementById('emp-table').style.display='table';
+    renderEmployees();
+  }catch(e){
+    document.getElementById('emp-loading').textContent='Błąd wczytywania danych. Sprawdź połączenie.';
+  }
+}
+
+function empSort(col){
+  if(empSortCol===col){empSortAsc=!empSortAsc;}else{empSortCol=col;empSortAsc=true;}
+  renderEmployees();
+}
+
+function renderEmployees(){
+  const search=(document.getElementById('emp-search')?.value||'').toLowerCase();
+  const org=document.getElementById('emp-org-filter')?.value||'';
+  // Update sort indicators
+  document.querySelectorAll('.emp-table th').forEach(th=>{th.classList.remove('sort-asc','sort-desc');});
+  const cols=['Family Name','Given Name','Organization 1 - Name','Organization 1 - Title','E-mail 1 - Value','Phone 1 - Value'];
+  const idx=cols.indexOf(empSortCol);
+  if(idx>=0){const th=document.querySelectorAll('.emp-table th')[idx];if(th)th.classList.add(empSortAsc?'sort-asc':'sort-desc');}
+  let list=employees.filter(e=>{
+    if(org&&e['Organization 1 - Name']!==org)return false;
+    if(search){
+      const hay=[e['Name'],e['E-mail 1 - Value'],e['Organization 1 - Title'],e['Organization 1 - Name'],e['Phone 1 - Value']].join(' ').toLowerCase();
+      if(!hay.includes(search))return false;
+    }
+    return true;
+  });
+  list.sort((a,b)=>{
+    const av=(a[empSortCol]||'').toLowerCase();
+    const bv=(b[empSortCol]||'').toLowerCase();
+    return empSortAsc?av.localeCompare(bv,'pl'):bv.localeCompare(av,'pl');
+  });
+  const tbody=document.getElementById('emp-tbody');
+  const empty=document.getElementById('emp-empty');
+  if(!list.length){tbody.innerHTML='';empty.style.display='block';}
+  else{
+    empty.style.display='none';
+    tbody.innerHTML=list.map(e=>`<tr>
+      <td class="emp-name">${escHtml(e['Family Name']||'')}</td>
+      <td>${escHtml(e['Given Name']||'')}</td>
+      <td>${escHtml(e['Organization 1 - Name']||'')}</td>
+      <td>${escHtml(e['Organization 1 - Title']||'')}</td>
+      <td class="emp-email">${e['E-mail 1 - Value']?`<a href="mailto:${escHtml(e['E-mail 1 - Value'])}">${escHtml(e['E-mail 1 - Value'])}</a>`:''}</td>
+      <td>${escHtml(e['Phone 1 - Value']||'')}</td>
+    </tr>`).join('');
+  }
+  document.getElementById('emp-count').textContent=`${list.length} z ${employees.length} pracowników`;
 }
 
 function closeIfBg(e,id){if(e.target.id===id)document.getElementById(id).classList.remove('open');}

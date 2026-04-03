@@ -1186,8 +1186,10 @@ function deleteCurrentTraining(){
   const t=trainings.find(x=>x.id===selTrainingId);if(!t)return;
   const mod=getModuleData(t.moduleId);
   openDC(`Usunąć szkolenie<br><strong>${mod?escHtml(mod.nazwa):t.date}</strong>?`,()=>{
+    const deleted=t;
     trainings=trainings.filter(x=>x.id!==selTrainingId);
     closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();
+    deleteSessionFromGitHub(deleted);
   });
 }
 function refreshModuleIfOpen(){
@@ -1209,6 +1211,19 @@ function buildSessionPayload(t){
   const mod=getModuleData(t.moduleId);
   const trainerNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
   return{id:t.id,date:t.date,module:mod?.nazwa||'',kategoria:mod?.kategoria||'',czasTrwania:mod?.czasTrwania||'',time:t.time||null,trenerzy:trainerNames,uczestnicy:(t.uczestnicy||[]).map(name=>({name})),notatki:'',updatedAt:new Date().toISOString()};
+}
+async function deleteSessionFromGitHub(t){
+  const token=getGhToken();if(!token)return;
+  try{
+    const branch=getGhBranch();
+    const path=getSessionPath(t);
+    const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+    const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
+    const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});
+    if(!r.ok)return;
+    const j=await r.json();
+    await fetch(apiUrl,{method:'DELETE',headers,body:JSON.stringify({message:`session delete: ${t.date}`,sha:j.sha,branch})});
+  }catch(e){console.error('Session delete error:',e);}
 }
 async function pushSessionToGitHub(trainingId){
   const token=getGhToken();if(!token)return;

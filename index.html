@@ -603,6 +603,15 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
         <option value="sredni">🟡 Średni</option>
         <option value="niski">🟢 Niski</option>
       </select>
+      <!-- Uczestnicy — widoczne tylko w trybie edycji -->
+      <div id="tm-participants-section" style="display:none;margin-top:4px;">
+        <label class="form-lbl">Uczestnicy</label>
+        <div id="tm-part-list" style="margin-bottom:8px;min-height:20px;"></div>
+        <div style="display:flex;gap:7px;margin-bottom:14px;">
+          <input id="tm-part-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Dodaj uczestnika..." maxlength="80" onkeydown="if(event.key==='Enter')tmAddParticipant()"/>
+          <button onclick="tmAddParticipant()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
+        </div>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeTrainingModal()">Anuluj</button>
@@ -1136,6 +1145,10 @@ function openTrainingModal(ds,preModId,editId=null){
     document.getElementById('tm-time').value=existingTr?.time||'';
     renderTrainerChecks(ds,existingTr);
   }
+  // Participants section
+  const partSec=document.getElementById('tm-participants-section');
+  if(editId!==null){partSec.style.display='block';renderTmParticipants();}
+  else{partSec.style.display='none';}
   // Collision check
   document.getElementById('tm-collision-warn').style.display='none';
   if(ds)checkCollisions(ds);
@@ -1180,7 +1193,28 @@ function openEditTraining(id){
   if(!t)return;
   openTrainingModal(t.date,null,id);
 }
-function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');document.getElementById('tm-t-input').value='';selDate=null;selTrainingId=null;}
+function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');document.getElementById('tm-t-input').value='';document.getElementById('tm-part-input').value='';selDate=null;selTrainingId=null;}
+function renderTmParticipants(){
+  const el=document.getElementById('tm-part-list');if(!el)return;
+  const t=trainings.find(x=>x.id===selTrainingId);
+  const list=t?.uczestnicy||[];
+  if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:4px 0 8px;">Brak uczestników</div>';return;}
+  el.innerHTML=list.map((name,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;"><span>${escHtml(name)}</span><button onclick="tmRemoveParticipant(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;line-height:1;padding:0 4px;">×</button></div>`).join('');
+}
+function tmAddParticipant(){
+  const inp=document.getElementById('tm-part-input');const name=inp.value.trim();if(!name)return;
+  const t=trainings.find(x=>x.id===selTrainingId);if(!t)return;
+  if(!t.uczestnicy)t.uczestnicy=[];
+  t.uczestnicy.push(name);inp.value='';
+  renderTmParticipants();saveToStorage();pushSessionToGitHub(selTrainingId);
+}
+function tmRemoveParticipant(idx){
+  const t=trainings.find(x=>x.id===selTrainingId);if(!t||!t.uczestnicy)return;
+  openDC(`Usunąć uczestnika <strong>${escHtml(t.uczestnicy[idx])}</strong>?`,()=>{
+    t.uczestnicy.splice(idx,1);
+    renderTmParticipants();saveToStorage();pushSessionToGitHub(selTrainingId);
+  });
+}
 function deleteCurrentTraining(){
   if(selTrainingId===null)return;
   const t=trainings.find(x=>x.id===selTrainingId);if(!t)return;
@@ -1706,7 +1740,7 @@ function dashCardHtml(ds,t,featured){
   const pL={wysoki:'🔴 Wysoki',sredni:'🟡 Średni',niski:'🟢 Niski'};
   const catC={Mindset:'#8b5cf6',Skill:'var(--amber)',Kultura:'var(--green)'};
   const monthShort=MONTHS_PL[d.getMonth()].substring(0,3);
-  return`<div class="dash-card${featured?' featured':''}">
+  return`<div class="dash-card${featured?' featured':''}" style="cursor:pointer;" onclick="openTrainingModal('${ds}',null,${t.id})">
     <div style="text-align:center;min-width:52px;">
       <div class="dash-card-date">${d.getDate()}</div>
       <div class="dash-card-date-sub">${dow} · ${monthShort}</div>
@@ -2056,7 +2090,7 @@ function renderMonthlySummary(){
     const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'short',day:'numeric',month:'long'});
     const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
     const priorityBadge=t.priority?`<span class="priority-badge ${t.priority}" style="margin-left:6px;">● ${pL[t.priority]}</span>`:'';
-    return`<div class="ms-item"><div class="ms-date">${escHtml(dateLabel)}</div><div class="ms-mod">${mod?escHtml(mod.nazwa):'—'}${priorityBadge}</div><div class="ms-trainer">${tNames.length?'👤 '+tNames.map(escHtml).join(', '):''}</div></div>`;
+    return`<div class="ms-item" style="cursor:pointer;" onclick="openTrainingModal('${ds}',null,${t.id})"><div class="ms-date">${escHtml(dateLabel)}</div><div class="ms-mod">${mod?escHtml(mod.nazwa):'—'}${priorityBadge}</div><div class="ms-trainer">${tNames.length?'👤 '+tNames.map(escHtml).join(', '):''}</div></div>`;
   }).join('');
   el.innerHTML=`<div class="monthly-summary-title">Szkolenia zaplanowane w ${escHtml(MONTHS_PL[curMonth])}</div>${rows}`;
 }

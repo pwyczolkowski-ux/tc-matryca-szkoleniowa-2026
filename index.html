@@ -110,6 +110,25 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .cat-tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;}
 .cat-tag.Mindset{background:rgba(139,92,246,0.1);color:#8b5cf6;}.cat-tag.Skill{background:rgba(245,158,11,0.1);color:var(--amber);}.cat-tag.Kultura{background:rgba(34,197,94,0.1);color:var(--green);}
 .modules-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.modules-cards.list-view{display:flex;flex-direction:column;gap:8px;}
+.modules-cards.list-view .mod-card{display:flex;align-items:center;gap:16px;padding:12px 16px;}
+.modules-cards.list-view .mod-card-name{font-size:14px;margin-bottom:0;flex:1;min-width:0;}
+.modules-cards.list-view .mod-card-desc{display:none;}
+.modules-cards.list-view .mod-card-footer{margin-top:0;padding-top:0;border-top:none;flex-shrink:0;}
+.view-toggle{display:flex;gap:4px;margin-left:auto;}
+.view-toggle-btn{background:var(--white);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s;color:var(--text-muted);}
+.view-toggle-btn:hover{border-color:#b0b5cc;color:var(--text);}
+.view-toggle-btn.active{background:var(--navy);border-color:var(--navy);color:var(--white);}
+.dash-panel{padding:28px;max-width:900px;}
+.dash-section-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.dash-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:8px;display:flex;align-items:flex-start;gap:16px;}
+.dash-card.featured{border-color:var(--red);border-width:2px;background:rgba(220,20,60,0.02);}
+.dash-card-date{font-size:22px;font-weight:300;color:var(--red);min-width:48px;text-align:center;line-height:1;}
+.dash-card-date-sub{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-top:2px;}
+.dash-card-body{flex:1;min-width:0;}
+.dash-card-mod{font-size:15px;font-weight:400;color:var(--text);margin-bottom:4px;}
+.dash-card-meta{font-size:12px;color:var(--text-muted);font-weight:300;}
+.dash-empty{font-size:13px;color:var(--text-muted);font-style:italic;padding:12px 0;}
 .mod-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px 20px;cursor:pointer;transition:all .2s;border-left:4px solid transparent;}
 .mod-card.cat-Mindset{border-left-color:#8b5cf6;}.mod-card.cat-Skill{border-left-color:var(--amber);}.mod-card.cat-Kultura{border-left-color:var(--green);}
 .mod-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.10);transform:translateY(-2px);border-color:#c5cad8;}
@@ -189,7 +208,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 <header>
   <div class="logo">the <strong>company</strong><span class="logo-dot">.</span></div>
   <div class="tab-nav">
-    <button class="tab-btn active" id="tab-mod" onclick="switchTab('modules')">Szkolenia</button>
+    <button class="tab-btn active" id="tab-dash" onclick="switchTab('dashboard')">Start</button>
+    <button class="tab-btn" id="tab-mod" onclick="switchTab('modules')">Szkolenia</button>
     <button class="tab-btn" id="tab-cal" onclick="switchTab('calendar')">Kalendarz</button>
     <button class="tab-btn" id="tab-trainers" onclick="switchTab('trainers')">Trenerzy</button>
   </div>
@@ -209,9 +229,9 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   </div>
 </div>
 <div class="app-shell">
-  <div class="sidebar" id="sidebar">
+  <div class="sidebar collapsed" id="sidebar">
     <div class="sb-header">
-      <button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" title="Zwiń / Rozwiń panel">‹</button>
+      <button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" title="Zwiń / Rozwiń panel">›</button>
     </div>
     <div class="sb-content">
       <div class="sb-section">
@@ -244,6 +264,24 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </div>
   </div>
   <div class="main">
+    <div class="tab-panel active" id="panel-dashboard">
+      <div class="dash-panel">
+        <div style="font-size:26px;font-weight:300;color:var(--text);margin-bottom:6px;">Witaj 👋</div>
+        <div style="font-size:14px;color:var(--text-muted);font-weight:300;margin-bottom:28px;">Matryca Szkoleniowa The Company 2026</div>
+        <div style="margin-bottom:32px;">
+          <div class="dash-section-title">Najbliższe szkolenie</div>
+          <div id="dash-next-one"></div>
+        </div>
+        <div style="margin-bottom:32px;">
+          <div class="dash-section-title">3 kolejne szkolenia</div>
+          <div id="dash-next-three"></div>
+        </div>
+        <div>
+          <div class="dash-section-title">3 ostatnie szkolenia</div>
+          <div id="dash-last-three"></div>
+        </div>
+      </div>
+    </div>
     <div class="tab-panel" id="panel-calendar">
       <div class="cal-panel">
         <div class="month-nav">
@@ -281,15 +319,19 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
         </div>
       </div>
     </div>
-    <div class="tab-panel active" id="panel-modules">
+    <div class="tab-panel" id="panel-modules">
       <div class="modules-panel">
         <div class="mp-title">Szkolenia</div>
         <div class="mp-sub">Program Matrycy Szkoleniowej The Company 2026 · kliknij szkolenie aby zobaczyć szczegóły lub edytować</div>
-        <div class="mod-filter-bar">
+        <div class="mod-filter-bar" style="display:flex;align-items:center;">
           <button class="mod-filter-btn f-all active" data-mf="all" onclick="filterModTab(this)">Wszystkie (18)</button>
           <button class="mod-filter-btn f-Mindset" data-mf="Mindset" onclick="filterModTab(this)">Mindset (3)</button>
           <button class="mod-filter-btn f-Skill" data-mf="Skill" onclick="filterModTab(this)">Skill (11)</button>
           <button class="mod-filter-btn f-Kultura" data-mf="Kultura" onclick="filterModTab(this)">Kultura (4)</button>
+          <div class="view-toggle">
+            <button class="view-toggle-btn active" id="view-grid-btn" onclick="setModView('grid')" title="Kafelki">⊞</button>
+            <button class="view-toggle-btn" id="view-list-btn" onclick="setModView('list')" title="Lista">☰</button>
+          </div>
         </div>
         <button onclick="openModuleDetail(null)" style="background:var(--navy);border:none;border-radius:8px;padding:8px 18px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#fff;cursor:pointer;transition:opacity .2s;margin-bottom:24px;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">+ Dodaj szkolenie</button>
         <div id="modules-by-cat"></div>
@@ -645,12 +687,12 @@ function switchSbTab(name){
 }
 function init(){
   loadFromStorage();
-  renderMonthTabs();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();
+  renderMonthTabs();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();renderDashboard();
   // Try to load fresher data from GitHub (async, refreshes UI when done)
   if(getGhToken()){
     setSyncStatus('pending','Wczytuję…');
     loadFromGitHub().then(ok=>{
-      if(ok){renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();}
+      if(ok){renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();renderDashboard();}
       else setSyncStatus('err','Błąd sync');
     });
   }else if(localStorage.getItem(LS_GH_TOKEN)===''){
@@ -658,13 +700,14 @@ function init(){
   }
 }
 
-const TAB_IDS={modules:'mod',calendar:'cal',trainers:'trainers','module-detail':'mod'};
+const TAB_IDS={modules:'mod',calendar:'cal',trainers:'trainers','module-detail':'mod',dashboard:'dash'};
 function switchTab(name){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   document.getElementById('tab-'+(TAB_IDS[name]||name)).classList.add('active');
   if(name==='trainers')renderTrainerPanel();
+  if(name==='dashboard')renderDashboard();
 }
 
 function renderMonthTabs(){
@@ -795,9 +838,9 @@ function saveTraining(){
   // preserve existing uczestnicy if re-editing
   const existing=trainings[selDate]||{};
   trainings[selDate]={moduleId:mid,trainerIds,priority,uczestnicy:existing.uczestnicy||[]};
-  closeTrainingModal();renderCalendar();saveToStorage();
+  closeTrainingModal();renderCalendar();renderDashboard();saveToStorage();
 }
-function removeTraining(ds){delete trainings[ds];renderCalendar();saveToStorage();}
+function removeTraining(ds){delete trainings[ds];renderCalendar();renderDashboard();saveToStorage();}
 
 function trainerAvatar(t,size){
   if(t.photo)return`<img src="${t.photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
@@ -932,9 +975,10 @@ function renderModuleCards(){
   const fMindset=document.querySelector('.mod-filter-btn.f-Mindset');if(fMindset)fMindset.textContent=`Mindset (${countMindset})`;
   const fSkill=document.querySelector('.mod-filter-btn.f-Skill');if(fSkill)fSkill.textContent=`Skill (${countSkill})`;
   const fKultura=document.querySelector('.mod-filter-btn.f-Kultura');if(fKultura)fKultura.textContent=`Kultura (${countKultura})`;
+  const listCls=modViewMode==='list'?' list-view':'';
   el.innerHTML=cats.map(cat=>{
     const mods=allMods.filter(m=>m.kategoria===cat);
-    return`<div class="cat-section"><div class="cat-hdr"><span class="cat-tag ${cat}">${cat}</span></div><div class="modules-cards">${mods.map(m=>`<div class="mod-card cat-${m.kategoria}" onclick="openModuleDetail(${m.id})"><div class="mod-card-name">${m.nazwa}</div><div class="mod-card-desc">${m.opis}</div><div class="mod-card-footer"><div class="mod-card-time">⏱ 3 godziny</div><div class="mod-card-cta">Szczegóły →</div></div></div>`).join('')}</div></div>`;
+    return`<div class="cat-section"><div class="cat-hdr"><span class="cat-tag ${cat}">${cat}</span></div><div class="modules-cards${listCls}">${mods.map(m=>`<div class="mod-card cat-${m.kategoria}" onclick="openModuleDetail(${m.id})"><div class="mod-card-name">${m.nazwa}</div><div class="mod-card-desc">${m.opis}</div><div class="mod-card-footer"><div class="mod-card-time">⏱ 3 godziny</div><div class="mod-card-cta">Szczegóły →</div></div></div>`).join('')}</div></div>`;
   }).join('');
 }
 
@@ -1093,6 +1137,57 @@ function removeParticipant(idx){
   if(selectedModuleId!==null)renderModuleDetailView(selectedModuleId);
 }
 
+let modViewMode='grid';
+function setModView(mode){
+  modViewMode=mode;
+  document.getElementById('view-grid-btn').classList.toggle('active',mode==='grid');
+  document.getElementById('view-list-btn').classList.toggle('active',mode==='list');
+  renderModuleCards();
+}
+
+function dashCardHtml(ds,t,featured){
+  const mod=getModuleData(t.moduleId);
+  const d=new Date(ds);
+  const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
+  const dow=['Nd','Pn','Wt','Śr','Cz','Pt','So'][d.getDay()];
+  const pL={wysoki:'🔴 Wysoki',sredni:'🟡 Średni',niski:'🟢 Niski'};
+  const catC={Mindset:'#8b5cf6',Skill:'var(--amber)',Kultura:'var(--green)'};
+  const monthShort=MONTHS_PL[d.getMonth()].substring(0,3);
+  return`<div class="dash-card${featured?' featured':''}">
+    <div style="text-align:center;min-width:52px;">
+      <div class="dash-card-date">${d.getDate()}</div>
+      <div class="dash-card-date-sub">${dow} · ${monthShort}</div>
+    </div>
+    <div class="dash-card-body">
+      <div class="dash-card-mod">${mod?escHtml(mod.nazwa):'—'}</div>
+      <div class="dash-card-meta">${mod?`<span style="font-weight:500;color:${catC[mod.kategoria]||'#999'};">${mod.kategoria}</span> · `:''} ${tNames.length?'👤 '+tNames.map(escHtml).join(', '):'Brak trenera'}${t.priority?' · '+pL[t.priority]:''}</div>
+    </div>
+  </div>`;
+}
+
+function renderDashboard(){
+  const all=Object.entries(trainings).sort(([a],[b])=>a.localeCompare(b));
+  const past=all.filter(([ds])=>ds<TODAY_STR).reverse();
+  const future=all.filter(([ds])=>ds>=TODAY_STR);
+
+  const nextOneEl=document.getElementById('dash-next-one');
+  const nextThreeEl=document.getElementById('dash-next-three');
+  const lastThreeEl=document.getElementById('dash-last-three');
+  if(!nextOneEl)return;
+
+  if(future.length){
+    const [ds,t]=future[0];
+    nextOneEl.innerHTML=dashCardHtml(ds,t,true);
+    const next3=future.slice(1,4);
+    nextThreeEl.innerHTML=next3.length?next3.map(([ds,t])=>dashCardHtml(ds,t,false)).join(''):`<div class="dash-empty">Brak kolejnych zaplanowanych szkoleń</div>`;
+  }else{
+    nextOneEl.innerHTML=`<div class="dash-empty">Brak zaplanowanych szkoleń</div>`;
+    nextThreeEl.innerHTML='';
+  }
+
+  lastThreeEl.innerHTML=past.slice(0,3).length?past.slice(0,3).map(([ds,t])=>dashCardHtml(ds,t,false)).join(''):`<div class="dash-empty">Brak przeprowadzonych szkoleń</div>`;
+}
+
 function updateSlots(){
   let count=0;
   for(let mo=0;mo<12;mo++){const days=new Date(2026,mo+1,0).getDate();for(let d=1;d<=days;d++){const s=fmtDs(2026,mo,d);if(!isPast(s)&&isRecommended(s)&&!trainings[s])count++;}}
@@ -1106,10 +1201,16 @@ function clearCalendar(){
   }
 }
 
+function trainingCountLabel(n){
+  if(n===0)return'Brak zaplanowanych szkoleń';
+  if(n===1)return'1 zaplanowane szkolenie';
+  if(n>=2&&n<=4)return`${n} zaplanowane szkolenia`;
+  return`${n} zaplanowanych szkoleń`;
+}
 function updateTrainingCount(){
   const n=Object.keys(trainings).length;
   const el=document.getElementById('training-count');
-  if(el)el.textContent=n>0?`${n} zaplanowanych szkoleń`:'Brak zaplanowanych szkoleń';
+  if(el)el.textContent=trainingCountLabel(n);
 }
 
 function generatePDF(){

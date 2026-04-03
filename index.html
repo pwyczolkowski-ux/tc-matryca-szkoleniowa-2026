@@ -806,7 +806,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   </div>
 </div>
 
-<div class="overlay" id="delete-confirm-overlay" onclick="if(event.target.id==='delete-confirm-overlay')closeDC()">
+<div class="overlay" id="delete-confirm-overlay" style="z-index:1000;" onclick="if(event.target.id==='delete-confirm-overlay')closeDC()">
   <div class="modal" style="width:400px;">
     <div class="modal-ttl">Potwierdź usunięcie</div>
     <div id="dc-subtitle" style="font-size:14px;color:var(--text-muted);margin-bottom:24px;font-weight:300;line-height:1.5;"></div>
@@ -1115,7 +1115,7 @@ function renderCalendar(){
         const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
         const partCount=(t.uczestnicy||[]).length;
         const timeStr=t.time?`<span style="font-size:10px;font-weight:400;color:rgba(220,20,60,0.8);margin-left:4px;">${escHtml(t.time)}</span>`:'';
-        html+=`<div class="day-training-badge"><span class="dtb-text" style="cursor:pointer;" onclick="event.stopPropagation();openEditTraining(${t.id})">📚 ${mod?escHtml(mod.nazwa):'?'}${timeStr}</span>${!past?`<button class="dtb-remove" onclick="event.stopPropagation();removeTraining(${t.id})">×</button>`:''}</div>`;
+        html+=`<div class="day-training-badge"><span class="dtb-text" style="cursor:pointer;" onclick="event.stopPropagation();openEditTraining(${t.id})">📚 ${mod?escHtml(mod.nazwa):'?'}${timeStr}</span>${!past?`<button class="dtb-remove" onclick="event.stopPropagation();openDC('Usunąć szkolenie<br><strong>${mod?escHtml(mod.nazwa):'?'}</strong>?',()=>removeTraining(${t.id}))">×</button>`:''}</div>`;
         if(tNames.length)html+=`<div class="dtb-trainer">👤 ${tNames.map(escHtml).join(', ')}</div>`;
         if(t.priority){html+=`<div class="priority-badge ${t.priority}">● ${pL[t.priority]||t.priority}</div>`;}
         html+=`<button class="dtb-part-btn" onclick="event.stopPropagation();openParticipantsModal(${t.id})">👥 Uczestnicy${partCount?` (${partCount})`:''}</button>`;

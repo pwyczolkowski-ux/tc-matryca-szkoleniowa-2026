@@ -462,7 +462,7 @@ function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
 const TODAY_STR=`${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}`;
 
-const MODULES=[
+let MODULES=[
 {id:1,kategoria:"Mindset",nazwa:"Źródła wewnętrznej motywacji",opis:"Znajdź swoje DLACZEGO zanim skończy Ci się JAK. Ikigai, Simon Sinek, coachingowe koło wartości — narzędzia do mapowania tego, co napędza Cię do działania.",oryginalny:"Skąd biorę energię? Mapa wewnętrznej motywacji"},
 {id:2,kategoria:"Mindset",nazwa:"Praca na swoich mocnych stronach",opis:"Talenty to nie przypadek — to strategia. Warsztat oparty o CliftonStrengths / VIA: odkryj swoje naturalne zasoby i naucz się przekuwać je w wyniki.",oryginalny:"Graj swoimi kartami. Jak odkryć i wykorzystać mocne strony"},
 {id:3,kategoria:"Mindset",nazwa:"Mindset 10x",opis:"Od incremental thinking do 10x Rule. Jak przestać optymalizować detale i szukać prawdziwych przełomów. Techniki kreatywnego myślenia o skali.",oryginalny:"Myśl 10x. Jak przestać optymalizować, a zacząć skalować"},
@@ -515,15 +515,27 @@ function saveToStorage(){
   try{
     localStorage.setItem(LS_TRAININGS,JSON.stringify(trainings));
     localStorage.setItem(LS_TRAINERS,JSON.stringify(trainers));
+    localStorage.setItem(LS_MODULE_EXTRAS,JSON.stringify(moduleExtras));
+    localStorage.setItem(LS_CUSTOM_MODULES,JSON.stringify(customModules));
   }catch(e){}
 }
 function loadFromStorage(){
   try{
     const t=localStorage.getItem(LS_TRAININGS);
     const tr=localStorage.getItem(LS_TRAINERS);
+    const me=localStorage.getItem(LS_MODULE_EXTRAS);
+    const cm=localStorage.getItem(LS_CUSTOM_MODULES);
     if(t)trainings=JSON.parse(t);
     if(tr)trainers=JSON.parse(tr);
+    if(me)moduleExtras=JSON.parse(me);
+    if(cm)customModules=JSON.parse(cm);
   }catch(e){}
+}
+function getAllModules(){return[...MODULES,...customModules];}
+function getModuleData(id){
+  const base=getAllModules().find(m=>m.id===id);if(!base)return null;
+  const extra=moduleExtras[id]||{};
+  return{...base,...extra};
 }
 
 function isGroupMeetingEvent(ev){
@@ -575,7 +587,7 @@ function init(){
   renderMonthTabs();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();
 }
 
-const TAB_IDS={modules:'mod',calendar:'cal',trainers:'trainers'};
+const TAB_IDS={modules:'mod',calendar:'cal',trainers:'trainers','module-detail':'mod'};
 function switchTab(name){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -658,7 +670,7 @@ function renderCalendar(){
     }
     if(hasTrain){
       const t=trainings[ds];
-      const mod=MODULES.find(x=>x.id===t.moduleId);
+      const mod=getModuleData(t.moduleId);
       const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
       html+=`<div class="day-training-badge"><span class="dtb-text">📚 ${mod?escHtml(mod.nazwa):'?'}</span><button class="dtb-remove" onclick="event.stopPropagation();removeTraining('${ds}')">×</button></div>`;
       if(tNames.length)html+=`<div class="dtb-trainer">👤 ${tNames.map(escHtml).join(', ')}</div>`;
@@ -682,7 +694,7 @@ function openTrainingModal(ds,preModId){
   ms.innerHTML='<option value="">— wybierz moduł —</option>';
   ['Mindset','Skill','Kultura'].forEach(cat=>{
     const og=document.createElement('optgroup');og.label=cat;
-    MODULES.filter(x=>x.kategoria===cat).forEach(mod=>{
+    getAllModules().filter(x=>x.kategoria===cat).forEach(mod=>{
       const o=document.createElement('option');o.value=mod.id;o.textContent=mod.nazwa;
       if(trainings[ds]?.moduleId===mod.id)o.selected=true;
       if(preModId===mod.id)o.selected=true;
@@ -755,7 +767,7 @@ function openTrainerProfile(id){
   const past=[],future=[];
   Object.entries(trainings).forEach(([ds,t])=>{
     if(!getTrainerIds(t).includes(id))return;
-    const mod=MODULES.find(m=>m.id===t.moduleId);
+    const mod=getModuleData(t.moduleId);
     const d=new Date(ds);
     const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     const item={ds,dateLabel,modName:mod?.nazwa||'—',cat:mod?.kategoria||''};
@@ -813,20 +825,32 @@ function removeTrainerFull(id){
 }
 document.getElementById('tm-t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainerFromModal();});
 document.getElementById('te-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveTrainerEdit();});
+document.getElementById('part-input').addEventListener('keydown',e=>{if(e.key==='Enter')addParticipant();});
 
 function filterSb(btn){sbFilter=btn.dataset.cat;document.querySelectorAll('.sf-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSbModules();}
 function renderSbModules(){
   const el=document.getElementById('sb-modules');
-  const list=sbFilter==='all'?MODULES:MODULES.filter(m=>m.kategoria===sbFilter);
-  el.innerHTML=list.map(m=>`<div class="sb-mod cat-${m.kategoria}" draggable="true" ondragstart="event.dataTransfer.setData('moduleId','${m.id}')" onclick="openModDetail(${m.id})"><div class="sb-mod-name">${m.nazwa}</div><div class="sb-mod-cat">${m.kategoria}</div></div>`).join('');
+  const allMods=getAllModules();
+  const list=sbFilter==='all'?allMods:allMods.filter(m=>m.kategoria===sbFilter);
+  el.innerHTML=list.map(m=>`<div class="sb-mod cat-${m.kategoria}" draggable="true" ondragstart="event.dataTransfer.setData('moduleId','${m.id}')" onclick="openModuleDetail(${m.id})"><div class="sb-mod-name">${m.nazwa}</div><div class="sb-mod-cat">${m.kategoria}</div></div>`).join('');
 }
 
 function renderModuleCards(){
   const el=document.getElementById('modules-by-cat');
+  const allMods=getAllModules();
   const cats=modTabFilter==='all'?['Mindset','Skill','Kultura']:[modTabFilter];
+  // Update filter bar counts dynamically
+  const total=allMods.length;
+  const countMindset=allMods.filter(m=>m.kategoria==='Mindset').length;
+  const countSkill=allMods.filter(m=>m.kategoria==='Skill').length;
+  const countKultura=allMods.filter(m=>m.kategoria==='Kultura').length;
+  const fAll=document.querySelector('.mod-filter-btn.f-all');if(fAll)fAll.textContent=`Wszystkie (${total})`;
+  const fMindset=document.querySelector('.mod-filter-btn.f-Mindset');if(fMindset)fMindset.textContent=`Mindset (${countMindset})`;
+  const fSkill=document.querySelector('.mod-filter-btn.f-Skill');if(fSkill)fSkill.textContent=`Skill (${countSkill})`;
+  const fKultura=document.querySelector('.mod-filter-btn.f-Kultura');if(fKultura)fKultura.textContent=`Kultura (${countKultura})`;
   el.innerHTML=cats.map(cat=>{
-    const mods=MODULES.filter(m=>m.kategoria===cat);
-    return`<div class="cat-section"><div class="cat-hdr"><span class="cat-tag ${cat}">${cat}</span></div><div class="modules-cards">${mods.map(m=>`<div class="mod-card cat-${m.kategoria}" onclick="openModDetail(${m.id})"><div class="mod-card-name">${m.nazwa}</div><div class="mod-card-desc">${m.opis}</div><div class="mod-card-footer"><div class="mod-card-time">⏱ 3 godziny</div><div class="mod-card-cta">Szczegóły →</div></div></div>`).join('')}</div></div>`;
+    const mods=allMods.filter(m=>m.kategoria===cat);
+    return`<div class="cat-section"><div class="cat-hdr"><span class="cat-tag ${cat}">${cat}</span></div><div class="modules-cards">${mods.map(m=>`<div class="mod-card cat-${m.kategoria}" onclick="openModuleDetail(${m.id})"><div class="mod-card-name">${m.nazwa}</div><div class="mod-card-desc">${m.opis}</div><div class="mod-card-footer"><div class="mod-card-time">⏱ 3 godziny</div><div class="mod-card-cta">Szczegóły →</div></div></div>`).join('')}</div></div>`;
   }).join('');
 }
 
@@ -850,19 +874,140 @@ function filterModTab(btn){
 }
 
 
-function openModDetail(id){
-  const mod=MODULES.find(m=>m.id===id);if(!mod)return;
-  document.getElementById('md-cat').textContent=mod.kategoria;
-  document.getElementById('md-cat').className=`mod-detail-cat ${mod.kategoria}`;
-  document.getElementById('md-name').textContent=mod.nazwa;
-  document.getElementById('md-orig').textContent=`Pełna nazwa: "${mod.oryginalny}"`;
-  document.getElementById('md-desc').textContent=mod.opis;
-  const entry=Object.entries(trainings).find(([,v])=>v.moduleId===id);
-  const tNames=entry?getTrainerIds(entry[1]).map(tid=>trainers.find(t=>t.id===tid)?.name).filter(Boolean):[];
-  document.getElementById('md-trainer').textContent=tNames.length?tNames.join(', '):'Do ustalenia';
-  document.getElementById('mod-overlay').classList.add('open');
+function openModuleDetail(id){
+  selectedModuleId=id;
+  // If id is null — new module mode
+  if(id===null){
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('panel-module-detail').classList.add('active');
+    document.getElementById('tab-mod').classList.add('active');
+    // Pre-fill empty edit form
+    document.getElementById('mds-cat').textContent='Nowe szkolenie';
+    document.getElementById('mds-cat').className='mod-detail-cat';
+    document.getElementById('mds-view').style.display='none';
+    document.getElementById('mds-edit').style.display='block';
+    document.getElementById('mds-edit-nazwa').value='';
+    document.getElementById('mds-edit-kat').value='Skill';
+    document.getElementById('mds-edit-opis').value='';
+    document.getElementById('mds-edit-korzysci').value='';
+    document.getElementById('mds-edit-agenda').value='';
+    return;
+  }
+  const mod=getModuleData(id);if(!mod)return;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-module-detail').classList.add('active');
+  document.getElementById('tab-mod').classList.add('active');
+  document.getElementById('mds-view').style.display='block';
+  document.getElementById('mds-edit').style.display='none';
+  renderModuleDetailView(id);
 }
-function closeModModal(){document.getElementById('mod-overlay').classList.remove('open');}
+function renderModuleDetailView(id){
+  const mod=getModuleData(id);if(!mod)return;
+  const catEl=document.getElementById('mds-cat');
+  catEl.textContent=mod.kategoria;catEl.className=`mod-detail-cat ${mod.kategoria}`;
+  document.getElementById('mds-name').textContent=mod.nazwa;
+  document.getElementById('mds-orig').textContent=mod.oryginalny?`"${mod.oryginalny}"`:'';
+  document.getElementById('mds-opis').textContent=mod.opis||'';
+  // Korzyści
+  const korzEl=document.getElementById('mds-korzysci');
+  const korz=(mod.korzysci||'').trim();
+  document.getElementById('mds-korzysci-wrap').style.display=korz?'block':'none';
+  if(korz)korzEl.innerHTML=korz.split('\n').filter(l=>l.trim()).map(l=>`<div style="display:flex;gap:8px;margin-bottom:6px;"><span style="color:var(--green);font-weight:500;flex-shrink:0;">✓</span><span style="font-size:14px;font-weight:300;color:var(--text);">${escHtml(l.trim())}</span></div>`).join('');
+  // Agenda
+  const agndEl=document.getElementById('mds-agenda');
+  const agnd=(mod.agenda||'').trim();
+  document.getElementById('mds-agenda-wrap').style.display=agnd?'block':'none';
+  if(agnd)agndEl.innerHTML=agnd.split('\n').filter(l=>l.trim()).map((l,i)=>`<div style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:var(--red);font-weight:500;flex-shrink:0;min-width:20px;">${i+1}.</span><span style="font-size:14px;font-weight:300;color:var(--text);">${escHtml(l.trim())}</span></div>`).join('');
+  // Trainings
+  const past=[],future=[];
+  Object.entries(trainings).forEach(([ds,t])=>{
+    if(t.moduleId!==id)return;
+    const d=new Date(ds);
+    const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const tNames=getTrainerIds(t).map(tid=>trainers.find(tr=>tr.id===tid)?.name).filter(Boolean);
+    const item={ds,dateLabel,tNames,uczestnicy:t.uczestnicy||[]};
+    if(ds<TODAY_STR)past.push(item);else future.push(item);
+  });
+  past.sort((a,b)=>b.ds.localeCompare(a.ds));
+  future.sort((a,b)=>a.ds.localeCompare(b.ds));
+  const fmtFuture=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div></div>`;
+  const fmtPast=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div><button onclick="openParticipantsModal('${i.ds}')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Uczestnicy ${i.uczestnicy.length?`(${i.uczestnicy.length})`:''}</button></div>`;
+  document.getElementById('mds-future').innerHTML=future.length?future.map(fmtFuture).join(''):`<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak zaplanowanych szkoleń</div>`;
+  document.getElementById('mds-past').innerHTML=past.length?past.map(fmtPast).join(''):`<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak przeprowadzonych szkoleń</div>`;
+}
+function closeModuleDetail(){
+  switchTab('modules');
+}
+function toggleModuleEditMode(editMode){
+  document.getElementById('mds-view').style.display=editMode?'none':'block';
+  document.getElementById('mds-edit').style.display=editMode?'block':'none';
+  if(editMode&&selectedModuleId!==null){
+    const mod=getModuleData(selectedModuleId);if(!mod)return;
+    document.getElementById('mds-edit-nazwa').value=mod.nazwa||'';
+    document.getElementById('mds-edit-kat').value=mod.kategoria||'Skill';
+    document.getElementById('mds-edit-opis').value=mod.opis||'';
+    document.getElementById('mds-edit-korzysci').value=mod.korzysci||'';
+    document.getElementById('mds-edit-agenda').value=mod.agenda||'';
+  }
+}
+function saveModuleEdit(){
+  const nazwa=document.getElementById('mds-edit-nazwa').value.trim();
+  if(!nazwa){alert('Podaj nazwę szkolenia');return;}
+  const kat=document.getElementById('mds-edit-kat').value;
+  const opis=document.getElementById('mds-edit-opis').value.trim();
+  const korzysci=document.getElementById('mds-edit-korzysci').value;
+  const agenda=document.getElementById('mds-edit-agenda').value;
+  if(selectedModuleId===null){
+    // New module
+    const newId=Date.now();
+    customModules.push({id:newId,kategoria:kat,nazwa,opis,oryginalny:'',korzysci,agenda});
+    selectedModuleId=newId;
+  }else{
+    // Check if built-in or custom
+    const custom=customModules.find(m=>m.id===selectedModuleId);
+    if(custom){Object.assign(custom,{nazwa,kategoria:kat,opis,korzysci,agenda});}
+    else{moduleExtras[selectedModuleId]={nazwa,opis,korzysci,agenda};}
+  }
+  saveToStorage();
+  renderModuleCards();renderSbModules();
+  document.getElementById('mds-view').style.display='block';
+  document.getElementById('mds-edit').style.display='none';
+  renderModuleDetailView(selectedModuleId);
+}
+function openParticipantsModal(ds){
+  participantsDate=ds;
+  const t=trainings[ds];if(!t)return;
+  const d=new Date(ds);
+  document.getElementById('part-date').textContent=d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const mod=getModuleData(t.moduleId);
+  document.getElementById('part-module-name').textContent=mod?.nazwa||'';
+  renderParticipantsList();
+  document.getElementById('participants-overlay').classList.add('open');
+}
+function closeParticipantsModal(){document.getElementById('participants-overlay').classList.remove('open');participantsDate=null;}
+function renderParticipantsList(){
+  const el=document.getElementById('part-list');
+  const t=trainings[participantsDate];
+  const list=t?.uczestnicy||[];
+  if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:4px 0;">Brak uczestników</div>';return;}
+  el.innerHTML=list.map((name,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);"><span style="flex:1;font-size:13px;font-weight:300;color:var(--text);">${escHtml(name)}</span><button onclick="removeParticipant(${i})" style="background:none;border:none;color:rgba(0,0,0,0.3);font-size:16px;cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(0,0,0,0.3)'">×</button></div>`).join('');
+}
+function addParticipant(){
+  const inp=document.getElementById('part-input');const name=inp.value.trim();if(!name)return;
+  const t=trainings[participantsDate];if(!t)return;
+  if(!t.uczestnicy)t.uczestnicy=[];
+  t.uczestnicy.push(name);inp.value='';
+  renderParticipantsList();saveToStorage();
+  if(selectedModuleId!==null)renderModuleDetailView(selectedModuleId);
+}
+function removeParticipant(idx){
+  const t=trainings[participantsDate];if(!t||!t.uczestnicy)return;
+  t.uczestnicy.splice(idx,1);
+  renderParticipantsList();saveToStorage();
+  if(selectedModuleId!==null)renderModuleDetailView(selectedModuleId);
+}
 
 function updateSlots(){
   let count=0;
@@ -967,7 +1112,7 @@ function buildPDF(entries,btn){
   const byMonth={};
   const chronological=[];
   entries.forEach(([ds,t])=>{
-    const mod=MODULES.find(m=>m.id===t.moduleId);
+    const mod=getModuleData(t.moduleId);
     const tNames=getTrainerIds(t).map(id=>trainers.find(tr=>tr.id===id)?.name).filter(Boolean);
     const trainerLabel=tNames.join(', ')||null;
     const d=new Date(ds);

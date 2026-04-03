@@ -168,6 +168,19 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .tp-training-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
 .tp-training-item:last-child{border-bottom:none;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px;}
+.priority-badge{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:500;padding:1px 5px;border-radius:3px;margin-top:2px;}
+.priority-badge.wysoki{background:rgba(220,20,60,0.12);color:var(--red);}
+.priority-badge.sredni{background:rgba(245,158,11,0.12);color:var(--amber);}
+.priority-badge.niski{background:rgba(34,197,94,0.12);color:var(--green);}
+.month-slots-info{font-size:13px;color:var(--text-muted);font-weight:300;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:8px 16px;display:inline-flex;align-items:center;gap:8px;}
+.month-slots-info strong{font-weight:500;color:var(--text);}
+.monthly-summary{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-top:20px;}
+.monthly-summary-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:14px;}
+.ms-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.ms-item:last-child{border-bottom:none;}
+.ms-date{font-size:13px;font-weight:500;color:var(--text);min-width:110px;}
+.ms-mod{flex:1;font-size:13px;font-weight:300;color:var(--text);}
+.ms-trainer{font-size:11px;color:var(--text-muted);}
 </style>
 </head>
 <body>
@@ -234,17 +247,30 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           <button class="mnav-btn" onclick="changeMonth(1)">&#8250;</button>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-          <div id="training-count" style="font-size:13px;color:var(--text-muted);font-weight:300;"></div>
-          <div style="display:flex;gap:8px;">
+          <div id="month-slots-display"></div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div id="training-count" style="font-size:13px;color:var(--text-muted);font-weight:300;margin-right:4px;"></div>
             <button onclick="clearCalendar()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:400;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.borderColor='#DC143C';this.style.color='#DC143C'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
-              🗑 Wyczyść kalendarz
+              🗑 Wyczyść
             </button>
+            <button onclick="exportData()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:400;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.borderColor='var(--text)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'" title="Eksportuj dane do pliku JSON">
+              💾 Eksportuj dane
+            </button>
+            <label style="background:none;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:400;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.borderColor='var(--text)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'" title="Importuj dane z pliku JSON">
+              📂 Importuj dane<input type="file" id="import-input" accept=".json" style="display:none;" onchange="importData(this)">
+            </label>
             <button onclick="generatePDF()" id="pdf-btn" style="background:#121635;border:none;border-radius:6px;padding:6px 16px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:500;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-              ⬇ Wygeneruj Matrycę PDF
+              ⬇ Wygeneruj matrycę roczną
             </button>
           </div>
         </div>
         <div class="cal-grid" id="cal-grid"></div>
+        <div class="monthly-summary" id="monthly-summary" style="display:none;"></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+          <button onclick="generateMonthlyPDF()" id="monthly-pdf-btn" style="background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:6px 16px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:500;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.background='#121635';this.style.color='#fff';this.style.borderColor='#121635'" onmouseout="this.style.background='var(--offwhite)';this.style.color='var(--text)';this.style.borderColor='var(--border)'">
+            ⬇ Wygeneruj matrycę miesięczną
+          </button>
+        </div>
       </div>
     </div>
     <div class="tab-panel active" id="panel-modules">
@@ -344,6 +370,13 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       <input id="tm-t-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Lub dodaj nowego trenera..." maxlength="60"/>
       <button onclick="addTrainerFromModal()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
     </div>
+    <label class="form-lbl">Priorytet szkolenia</label>
+    <select class="form-sel" id="tm-priority">
+      <option value="">— brak priorytetu —</option>
+      <option value="wysoki">🔴 Wysoki</option>
+      <option value="sredni">🟡 Średni</option>
+      <option value="niski">🟢 Niski</option>
+    </select>
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeTrainingModal()">Anuluj</button>
       <button class="btn btn-red" onclick="saveTraining()">Zaplanuj szkolenie</button>
@@ -674,11 +707,14 @@ function renderCalendar(){
       const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
       html+=`<div class="day-training-badge"><span class="dtb-text">📚 ${mod?escHtml(mod.nazwa):'?'}</span><button class="dtb-remove" onclick="event.stopPropagation();removeTraining('${ds}')">×</button></div>`;
       if(tNames.length)html+=`<div class="dtb-trainer">👤 ${tNames.map(escHtml).join(', ')}</div>`;
+      if(t.priority){const pL={wysoki:'Wysoki',sredni:'Średni',niski:'Niski'};html+=`<div class="priority-badge ${t.priority}">● ${pL[t.priority]||t.priority}</div>`;}
     }
     cell.innerHTML=html;grid.appendChild(cell);
   }
   updateSlots();
   updateTrainingCount();
+  updateMonthSlots();
+  renderMonthlySummary();
 }
 
 function openTrainingModal(ds,preModId){
@@ -701,6 +737,7 @@ function openTrainingModal(ds,preModId){
       og.appendChild(o);
     });ms.appendChild(og);
   });
+  document.getElementById('tm-priority').value=trainings[ds]?.priority||'';
   renderTrainerChecks(ds);
   document.getElementById('training-overlay').classList.add('open');
 }
@@ -710,7 +747,10 @@ function saveTraining(){
   const mid=parseInt(document.getElementById('tm-module').value);
   if(!mid){alert('Wybierz moduł szkoleniowy');return;}
   const trainerIds=Array.from(document.querySelectorAll('#tm-trainers-list input[type=checkbox]:checked')).map(cb=>parseInt(cb.value));
-  trainings[selDate]={moduleId:mid,trainerIds};
+  const priority=document.getElementById('tm-priority').value||null;
+  // preserve existing uczestnicy if re-editing
+  const existing=trainings[selDate]||{};
+  trainings[selDate]={moduleId:mid,trainerIds,priority,uczestnicy:existing.uczestnicy||[]};
   closeTrainingModal();renderCalendar();saveToStorage();
 }
 function removeTraining(ds){delete trainings[ds];renderCalendar();saveToStorage();}
@@ -1269,6 +1309,161 @@ function buildPDF(entries,btn){
   doc.save('Matryca_Szkoleniowa_TC_2026.pdf');
   btn.innerHTML='⬇ Wygeneruj Matrycę PDF';
   btn.disabled=false;
+}
+
+function calcMonthSlots(m){
+  const y=2026,dcount=new Date(y,m+1,0).getDate();let count=0;
+  for(let d=1;d<=dcount;d++){
+    const ds=fmtDs(y,m,d);
+    const dow=new Date(y,m,d).getDay();
+    if(dow===0||dow===6)continue;
+    if(isPast(ds))continue;
+    if(trainings[ds])continue;
+    if(isHoliday(ds)||isBlocked(ds))continue;
+    // July(6) and August(7): all free weekdays are slots
+    if(m===6||m===7){count++;}
+    else if(isRecommended(ds)){count++;}
+  }
+  return count;
+}
+
+function updateMonthSlots(){
+  const el=document.getElementById('month-slots-display');if(!el)return;
+  const n=calcMonthSlots(curMonth);
+  const monthName=MONTHS_PL[curMonth];
+  el.innerHTML=`<div class="month-slots-info">📅 <strong>${n}</strong> wolnych slotów szkoleniowych w <strong>${monthName}</strong></div>`;
+}
+
+function renderMonthlySummary(){
+  const el=document.getElementById('monthly-summary');if(!el)return;
+  const y=2026,m=curMonth;
+  const entries=Object.entries(trainings).filter(([ds])=>{
+    const d=new Date(ds);return d.getFullYear()===y&&d.getMonth()===m;
+  }).sort(([a],[b])=>a.localeCompare(b));
+  if(!entries.length){el.style.display='none';return;}
+  el.style.display='block';
+  const pL={wysoki:'Wysoki',sredni:'Średni',niski:'Niski'};
+  const rows=entries.map(([ds,t])=>{
+    const mod=getModuleData(t.moduleId);
+    const d=new Date(ds);
+    const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'short',day:'numeric',month:'long'});
+    const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
+    const priorityBadge=t.priority?`<span class="priority-badge ${t.priority}" style="margin-left:6px;">● ${pL[t.priority]}</span>`:'';
+    return`<div class="ms-item"><div class="ms-date">${escHtml(dateLabel)}</div><div class="ms-mod">${mod?escHtml(mod.nazwa):'—'}${priorityBadge}</div><div class="ms-trainer">${tNames.length?'👤 '+tNames.map(escHtml).join(', '):''}</div></div>`;
+  }).join('');
+  el.innerHTML=`<div class="monthly-summary-title">Szkolenia zaplanowane w ${escHtml(MONTHS_PL[curMonth])}</div>${rows}`;
+}
+
+// ── Export / Import ────────────────────────────────────────────────
+function exportData(){
+  const data={trainings,trainers,moduleExtras,customModules,exportedAt:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`matryca_szkoleniowa_2026_${TODAY_STR}.json`;a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importData(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!d.trainings&&!d.trainers){alert('Nieprawidłowy plik danych.');return;}
+      if(!confirm('Zastąpić bieżące dane danymi z pliku?'))return;
+      if(d.trainings)trainings=d.trainings;
+      if(d.trainers)trainers=d.trainers;
+      if(d.moduleExtras)moduleExtras=d.moduleExtras;
+      if(d.customModules)customModules=d.customModules;
+      saveToStorage();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();
+      alert('Dane zostały wczytane pomyślnie.');
+    }catch(err){alert('Błąd odczytu pliku: '+err.message);}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ── Monthly PDF ───────────────────────────────────────────────────
+function generateMonthlyPDF(){
+  const y=2026,m=curMonth;
+  const entries=Object.entries(trainings).filter(([ds])=>{
+    const d=new Date(ds);return d.getFullYear()===y&&d.getMonth()===m;
+  }).sort(([a],[b])=>a.localeCompare(b));
+  if(!entries.length){alert('Brak zaplanowanych szkoleń w '+MONTHS_PL[m]+'. Zaplanuj szkolenia i spróbuj ponownie.');return;}
+
+  const btn=document.getElementById('monthly-pdf-btn');
+  btn.textContent='⏳ Generuję...';btn.disabled=true;
+  function resetBtn(){btn.innerHTML='⬇ Wygeneruj matrycę miesięczną';btn.disabled=false;}
+
+  function doBuild(){buildMonthlyPDF(entries,m,btn,resetBtn);}
+  if(!window.jspdf){
+    const s1=document.createElement('script');
+    s1.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s1.onerror=()=>{alert('Nie udało się załadować biblioteki PDF.');resetBtn();};
+    s1.onload=()=>{
+      const s2=document.createElement('script');
+      s2.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
+      s2.onerror=()=>{alert('Nie udało się załadować biblioteki PDF.');resetBtn();};
+      s2.onload=doBuild;document.head.appendChild(s2);
+    };document.head.appendChild(s1);
+  }else doBuild();
+}
+
+function buildMonthlyPDF(entries,m,btn,resetBtn){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
+  const ML=14,MR=14,TW=pw-ML-MR;
+  const NAVY=[18,22,53],RED=[220,20,60],WHITE=[255,255,255],LIGHT=[245,246,250],MID=[228,232,242],MUTED=[130,140,170];
+  const CAT_C={Mindset:[139,92,246],Skill:[200,130,10],Kultura:[22,160,80]};
+  const PRIO_C={wysoki:[220,20,60],sredni:[200,130,10],niski:[22,160,80]};
+
+  // Header
+  doc.setFillColor(...NAVY);doc.rect(0,0,pw,18,'F');
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...WHITE);
+  doc.text('the ',ML,12);doc.setFont('helvetica','bold');doc.text('company.',ML+doc.getTextWidth('the '),12);
+  doc.setFont('helvetica','bold');doc.setFontSize(10);
+  doc.text(pl('MATRYCA SZKOLENIOWA — '+MONTHS_PL[m].toUpperCase()+' 2026'),pw/2,12,{align:'center'});
+  doc.setFillColor(...RED);doc.rect(0,18,pw,0.8,'F');
+
+  // Title
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...MUTED);
+  doc.text(pl('Propozycja matrycy szkoleniowej The Company · '+MONTHS_PL[m]+' 2026'),ML,28);
+
+  // Table
+  doc.autoTable({
+    startY:34,
+    margin:{left:ML,right:MR},
+    head:[['#','Data','Modul szkoleniowy','Kategoria','Trener','Priorytet']],
+    body:entries.map(([ds,t],i)=>{
+      const mod=getModuleData(t.moduleId);
+      const d=new Date(ds);
+      const tNames=getTrainerIds(t).map(id=>trainers.find(tr=>tr.id===id)?.name).filter(Boolean);
+      const dow=['Nd','Pn','Wt','Sr','Cz','Pt','So'][d.getDay()];
+      const pLbl={wysoki:'Wysoki',sredni:'Sredni',niski:'Niski'};
+      return[i+1,`${dow} ${d.getDate()} ${pl(MONTHS_PL[m])}`,pl(mod?.nazwa||'—'),pl(mod?.kategoria||'—'),pl(tNames.join(', ')||'—'),pl(t.priority?pLbl[t.priority]||t.priority:'—')];
+    }),
+    styles:{font:'helvetica',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3},textColor:[30,40,80],overflow:'linebreak',lineColor:MID,lineWidth:0.1},
+    headStyles:{fillColor:NAVY,textColor:WHITE,fontStyle:'bold',fontSize:8},
+    alternateRowStyles:{fillColor:LIGHT},
+    columnStyles:{0:{cellWidth:8,halign:'center',fontStyle:'bold'},1:{cellWidth:30},2:{cellWidth:undefined,minCellWidth:70},3:{cellWidth:22,halign:'center'},4:{cellWidth:35},5:{cellWidth:20,halign:'center'}},
+    didParseCell:(data)=>{
+      if(data.section==='body'){
+        if(data.column.index===3){const cat=data.cell.raw;data.cell.styles.textColor=CAT_C[cat]||[30,40,80];data.cell.styles.fontStyle='bold';}
+        if(data.column.index===5){const p=data.cell.raw;if(p==='Wysoki')data.cell.styles.textColor=PRIO_C.wysoki;else if(p==='Sredni')data.cell.styles.textColor=PRIO_C.sredni;else if(p==='Niski')data.cell.styles.textColor=PRIO_C.niski;}
+      }
+    }
+  });
+
+  // Footer
+  const total=doc.internal.getNumberOfPages();
+  for(let p=1;p<=total;p++){
+    doc.setPage(p);
+    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...MUTED);
+    doc.text(pl('the company.  ·  Matryca Szkoleniowa '+MONTHS_PL[m]+' 2026  ·  strona '+p+' / '+total),pw/2,ph-4,{align:'center'});
+  }
+
+  doc.save(pl('Matryca_'+MONTHS_PL[m]+'_2026.pdf'));
+  btn.innerHTML='⬇ Wygeneruj matrycę miesięczną';btn.disabled=false;
 }
 
 function closeIfBg(e,id){if(e.target.id===id)document.getElementById(id).classList.remove('open');}

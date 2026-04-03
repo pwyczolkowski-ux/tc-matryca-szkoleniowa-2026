@@ -1304,6 +1304,46 @@ function openTrainerProfile(id){
   document.getElementById('trainer-profile-overlay').classList.add('open');
 }
 function closeTrainerProfile(){document.getElementById('trainer-profile-overlay').classList.remove('open');trainerProfileId=null;}
+let pendingProfilePhotoData=null;
+function handleTrainerProfilePhotoUpload(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){alert('Maks. 5 MB.');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    pendingProfilePhotoData=e.target.result;
+    document.getElementById('tp-edit-photo-preview').innerHTML=`<img src="${pendingProfilePhotoData}" style="width:100%;height:100%;object-fit:cover;">`;
+  };
+  reader.readAsDataURL(file);
+}
+function toggleTrainerEditMode(on){
+  document.getElementById('tp-view-mode').style.display=on?'none':'block';
+  document.getElementById('tp-edit-mode').style.display=on?'block':'none';
+  if(on){
+    const tr=trainers.find(t=>t.id===trainerProfileId);if(!tr)return;
+    pendingProfilePhotoData=null;
+    document.getElementById('tp-edit-name').value=tr?.name||'';
+    document.getElementById('tp-edit-rola').value=tr?.rola||'';
+    document.getElementById('tp-edit-email').value=tr?.email||'';
+    document.getElementById('tp-edit-telefon').value=tr?.telefon||'';
+    document.getElementById('tp-edit-bio').value=tr?.bio||'';
+    document.getElementById('tp-edit-photo-input').value='';
+    const prev=document.getElementById('tp-edit-photo-preview');
+    prev.innerHTML=tr?.photo?`<img src="${tr.photo}" style="width:100%;height:100%;object-fit:cover;">`:'<span style="font-size:26px;">📷</span>';
+  }
+}
+function saveTrainerFromProfile(){
+  const name=document.getElementById('tp-edit-name').value.trim();
+  if(!name){alert('Podaj imię i nazwisko trenera');return;}
+  const rola=document.getElementById('tp-edit-rola').value.trim();
+  const email=document.getElementById('tp-edit-email').value.trim();
+  const telefon=document.getElementById('tp-edit-telefon').value.trim();
+  const bio=document.getElementById('tp-edit-bio').value.trim();
+  const tr=trainers.find(t=>t.id===trainerProfileId);
+  if(tr){tr.name=name;tr.rola=rola;tr.email=email;tr.telefon=telefon;tr.bio=bio;if(pendingProfilePhotoData!==null)tr.photo=pendingProfilePhotoData;}
+  pendingProfilePhotoData=null;
+  renderTrainers();saveToStorage();
+  openTrainerProfile(trainerProfileId);
+}
 function deleteTrainerFromProfile(){
   if(!trainerProfileId)return;
   const tr=trainers.find(t=>t.id===trainerProfileId);if(!tr)return;
@@ -1370,7 +1410,7 @@ function renderTrainerPanel(){
   if(!trainers.length){el.innerHTML='<div style="color:var(--text-muted);font-size:14px;font-weight:300;grid-column:1/-1;">Brak trenerów</div>';return;}
   const count={};trainings.forEach(t=>{getTrainerIds(t).forEach(id=>{count[id]=(count[id]||0)+1;});});
   const avatarSize=trainerViewMode==='list'?34:46;
-  el.innerHTML=trainers.map(t=>`<div class="trainer-card" style="cursor:pointer;" onclick="openTrainerProfile(${t.id})">${trainerAvatar(t,avatarSize)}<div style="flex:1;min-width:0;"><div class="trainer-card-name">${escHtml(t.name)}</div><div class="trainer-card-meta">${count[t.id]||0} szkoleń</div>${t.bio?`<div class="trainer-card-bio" style="font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${escHtml(t.bio)}</div>`:''}</div></div>`).join('');
+  el.innerHTML=trainers.map(t=>`<div class="trainer-card" style="cursor:pointer;" onclick="openTrainerProfile(${t.id})">${trainerAvatar(t,avatarSize)}<div style="flex:1;min-width:0;"><div class="trainer-card-name">${escHtml(t.name)}</div>${t.rola?`<div style="font-size:11px;color:var(--red);font-weight:400;margin-top:1px;">${escHtml(t.rola)}</div>`:''}<div class="trainer-card-meta">${count[t.id]||0} szkoleń</div>${t.bio?`<div class="trainer-card-bio" style="font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${escHtml(t.bio)}</div>`:''}</div></div>`).join('');
 }
 function removeTrainerFull(id){
   trainers=trainers.filter(t=>t.id!==id);

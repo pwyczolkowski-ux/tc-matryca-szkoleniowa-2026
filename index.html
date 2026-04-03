@@ -163,6 +163,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .form-sel{width:100%;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:14px;font-weight:300;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:14px;cursor:pointer;}
 .form-sel:focus{border-color:var(--red);}
 .modal-actions{display:flex;gap:10px;margin-top:20px;}
+#tm-expanded{animation:tmExpand .18s ease;}
+@keyframes tmExpand{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
 .btn{flex:1;padding:11px;border-radius:8px;border:none;font-family:'Roboto',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
 .btn-red{background:var(--red);color:var(--white);}.btn-red:hover{opacity:.85;}
 .btn-gray{background:var(--offwhite);border:1px solid var(--border);color:var(--text);}.btn-gray:hover{background:var(--border);}
@@ -391,7 +393,10 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           <button class="mnav-btn" onclick="changeMonth(1)">&#8250;</button>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-          <div id="month-slots-display"></div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div id="month-slots-display"></div>
+            <button onclick="openQuickCreate()" style="background:var(--red);border:none;border-radius:8px;padding:7px 16px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s;white-space:nowrap;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">+ Utwórz szkolenie</button>
+          </div>
           <div style="display:flex;gap:8px;align-items:center;">
             <div id="training-count" style="font-size:13px;color:var(--text-muted);font-weight:300;margin-right:4px;"></div>
             <button onclick="clearCalendar()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:400;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.borderColor='#DC143C';this.style.color='#DC143C'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
@@ -414,6 +419,15 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           <button onclick="generateMonthlyPDF()" id="monthly-pdf-btn" style="background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:6px 16px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:500;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.background='#121635';this.style.color='#fff';this.style.borderColor='#121635'" onmouseout="this.style.background='var(--offwhite)';this.style.color='var(--text)';this.style.borderColor='var(--border)'">
             ⬇ Wygeneruj matrycę miesięczną
           </button>
+        </div>
+        <!-- Bottom navigation -->
+        <div class="month-nav" style="margin-top:20px;">
+          <button class="mnav-btn" onclick="changeMonth(-1)">&#8249;</button>
+          <div class="month-title-wrap">
+            <div class="month-name" id="month-name-b"></div>
+            <div class="month-tabs" id="month-tabs-b"></div>
+          </div>
+          <button class="mnav-btn" onclick="changeMonth(1)">&#8250;</button>
         </div>
       </div>
     </div>
@@ -543,28 +557,36 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   <div class="modal">
     <button class="modal-x" onclick="closeTrainingModal()">×</button>
     <div class="modal-ttl" id="tm-title">Zaplanuj szkolenie</div>
+    <!-- Date picker — visible only in standalone "Utwórz szkolenie" mode -->
+    <div id="tm-date-row" style="display:none;margin-bottom:6px;">
+      <label class="form-lbl">Data szkolenia</label>
+      <input type="date" class="form-sel" id="tm-date-pick" min="2026-01-01" max="2026-12-31" onchange="onTrainingDateChange()" style="margin-bottom:10px;">
+    </div>
+    <!-- Date label — visible when opened from calendar day click -->
     <div class="modal-date-lbl" id="tm-date"></div>
-    <div id="tm-existing" style="display:none;margin-bottom:16px;">
-      <div class="ee-title">Istniejące wydarzenia tego dnia</div>
-      <div id="tm-event-list"></div>
-    </div>
+    <!-- Collision / events warning -->
+    <div id="tm-collision-warn" style="display:none;font-size:13px;font-weight:300;color:#b45309;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.5;"></div>
+    <!-- Step 1: choose the training -->
     <label class="form-lbl">Szkolenie</label>
-    <select class="form-sel" id="tm-module"><option value="">— wybierz szkolenie —</option></select>
-    <label class="form-lbl">Godzina (opcjonalnie)</label>
-    <input type="time" class="form-sel" id="tm-time" style="margin-bottom:14px;">
-    <label class="form-lbl">Trener / Trenerzy</label>
-    <div class="trainer-check-list" id="tm-trainers-list"></div>
-    <div style="display:flex;gap:7px;margin-bottom:14px;">
-      <input id="tm-t-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Lub dodaj nowego trenera..." maxlength="60"/>
-      <button onclick="addTrainerFromModal()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
+    <select class="form-sel" id="tm-module" onchange="onModuleSelect()"><option value="">— wybierz szkolenie —</option></select>
+    <!-- Step 2: expands after module is chosen -->
+    <div id="tm-expanded" style="display:none;">
+      <label class="form-lbl" style="margin-top:4px;">Godzina (opcjonalnie)</label>
+      <input type="time" class="form-sel" id="tm-time" style="margin-bottom:14px;">
+      <label class="form-lbl">Trener / Trenerzy</label>
+      <div class="trainer-check-list" id="tm-trainers-list"></div>
+      <div style="display:flex;gap:7px;margin-bottom:14px;">
+        <input id="tm-t-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Lub dodaj nowego trenera..." maxlength="60"/>
+        <button onclick="addTrainerFromModal()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
+      </div>
+      <label class="form-lbl">Priorytet szkolenia</label>
+      <select class="form-sel" id="tm-priority">
+        <option value="">— brak priorytetu —</option>
+        <option value="wysoki">🔴 Wysoki</option>
+        <option value="sredni">🟡 Średni</option>
+        <option value="niski">🟢 Niski</option>
+      </select>
     </div>
-    <label class="form-lbl">Priorytet szkolenia</label>
-    <select class="form-sel" id="tm-priority">
-      <option value="">— brak priorytetu —</option>
-      <option value="wysoki">🔴 Wysoki</option>
-      <option value="sredni">🟡 Średni</option>
-      <option value="niski">🟢 Niski</option>
-    </select>
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeTrainingModal()">Anuluj</button>
       <button id="tm-delete-btn" class="btn btn-gray" style="display:none;color:var(--red);border-color:rgba(220,20,60,0.3);" onclick="deleteCurrentTraining()">Usuń</button>
@@ -886,12 +908,13 @@ function switchTab(name){
 }
 
 function renderMonthTabs(){
-  const el=document.getElementById('month-tabs');
-  el.innerHTML=MONTHS_PL.map((m,i)=>{
+  const html=MONTHS_PL.map((m,i)=>{
     const last=fmtDs(2026,i,new Date(2026,i+1,0).getDate());
     const pastM=last<TODAY_STR;
     return`<button class="mq-tab${i===curMonth?' active':''}${pastM?' past':''}" onclick="goToMonth(${i})">${m.substring(0,3)}</button>`;
   }).join('');
+  document.getElementById('month-tabs').innerHTML=html;
+  const b=document.getElementById('month-tabs-b');if(b)b.innerHTML=html;
 }
 function goToMonth(m){curMonth=m;renderCalendar();renderMonthTabs();}
 function changeMonth(d){curMonth=Math.max(0,Math.min(11,curMonth+d));renderCalendar();renderMonthTabs();}
@@ -899,6 +922,7 @@ function changeMonth(d){curMonth=Math.max(0,Math.min(11,curMonth+d));renderCalen
 function renderCalendar(){
   const y=2026,m=curMonth;
   document.getElementById('month-name').innerHTML=`${MONTHS_PL[m]} <span>${y}</span>`;
+  const mb=document.getElementById('month-name-b');if(mb)mb.innerHTML=`${MONTHS_PL[m]} <span>${y}</span>`;
   const grid=document.getElementById('cal-grid');grid.innerHTML='';
   DAYS_PL.forEach((d,i)=>{const h=document.createElement('div');h.className='cal-hdr'+(i>=5?' wknd':'');h.textContent=d;grid.appendChild(h);});
   const fd=new Date(y,m,1).getDay();
@@ -985,18 +1009,21 @@ function renderCalendar(){
 
 function openTrainingModal(ds,preModId,editId=null){
   selDate=ds;selTrainingId=editId;
-  const d=new Date(ds);
-  document.getElementById('tm-date').textContent=d.toLocaleDateString('pl-PL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('tm-title').textContent=editId!==null?'Edytuj szkolenie':'Zaplanuj szkolenie';
+  const standalone=ds===null;
+  // Date row vs label
+  document.getElementById('tm-date-row').style.display=standalone?'block':'none';
+  document.getElementById('tm-date-pick').value='';
+  const dateEl=document.getElementById('tm-date');
+  if(ds){const d=new Date(ds);dateEl.textContent=d.toLocaleDateString('pl-PL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});dateEl.style.display='block';}
+  else{dateEl.textContent='';dateEl.style.display='none';}
+  // Title & buttons
+  document.getElementById('tm-title').textContent=editId!==null?'Edytuj szkolenie':(standalone?'Utwórz szkolenie':'Zaplanuj szkolenie');
   document.getElementById('tm-save-btn').textContent=editId!==null?'Zapisz zmiany':'Zaplanuj';
   document.getElementById('tm-delete-btn').style.display=editId!==null?'block':'none';
-  const evts=RAW_EVENTS[ds];
-  const existEl=document.getElementById('tm-existing');
-  if(evts&&evts.length){existEl.style.display='block';document.getElementById('tm-event-list').innerHTML=evts.map(e=>`<div class="ee-item">${e}</div>`).join('');}
-  else existEl.style.display='none';
+  // Module select
   const existingTr=editId!==null?trainings.find(x=>x.id===editId):null;
   const ms=document.getElementById('tm-module');
-  ms.innerHTML='<option value="">— wybierz moduł —</option>';
+  ms.innerHTML='<option value="">— wybierz szkolenie —</option>';
   ['Mindset','Skill','Kultura'].forEach(cat=>{
     const og=document.createElement('optgroup');og.label=cat;
     getAllModules().filter(x=>x.kategoria===cat).forEach(mod=>{
@@ -1006,10 +1033,53 @@ function openTrainingModal(ds,preModId,editId=null){
       og.appendChild(o);
     });ms.appendChild(og);
   });
-  document.getElementById('tm-priority').value=existingTr?.priority||'';
-  document.getElementById('tm-time').value=existingTr?.time||'';
-  renderTrainerChecks(ds,existingTr);
+  // Expanded section
+  const hasSelection=existingTr||preModId;
+  const exp=document.getElementById('tm-expanded');
+  exp.style.display=hasSelection?'block':'none';
+  if(hasSelection){
+    document.getElementById('tm-priority').value=existingTr?.priority||'';
+    document.getElementById('tm-time').value=existingTr?.time||'';
+    renderTrainerChecks(ds,existingTr);
+  }
+  // Collision check
+  document.getElementById('tm-collision-warn').style.display='none';
+  if(ds)checkCollisions(ds);
   document.getElementById('training-overlay').classList.add('open');
+}
+function openQuickCreate(){
+  openTrainingModal(null,null,null);
+}
+function onModuleSelect(){
+  const val=document.getElementById('tm-module').value;
+  const exp=document.getElementById('tm-expanded');
+  if(val&&exp.style.display==='none'){
+    exp.style.display='block';
+    renderTrainerChecks(selDate,selTrainingId?trainings.find(x=>x.id===selTrainingId):null);
+  }
+  if(!val)exp.style.display='none';
+}
+function onTrainingDateChange(){
+  const ds=document.getElementById('tm-date-pick').value;
+  selDate=ds||null;
+  if(ds){
+    const d=new Date(ds);
+    const lbl=document.getElementById('tm-date');
+    lbl.textContent=d.toLocaleDateString('pl-PL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    lbl.style.display='block';
+    checkCollisions(ds);
+  }else{
+    document.getElementById('tm-collision-warn').style.display='none';
+  }
+}
+function checkCollisions(ds){
+  const warn=document.getElementById('tm-collision-warn');if(!ds){warn.style.display='none';return;}
+  const evts=RAW_EVENTS[ds]||[];
+  if(!evts.length){warn.style.display='none';return;}
+  const blk=getBlockingEvts(ds);
+  const blkText=blk.length?`<br><strong>Blokujące:</strong> ${blk.map(escHtml).join(', ')}`:' (nieblokujące)';
+  warn.style.display='block';
+  warn.innerHTML=`⚠️ ${evts.length} ${evts.length===1?'wydarzenie':'wydarzeń'} tego dnia: ${evts.slice(0,3).map(escHtml).join(', ')}${evts.length>3?` +${evts.length-3} więcej`:''}${blkText}`;
 }
 function openEditTraining(id){
   const t=trainings.find(x=>x.id===id);
@@ -1027,7 +1097,8 @@ function deleteCurrentTraining(){
   });
 }
 function saveTraining(){
-  if(!selDate)return;
+  if(!selDate){selDate=document.getElementById('tm-date-pick').value||null;}
+  if(!selDate){alert('Wybierz datę szkolenia');return;}
   const mid=parseInt(document.getElementById('tm-module').value);
   if(!mid){alert('Wybierz szkolenie');return;}
   const trainerIds=Array.from(document.querySelectorAll('#tm-trainers-list input[type=checkbox]:checked')).map(cb=>parseInt(cb.value));

@@ -408,12 +408,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
             <button onclick="clearCalendar()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:400;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.borderColor='#DC143C';this.style.color='#DC143C'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
               🗑 Wyczyść
             </button>
-            <button onclick="exportData()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:400;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.borderColor='var(--text)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'" title="Eksportuj dane do pliku JSON">
-              💾 Eksportuj dane
-            </button>
-            <label style="background:none;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:400;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.borderColor='var(--text)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'" title="Importuj dane z pliku JSON">
-              📂 Importuj dane<input type="file" id="import-input" accept=".json" style="display:none;" onchange="importData(this)">
-            </label>
             <button onclick="generatePDF()" id="pdf-btn" style="background:#121635;border:none;border-radius:6px;padding:6px 16px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:500;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
               ⬇ Wygeneruj matrycę roczną
             </button>
@@ -613,9 +607,15 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       <div id="tm-participants-section" style="display:none;margin-top:4px;">
         <label class="form-lbl" id="tm-part-label">Uczestnicy</label>
         <div id="tm-part-list" style="margin-bottom:8px;min-height:20px;"></div>
-        <div style="display:flex;gap:7px;margin-bottom:14px;">
-          <input id="tm-part-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Dodaj uczestnika..." maxlength="80" onkeydown="if(event.key==='Enter')tmAddParticipant()"/>
-          <button onclick="tmAddParticipant()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
+        <div style="position:relative;margin-bottom:14px;">
+          <div style="display:flex;gap:7px;">
+            <input id="tm-part-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Szukaj pracownika..." maxlength="80"
+              oninput="tmFilterEmployees()" onfocus="tmFilterEmployees()"
+              onblur="setTimeout(tmHideEmpDrop,160)"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();tmAddParticipantFromInput();}if(event.key==='Escape')tmHideEmpDrop();"/>
+            <button onclick="tmAddParticipantFromInput()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
+          </div>
+          <div id="tm-emp-drop" style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:48px;background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.1);max-height:200px;overflow-y:auto;z-index:200;"></div>
         </div>
       </div>
     </div>
@@ -1204,7 +1204,7 @@ function openEditTraining(id){
   if(!t)return;
   openTrainingModal(t.date,null,id);
 }
-function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');document.getElementById('tm-t-input').value='';document.getElementById('tm-part-input').value='';selDate=null;selTrainingId=null;}
+function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');document.getElementById('tm-t-input').value='';document.getElementById('tm-part-input').value='';tmHideEmpDrop();selDate=null;selTrainingId=null;}
 function renderTmParticipants(){
   const el=document.getElementById('tm-part-list');if(!el)return;
   const t=trainings.find(x=>x.id===selTrainingId);
@@ -1214,13 +1214,45 @@ function renderTmParticipants(){
   if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:4px 0 8px;">Brak uczestników</div>';return;}
   el.innerHTML=list.map((name,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;"><span>${escHtml(name)}</span><button onclick="tmRemoveParticipant(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;line-height:1;padding:0 4px;">×</button></div>`).join('');
 }
-function tmAddParticipant(){
-  const inp=document.getElementById('tm-part-input');const name=inp.value.trim();if(!name)return;
+function tmFilterEmployees(){
+  const inp=document.getElementById('tm-part-input');
+  const drop=document.getElementById('tm-emp-drop');
+  if(!inp||!drop)return;
+  const q=(inp.value||'').trim().toLowerCase();
+  if(!empLoaded){drop.innerHTML='<div style="padding:10px 12px;font-size:13px;color:var(--text-muted);">Ładowanie listy pracowników…</div>';drop.style.display='block';loadEmployees().then(()=>tmFilterEmployees());return;}
+  const t=trainings.find(x=>x.id===selTrainingId);
+  const existing=new Set((t?.uczestnicy||[]).map(n=>n.toLowerCase()));
+  const matches=employees.filter(e=>{
+    const name=(e['Name']||((e['Given Name']||'')+' '+(e['Family Name']||'')).trim());
+    return name&&(q?name.toLowerCase().includes(q):true)&&!existing.has(name.toLowerCase());
+  }).slice(0,9);
+  if(!matches.length){drop.style.display='none';return;}
+  drop.innerHTML=matches.map(e=>{
+    const name=e['Name']||((e['Given Name']||'')+' '+(e['Family Name']||'')).trim();
+    const title=e['Organization 1 - Title']||'';
+    const org=e['Organization 1 - Name']||'';
+    const sub=[title,org].filter(Boolean).join(' · ');
+    return`<div class="tm-emp-item" data-name="${escHtml(name)}" onmousedown="tmAddParticipantName(this.dataset.name)" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;" onmouseover="this.style.background='var(--offwhite)'" onmouseout="this.style.background=''">
+      <div style="font-size:13px;font-weight:400;color:var(--text);">${escHtml(name)}</div>
+      ${sub?`<div style="font-size:11px;color:var(--text-muted);margin-top:1px;">${escHtml(sub)}</div>`:''}
+    </div>`;
+  }).join('');
+  drop.style.display='block';
+}
+function tmHideEmpDrop(){const d=document.getElementById('tm-emp-drop');if(d)d.style.display='none';}
+function tmAddParticipantName(name){
   const t=trainings.find(x=>x.id===selTrainingId);if(!t)return;
   if(!t.uczestnicy)t.uczestnicy=[];
-  t.uczestnicy.push(name);inp.value='';
+  if(!t.uczestnicy.includes(name))t.uczestnicy.push(name);
+  const inp=document.getElementById('tm-part-input');if(inp)inp.value='';
+  tmHideEmpDrop();
   renderTmParticipants();saveToStorage();refreshModuleIfOpen();renderDashboard();pushSessionToGitHub(selTrainingId);
 }
+function tmAddParticipantFromInput(){
+  const inp=document.getElementById('tm-part-input');const name=(inp?.value||'').trim();if(!name)return;
+  tmAddParticipantName(name);
+}
+function tmAddParticipant(){tmAddParticipantFromInput();}
 function tmRemoveParticipant(idx){
   const t=trainings.find(x=>x.id===selTrainingId);if(!t||!t.uczestnicy)return;
   openDC(`Usunąć uczestnika <strong>${escHtml(t.uczestnicy[idx])}</strong>?`,()=>{

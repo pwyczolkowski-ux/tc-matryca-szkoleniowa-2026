@@ -145,6 +145,11 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .trainer-card-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
 .trainer-card-remove{background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:'Roboto',sans-serif;}
 .trainer-card-remove:hover{border-color:var(--red);color:var(--red);}
+.trainer-check-list{max-height:150px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;background:var(--offwhite);margin-bottom:8px;}
+.trainer-check-item{display:flex;align-items:center;gap:10px;padding:7px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.trainer-check-item:last-child{border-bottom:none;}
+.trainer-check-item:hover{background:rgba(0,0,0,0.03);}
+.trainer-check-item input[type=checkbox]{accent-color:var(--red);width:14px;height:14px;flex-shrink:0;cursor:pointer;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px;}
 </style>
 </head>
@@ -262,8 +267,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <label class="form-lbl">Moduł szkoleniowy</label>
     <select class="form-sel" id="tm-module"><option value="">— wybierz moduł —</option></select>
     <label class="form-lbl">Trener / Trenerzy</label>
-    <select class="form-sel" id="tm-trainer"><option value="">— wybierz trenera —</option></select>
-    <div style="display:flex;gap:7px;margin-top:-8px;margin-bottom:14px;">
+    <div class="trainer-check-list" id="tm-trainers-list"></div>
+    <div style="display:flex;gap:7px;margin-bottom:14px;">
       <input id="tm-t-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Lub dodaj nowego trenera..." maxlength="60"/>
       <button onclick="addTrainerFromModal()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
     </div>
@@ -487,9 +492,9 @@ function renderCalendar(){
     if(hasTrain){
       const t=trainings[ds];
       const mod=MODULES.find(x=>x.id===t.moduleId);
-      const trainer=trainers.find(x=>x.id===t.trainerId);
+      const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
       html+=`<div class="day-training-badge"><span class="dtb-text">📚 ${mod?escHtml(mod.nazwa):'?'}</span><button class="dtb-remove" onclick="event.stopPropagation();removeTraining('${ds}')">×</button></div>`;
-      if(trainer)html+=`<div class="dtb-trainer">👤 ${escHtml(trainer.name)}</div>`;
+      if(tNames.length)html+=`<div class="dtb-trainer">👤 ${tNames.map(escHtml).join(', ')}</div>`;
     }
     cell.innerHTML=html;grid.appendChild(cell);
   }
@@ -517,22 +522,32 @@ function openTrainingModal(ds,preModId){
       og.appendChild(o);
     });ms.appendChild(og);
   });
-  const ts=document.getElementById('tm-trainer');
-  ts.innerHTML='<option value="">— wybierz trenera —</option>';
-  trainers.forEach(tr=>{const o=document.createElement('option');o.value=tr.id;o.textContent=tr.name;if(trainings[ds]?.trainerId===tr.id)o.selected=true;ts.appendChild(o);});
+  renderTrainerChecks(ds);
   document.getElementById('training-overlay').classList.add('open');
 }
 function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');document.getElementById('tm-t-input').value='';selDate=null;}
 function saveTraining(){
   if(!selDate)return;
   const mid=parseInt(document.getElementById('tm-module').value);
-  const tid=parseInt(document.getElementById('tm-trainer').value);
   if(!mid){alert('Wybierz moduł szkoleniowy');return;}
-  trainings[selDate]={moduleId:mid,trainerId:isNaN(tid)?null:tid};
+  const trainerIds=Array.from(document.querySelectorAll('#tm-trainers-list input[type=checkbox]:checked')).map(cb=>parseInt(cb.value));
+  trainings[selDate]={moduleId:mid,trainerIds};
   closeTrainingModal();renderCalendar();saveToStorage();
 }
 function removeTraining(ds){delete trainings[ds];renderCalendar();saveToStorage();}
 
+function getTrainerIds(t){
+  // migrate old single trainerId to array
+  if(t.trainerIds)return t.trainerIds;
+  if(t.trainerId!=null)return[t.trainerId];
+  return[];
+}
+function renderTrainerChecks(ds){
+  const el=document.getElementById('tm-trainers-list');
+  if(!trainers.length){el.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--text-muted);">Brak trenerów — dodaj poniżej</div>';return;}
+  const checked=ds&&trainings[ds]?new Set(getTrainerIds(trainings[ds])):new Set();
+  el.innerHTML=trainers.map(tr=>`<label class="trainer-check-item"><input type="checkbox" value="${tr.id}"${checked.has(tr.id)?' checked':''}><div style="width:10px;height:10px;border-radius:50%;background:${tr.color};flex-shrink:0;"></div><span style="font-size:13px;font-weight:300;color:var(--text);">${escHtml(tr.name)}</span></label>`).join('');
+}
 function addTrainer(){
   const inp=document.getElementById('t-input');const name=inp.value.trim();if(!name)return;
   trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length]});
@@ -543,9 +558,10 @@ function addTrainerFromModal(){
   const id=Date.now();
   trainers.push({id,name,color:TCOLS[trainers.length%TCOLS.length]});
   inp.value='';
-  const ts=document.getElementById('tm-trainer');
-  const o=document.createElement('option');o.value=id;o.textContent=name;o.selected=true;
-  ts.appendChild(o);
+  renderTrainerChecks(selDate);
+  // auto-check the new trainer
+  const cb=document.querySelector(`#tm-trainers-list input[value="${id}"]`);
+  if(cb)cb.checked=true;
   renderTrainers();saveToStorage();
 }
 function removeTrainer(id){trainers=trainers.filter(t=>t.id!==id);renderTrainers();saveToStorage();}
@@ -558,7 +574,7 @@ function renderTrainers(){
 function renderTrainerPanel(){
   const el=document.getElementById('trainers-panel-list');if(!el)return;
   if(!trainers.length){el.innerHTML='<div style="color:var(--text-muted);font-size:14px;font-weight:300;grid-column:1/-1;">Brak trenerów — dodaj poniżej</div>';return;}
-  const count={};Object.values(trainings).forEach(t=>{if(t.trainerId)count[t.trainerId]=(count[t.trainerId]||0)+1;});
+  const count={};Object.values(trainings).forEach(t=>{getTrainerIds(t).forEach(id=>{count[id]=(count[id]||0)+1;});});
   el.innerHTML=trainers.map(t=>`<div class="trainer-card"><div style="width:14px;height:14px;border-radius:50%;background:${t.color};flex-shrink:0;"></div><div style="flex:1;"><div class="trainer-card-name">${escHtml(t.name)}</div><div class="trainer-card-meta">${count[t.id]||0} przypisanych szkoleń</div></div><button class="trainer-card-remove" onclick="removeTrainerFull(${t.id})">Usuń</button></div>`).join('');
 }
 function addTrainerFromPanel(){
@@ -568,7 +584,7 @@ function addTrainerFromPanel(){
 }
 function removeTrainerFull(id){
   trainers=trainers.filter(t=>t.id!==id);
-  Object.values(trainings).forEach(t=>{if(t.trainerId===id)t.trainerId=null;});
+  Object.values(trainings).forEach(t=>{t.trainerIds=getTrainerIds(t).filter(x=>x!==id);delete t.trainerId;});
   renderTrainers();saveToStorage();
 }
 document.getElementById('t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainer();});
@@ -619,7 +635,8 @@ function openModDetail(id){
   document.getElementById('md-orig').textContent=`Pełna nazwa: "${mod.oryginalny}"`;
   document.getElementById('md-desc').textContent=mod.opis;
   const entry=Object.entries(trainings).find(([,v])=>v.moduleId===id);
-  document.getElementById('md-trainer').textContent=entry?(trainers.find(t=>t.id===entry[1].trainerId)?.name||'Do ustalenia'):'Do ustalenia';
+  const tNames=entry?getTrainerIds(entry[1]).map(tid=>trainers.find(t=>t.id===tid)?.name).filter(Boolean):[];
+  document.getElementById('md-trainer').textContent=tNames.length?tNames.join(', '):'Do ustalenia';
   document.getElementById('mod-overlay').classList.add('open');
 }
 function closeModModal(){document.getElementById('mod-overlay').classList.remove('open');}
@@ -728,18 +745,19 @@ function buildPDF(entries,btn){
   const chronological=[];
   entries.forEach(([ds,t])=>{
     const mod=MODULES.find(m=>m.id===t.moduleId);
-    const trainer=trainers.find(tr=>tr.id===t.trainerId);
+    const tNames=getTrainerIds(t).map(id=>trainers.find(tr=>tr.id===id)?.name).filter(Boolean);
+    const trainerLabel=tNames.join(', ')||null;
     const d=new Date(ds);
     const mo=d.getMonth();
     const dow=['Nd','Pn','Wt','Sr','Cz','Pt','So'][d.getDay()];
     const dateShort=`${dow} ${d.getDate()}`;
     if(!byMonth[mo])byMonth[mo]=[];
-    byMonth[mo].push({dateShort,mod,trainer});
+    byMonth[mo].push({dateShort,mod,trainerLabel});
     chronological.push({
       ds,
       dateLabel:`${d.getDate()} ${MONTHS[mo]} (${dow})`,
       fullDate:pl(d.toLocaleDateString('pl-PL',{weekday:'long',year:'numeric',month:'long',day:'numeric'})),
-      mod,trainer
+      mod,trainerLabel
     });
   });
 
@@ -795,9 +813,9 @@ function buildPDF(entries,btn){
         doc.text(lines[0]||'',x+4,y+6);
         if(lines[1])doc.text(lines[1],x+4,y+8.3);
         // Trainer
-        if(item.trainer){
+        if(item.trainerLabel){
           doc.setFontSize(5);doc.setTextColor(...MUTED);
-          doc.text(pl(item.trainer.name),x+4,y+cellH-1.2);
+          doc.text(pl(item.trainerLabel),x+4,y+cellH-1.2);
         }
       }
     });
@@ -847,7 +865,7 @@ function buildPDF(entries,btn){
       pl(item.fullDate),
       pl(item.mod?.nazwa||'—'),
       pl(item.mod?.kategoria||'—'),
-      pl(item.trainer?.name||'—')
+      pl(item.trainerLabel||'—')
     ]),
     styles:{
       font:'helvetica',fontSize:8,cellPadding:{top:3,bottom:3,left:3,right:3},

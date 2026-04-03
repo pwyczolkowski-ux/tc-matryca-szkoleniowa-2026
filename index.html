@@ -806,6 +806,22 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   </div>
 </div>
 
+<!-- GitHub token modal -->
+<div class="overlay" id="gh-token-overlay" style="z-index:2000;" onclick="if(event.target.id==='gh-token-overlay')closeGhTokenModal()">
+  <div class="modal" style="width:480px;">
+    <button class="modal-x" onclick="closeGhTokenModal()">×</button>
+    <div class="modal-ttl">Konfiguracja GitHub</div>
+    <p style="font-size:13px;color:#64748b;margin:0 0 12px;">Wpisz swój Personal Access Token (PAT) z uprawnieniami <strong>repo</strong> (odczyt i zapis). Token jest przechowywany tylko w przeglądarce, nigdy w repozytorium.</p>
+    <p style="font-size:12px;color:#94a3b8;margin:0 0 16px;">GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → New token → uprawnienie <em>Contents: Read and write</em></p>
+    <label class="form-lbl">GitHub Personal Access Token</label>
+    <input id="gh-token-input" type="password" class="form-inp" placeholder="github_pat_…" style="margin-bottom:16px;font-family:monospace;"/>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="closeGhTokenModal()">Anuluj</button>
+      <button class="btn btn-primary" onclick="saveGhToken()">Zapisz i zweryfikuj</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="delete-confirm-overlay" style="z-index:1000;" onclick="if(event.target.id==='delete-confirm-overlay')closeDC()">
   <div class="modal" style="width:400px;">
     <div class="modal-ttl">Potwierdź usunięcie</div>
@@ -1006,12 +1022,19 @@ function switchSbTab(name){
   const panel=document.getElementById('sbt-'+name);if(panel)panel.classList.add('active');
 }
 function init(){
-  // Wyczyść stare dane z localStorage
+  // Wyczyść stare dane z localStorage (tylko dane, nie token)
   ['tc_matryca_trainings','tc_matryca_trainers','tc_matryca_modules',
    'tc_matryca_module_extras','tc_matryca_custom_modules'].forEach(k=>localStorage.removeItem(k));
   // Załaduj zawsze z GitHub
   modules=migrateModules(null,null); // seed domyślnych modułów jako fallback
   renderMonthTabs();renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();renderDashboard();
+  // Pokaż przycisk konfiguracji tokena od razu
+  setSyncStatus('pending','Ładowanie…');
+  if(!getGhToken()){
+    setSyncStatus('err','Brak tokena — kliknij 🔑 aby skonfigurować');
+    setTimeout(openGhTokenModal,500);
+    return;
+  }
   loadFromGitHub().then(ok=>{
     if(ok){renderCalendar();renderSbModules();renderModuleCards();renderTrainers();updateSlots();renderDashboard();}
   });
@@ -2251,17 +2274,46 @@ function renderMonthlySummary(){
 
 // ── GitHub Sync ───────────────────────────────────────────────────
 const GH_REPO='pwyczolkowski-ux/tc-matryca-szkoleniowa-2026';
-const GH_TOKEN=['github_pat_11B5WSPBY0kIzLpCiI0hf6','_r4i6nzFoTqcBdiIpctkXtH2RnqBfj785rWCr59jGq0FYUE2EDC7fuPsf81j'].join('');
 const GH_BRANCH='main';
 let ghSyncing=false;
 let ghPendingPush=false;
 let ghSyncTimer=null;
 
-function getGhToken(){return GH_TOKEN;}
+function getGhToken(){return localStorage.getItem('gh_pat_token')||'';}
 function getGhBranch(){return GH_BRANCH;}
+function openGhTokenModal(){
+  const cur=getGhToken();
+  document.getElementById('gh-token-input').value=cur;
+  document.getElementById('gh-token-overlay').classList.add('open');
+  document.getElementById('gh-token-input').focus();
+}
+function closeGhTokenModal(){document.getElementById('gh-token-overlay').classList.remove('open');}
+function saveGhToken(){
+  const v=document.getElementById('gh-token-input').value.trim();
+  if(!v){alert('Wpisz token GitHub PAT.');return;}
+  localStorage.setItem('gh_pat_token',v);
+  closeGhTokenModal();
+  setSyncStatus('pending','Weryfikacja tokena…');
+  loadFromGitHub().then(ok=>{
+    if(ok){renderCalendar();renderMonthList();renderDashboard();renderModuleCards();renderSbModules();renderTrainers();}
+    else setSyncStatus('err','Token nieprawidłowy lub brak dostępu');
+  });
+}
 function setSyncStatus(state,msg){
-  let el=document.getElementById('gh-sync-status');
-  if(!el){el=document.createElement('div');el.id='gh-sync-status';Object.assign(el.style,{position:'fixed',bottom:'14px',right:'14px',padding:'6px 14px',borderRadius:'8px',fontSize:'12px',fontWeight:'500',fontFamily:'Roboto,sans-serif',zIndex:'9999',transition:'opacity .4s',pointerEvents:'none'});document.body.appendChild(el);}
+  let wrap=document.getElementById('gh-sync-wrap');
+  if(!wrap){
+    wrap=document.createElement('div');wrap.id='gh-sync-wrap';
+    Object.assign(wrap.style,{position:'fixed',bottom:'14px',right:'14px',display:'flex',alignItems:'center',gap:'8px',zIndex:'9999',fontFamily:'Roboto,sans-serif'});
+    const cfgBtn=document.createElement('button');cfgBtn.id='gh-cfg-btn';cfgBtn.title='Konfiguracja GitHub Token';
+    cfgBtn.textContent='🔑';Object.assign(cfgBtn.style,{background:'#1e293b',border:'none',borderRadius:'6px',padding:'5px 8px',fontSize:'14px',cursor:'pointer',lineHeight:'1'});
+    cfgBtn.onclick=openGhTokenModal;
+    wrap.appendChild(cfgBtn);
+    const el=document.createElement('div');el.id='gh-sync-status';
+    Object.assign(el.style,{padding:'6px 14px',borderRadius:'8px',fontSize:'12px',fontWeight:'500',transition:'opacity .4s',pointerEvents:'none'});
+    wrap.appendChild(el);
+    document.body.appendChild(wrap);
+  }
+  const el=document.getElementById('gh-sync-status');
   el.style.opacity='1';
   if(state==='ok'){el.style.background='#22c55e';el.style.color='#fff';el.textContent='✓ Zapisano';setTimeout(()=>{el.style.opacity='0';},2500);}
   else if(state==='err'){el.style.background='#DC143C';el.style.color='#fff';el.textContent='✗ '+msg;el.style.maxWidth='340px';}
@@ -2273,7 +2325,8 @@ function buildDataPayload(){
 }
 
 async function pushToGitHub(immediate=false){
-  const token=getGhToken();if(!token)return false;
+  const token=getGhToken();
+  if(!token){setSyncStatus('err','Brak tokena GitHub — kliknij 🔑 aby skonfigurować');return false;}
   if(!immediate){
     if(ghSyncTimer)clearTimeout(ghSyncTimer);
     ghSyncTimer=setTimeout(()=>pushToGitHub(true),500);
@@ -2311,7 +2364,10 @@ async function loadFromGitHub(){
   try{
     const headers=token?{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}:{};
     const r=await fetch(apiUrl,{headers,cache:'no-store'});
-    if(!r.ok)return false;
+    if(!r.ok){
+      if(r.status===401||r.status===403)setSyncStatus('err',`Token nieważny (${r.status}) — kliknij 🔑`);
+      return false;
+    }
     const meta=await r.json();
     const d=JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,'')))));
     if(!d.trainings&&!d.trainers)return false;

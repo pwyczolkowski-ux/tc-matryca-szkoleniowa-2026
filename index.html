@@ -2262,9 +2262,10 @@ function getGhBranch(){return GH_BRANCH;}
 function setSyncStatus(state,msg){
   let el=document.getElementById('gh-sync-status');
   if(!el){el=document.createElement('div');el.id='gh-sync-status';Object.assign(el.style,{position:'fixed',bottom:'14px',right:'14px',padding:'6px 14px',borderRadius:'8px',fontSize:'12px',fontWeight:'500',fontFamily:'Roboto,sans-serif',zIndex:'9999',transition:'opacity .4s',pointerEvents:'none'});document.body.appendChild(el);}
-  if(state==='ok'){el.style.background='#22c55e';el.style.color='#fff';el.textContent='✓ Zapisano';el.style.opacity='1';setTimeout(()=>{el.style.opacity='0';},2000);}
-  else if(state==='err'){el.style.background='#DC143C';el.style.color='#fff';el.textContent='✗ Błąd zapisu — sprawdź konsolę';el.style.opacity='1';}
-  else{el.style.background='#121635';el.style.color='#fff';el.textContent='⏳ Zapisywanie…';el.style.opacity='1';}
+  el.style.opacity='1';
+  if(state==='ok'){el.style.background='#22c55e';el.style.color='#fff';el.textContent='✓ Zapisano';setTimeout(()=>{el.style.opacity='0';},2500);}
+  else if(state==='err'){el.style.background='#DC143C';el.style.color='#fff';el.textContent='✗ '+msg;el.style.maxWidth='340px';}
+  else{el.style.background='#121635';el.style.color='#fff';el.textContent='⏳ '+msg;}
 }
 
 function buildDataPayload(){
@@ -2280,6 +2281,7 @@ async function pushToGitHub(immediate=false){
   }
   if(ghSyncing){ghPendingPush=true;return true;}
   ghSyncing=true;ghPendingPush=false;
+  setSyncStatus('pending','Zapisywanie…');
   try{
     const branch=getGhBranch();
     const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/data.json`;
@@ -2291,10 +2293,15 @@ async function pushToGitHub(immediate=false){
     if(sha)body.sha=sha;
     const r=await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
     ghSyncing=false;
-    if(ghPendingPush)setTimeout(()=>pushToGitHub(true),200);
-    if(r.ok||r.status===201){setSyncStatus('ok','Zsynchronizowane');return true;}
-    else{const err=await r.json();console.error('GH sync error:',err);setSyncStatus('err','Błąd sync');return false;}
-  }catch(e){console.error('GH sync error:',e);setSyncStatus('err','Błąd sync');ghSyncing=false;if(ghPendingPush)setTimeout(()=>pushToGitHub(true),200);return false;}
+    if(ghPendingPush)setTimeout(()=>pushToGitHub(true),300);
+    if(r.ok||r.status===201){setSyncStatus('ok','Zapisano');return true;}
+    const err=await r.json().catch(()=>({}));
+    setSyncStatus('err',`Błąd ${r.status}: ${err.message||'nieznany'}`);
+    return false;
+  }catch(e){
+    setSyncStatus('err',`Błąd sieci: ${e.message}`);
+    ghSyncing=false;if(ghPendingPush)setTimeout(()=>pushToGitHub(true),300);return false;
+  }
 }
 
 async function loadFromGitHub(){

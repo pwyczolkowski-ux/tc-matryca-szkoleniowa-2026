@@ -283,8 +283,9 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 </div>
 
 <script>
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
-const TODAY_STR=TODAY.toISOString().slice(0,10);
+const TODAY_STR=`${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}`;
 
 const MODULES=[
 {id:1,kategoria:"Mindset",nazwa:"Źródła wewnętrznej motywacji",opis:"Znajdź swoje DLACZEGO zanim skończy Ci się JAK. Ikigai, Simon Sinek, coachingowe koło wartości — narzędzia do mapowania tego, co napędza Cię do działania.",oryginalny:"Skąd biorę energię? Mapa wewnętrznej motywacji"},
@@ -348,8 +349,8 @@ function isGroupMeetingEvent(ev){
   if(hasTC)return true;
   // Kraków, Lublin, Wrocław never block
   if(/Krak|Lublin|Wrocław/.test(ev))return false;
-  // Only Warszawa, Katowice, online/zoom/na żywo block
-  return /Warszawa|Katowice|online|zoom|na żywo/.test(ev)||(!(/Krak|Lublin|Wrocław/.test(ev))&&!(/Warszawa|Katowice|online|zoom|na żywo/.test(ev)));
+  // Block all remaining CC/BNI+ events (not Kraków/Lublin/Wrocław)
+  return true;
 }
 function hasCCMeeting(d){const e=RAW_EVENTS[d];return e&&e.some(isGroupMeetingEvent);}
 function getBlockingEvts(d){const e=RAW_EVENTS[d];return e?e.filter(isGroupMeetingEvent):[];}
@@ -459,8 +460,8 @@ function renderCalendar(){
       const t=trainings[ds];
       const mod=MODULES.find(x=>x.id===t.moduleId);
       const trainer=trainers.find(x=>x.id===t.trainerId);
-      html+=`<div class="day-training-badge"><span class="dtb-text">📚 ${mod?mod.nazwa:'?'}</span><button class="dtb-remove" onclick="event.stopPropagation();removeTraining('${ds}')">×</button></div>`;
-      if(trainer)html+=`<div class="dtb-trainer">👤 ${trainer.name}</div>`;
+      html+=`<div class="day-training-badge"><span class="dtb-text">📚 ${mod?escHtml(mod.nazwa):'?'}</span><button class="dtb-remove" onclick="event.stopPropagation();removeTraining('${ds}')">×</button></div>`;
+      if(trainer)html+=`<div class="dtb-trainer">👤 ${escHtml(trainer.name)}</div>`;
     }
     cell.innerHTML=html;grid.appendChild(cell);
   }
@@ -513,7 +514,7 @@ function removeTrainer(id){trainers=trainers.filter(t=>t.id!==id);renderTrainers
 function renderTrainers(){
   const el=document.getElementById('trainers-list');
   if(!trainers.length){el.innerHTML='<div class="t-empty">Brak trenerów — dodaj poniżej</div>';return;}
-  el.innerHTML=trainers.map(t=>`<div class="trainer-item"><div class="t-dot" style="background:${t.color}"></div><span class="t-name">${t.name}</span><button class="t-remove" onclick="removeTrainer(${t.id})">×</button></div>`).join('');
+  el.innerHTML=trainers.map(t=>`<div class="trainer-item"><div class="t-dot" style="background:${t.color}"></div><span class="t-name">${escHtml(t.name)}</span><button class="t-remove" onclick="removeTrainer(${t.id})">×</button></div>`).join('');
 }
 document.getElementById('t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainer();});
 
@@ -593,12 +594,15 @@ function generatePDF(){
   btn.textContent='⏳ Generuję...';btn.disabled=true;
 
   // Load jsPDF dynamically
+  function resetBtn(){btn.innerHTML='⬇ Wygeneruj Matrycę PDF';btn.disabled=false;}
   if(!window.jspdf){
     const s1=document.createElement('script');
     s1.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s1.onerror=()=>{alert('Nie udało się załadować biblioteki PDF. Sprawdź połączenie z internetem.');resetBtn();};
     s1.onload=()=>{
       const s2=document.createElement('script');
       s2.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
+      s2.onerror=()=>{alert('Nie udało się załadować biblioteki PDF. Sprawdź połączenie z internetem.');resetBtn();};
       s2.onload=()=>buildPDF(entries,btn);
       document.head.appendChild(s2);
     };

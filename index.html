@@ -162,6 +162,11 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .trainer-check-item:last-child{border-bottom:none;}
 .trainer-check-item:hover{background:rgba(0,0,0,0.03);}
 .trainer-check-item input[type=checkbox]{accent-color:var(--red);width:14px;height:14px;flex-shrink:0;cursor:pointer;}
+.te-photo-wrap{width:72px;height:72px;border-radius:50%;border:2px dashed var(--border);background:var(--offwhite);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-shrink:0;transition:border-color .2s;}
+.te-photo-wrap:hover{border-color:var(--red);}
+.tp-section-title{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.tp-training-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.tp-training-item:last-child{border-bottom:none;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px;}
 </style>
 </head>
@@ -202,10 +207,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       </div>
       <div class="sb-tab-panel active" id="sbt-trainers" style="padding:16px 20px;overflow-y:auto;">
         <div id="trainers-list"></div>
-        <div class="t-add">
-          <input class="t-input" id="t-input" placeholder="Imię i nazwisko trenera" maxlength="60"/>
-          <button class="t-add-btn" onclick="addTrainer()">+</button>
-        </div>
+        <button onclick="openTrainerEditModal(null)" style="width:100%;margin-top:8px;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.18);border-radius:6px;padding:9px;color:rgba(255,255,255,0.45);font-family:'Roboto',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;" onmouseover="this.style.color='var(--white)';this.style.borderColor='rgba(255,255,255,0.4)'" onmouseout="this.style.color='rgba(255,255,255,0.45)';this.style.borderColor='rgba(255,255,255,0.18)'">+ Dodaj trenera</button>
       </div>
       <div class="sb-tab-panel" id="sbt-modules" style="flex-direction:column;overflow:hidden;">
         <div style="padding:16px 20px 10px;flex-shrink:0;">
@@ -263,13 +265,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
         <div class="mp-title">Trenerzy</div>
         <div class="mp-sub">Lista trenerów przypisanych do szkoleń</div>
         <div id="trainers-panel-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:28px;"></div>
-        <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;max-width:420px;">
-          <div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:12px;">Dodaj trenera</div>
-          <div style="display:flex;gap:8px;">
-            <input id="panel-t-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Imię i nazwisko trenera" maxlength="60"/>
-            <button onclick="addTrainerFromPanel()" style="background:var(--red);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">+</button>
-          </div>
-        </div>
+        <button onclick="openTrainerEditModal(null)" style="background:var(--white);border:1px dashed var(--border);border-radius:10px;padding:16px 20px;max-width:420px;width:100%;font-family:'Roboto',sans-serif;font-size:14px;font-weight:300;color:var(--text-muted);cursor:pointer;transition:all .2s;text-align:center;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">+ Dodaj trenera</button>
       </div>
     </div>
   </div>
@@ -332,6 +328,56 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   </div>
 </div>
 
+<div class="overlay" id="trainer-edit-overlay" onclick="closeIfBg(event,'trainer-edit-overlay')">
+  <div class="modal" style="width:460px;">
+    <button class="modal-x" onclick="closeTrainerEditModal()">×</button>
+    <div class="modal-ttl" id="te-title">Dodaj trenera</div>
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;">
+      <div class="te-photo-wrap" id="te-photo-preview" onclick="document.getElementById('te-photo-input').click()">
+        <span style="font-size:26px;">📷</span>
+      </div>
+      <div>
+        <input type="file" id="te-photo-input" accept="image/*" style="display:none;" onchange="handlePhotoUpload(this)">
+        <button onclick="document.getElementById('te-photo-input').click()" class="btn btn-gray" style="padding:7px 14px;font-size:12px;">Dodaj zdjęcie</button>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">JPG lub PNG · zalecane do 500 KB</div>
+      </div>
+    </div>
+    <label class="form-lbl">Imię i nazwisko</label>
+    <input id="te-name" class="form-sel" placeholder="np. Jan Kowalski" maxlength="60">
+    <label class="form-lbl">O trenerze</label>
+    <textarea id="te-bio" placeholder="Specjalizacje, doświadczenie, styl pracy..." style="width:100%;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;resize:vertical;min-height:80px;box-sizing:border-box;margin-bottom:14px;transition:border-color .2s;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-gray" onclick="closeTrainerEditModal()">Anuluj</button>
+      <button class="btn btn-red" onclick="saveTrainerEdit()">Zapisz</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="trainer-profile-overlay" onclick="closeIfBg(event,'trainer-profile-overlay')">
+  <div class="modal" style="width:520px;">
+    <button class="modal-x" onclick="closeTrainerProfile()">×</button>
+    <div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:24px;">
+      <div id="tp-avatar" style="flex-shrink:0;"></div>
+      <div style="flex:1;min-width:0;">
+        <div id="tp-name" style="font-size:22px;font-weight:300;color:var(--text);margin-bottom:6px;"></div>
+        <div id="tp-bio" style="font-size:13px;color:var(--text-muted);line-height:1.7;"></div>
+      </div>
+      <button onclick="openTrainerEditModal(trainerProfileId)" class="btn btn-gray" style="flex-shrink:0;padding:7px 14px;font-size:12px;">Edytuj</button>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div class="tp-section-title">Zaplanowane szkolenia</div>
+      <div id="tp-future-list"></div>
+    </div>
+    <div>
+      <div class="tp-section-title">Przeprowadzone szkolenia</div>
+      <div id="tp-past-list"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn btn-gray" onclick="closeTrainerProfile()">Zamknij</button>
+    </div>
+  </div>
+</div>
+
 <script>
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
@@ -372,6 +418,9 @@ let trainers=[];
 let trainings={};
 let sbFilter="all";
 let selDate=null;
+let editingTrainerId=null;
+let pendingPhotoData=null;
+let trainerProfileId=null;
 
 const LS_TRAININGS='tc_matryca_trainings';
 const LS_TRAINERS='tc_matryca_trainers';
@@ -568,6 +617,73 @@ function saveTraining(){
 }
 function removeTraining(ds){delete trainings[ds];renderCalendar();saveToStorage();}
 
+function trainerAvatar(t,size){
+  if(t.photo)return`<img src="${t.photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
+  const fs=Math.round(size*.38);
+  return`<div style="width:${size}px;height:${size}px;border-radius:50%;background:${t.color};display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:400;color:#fff;flex-shrink:0;">${escHtml(t.name.charAt(0).toUpperCase())}</div>`;
+}
+function openTrainerEditModal(id=null){
+  editingTrainerId=id;pendingPhotoData=null;
+  const tr=id?trainers.find(t=>t.id===id):null;
+  document.getElementById('te-title').textContent=id?'Edytuj trenera':'Dodaj trenera';
+  document.getElementById('te-name').value=tr?.name||'';
+  document.getElementById('te-bio').value=tr?.bio||'';
+  document.getElementById('te-photo-input').value='';
+  const prev=document.getElementById('te-photo-preview');
+  prev.innerHTML=tr?.photo?`<img src="${tr.photo}" style="width:100%;height:100%;object-fit:cover;">`:'<span style="font-size:26px;">📷</span>';
+  document.getElementById('trainer-edit-overlay').classList.add('open');
+}
+function closeTrainerEditModal(){document.getElementById('trainer-edit-overlay').classList.remove('open');editingTrainerId=null;pendingPhotoData=null;}
+function handlePhotoUpload(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>3*1024*1024){alert('Zdjęcie jest za duże. Maks. 3 MB.');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    pendingPhotoData=e.target.result;
+    document.getElementById('te-photo-preview').innerHTML=`<img src="${pendingPhotoData}" style="width:100%;height:100%;object-fit:cover;">`;
+  };
+  reader.readAsDataURL(file);
+}
+function saveTrainerEdit(){
+  const name=document.getElementById('te-name').value.trim();
+  if(!name){alert('Podaj imię i nazwisko trenera');return;}
+  const bio=document.getElementById('te-bio').value.trim();
+  if(editingTrainerId){
+    const tr=trainers.find(t=>t.id===editingTrainerId);
+    if(tr){tr.name=name;tr.bio=bio;if(pendingPhotoData!==null)tr.photo=pendingPhotoData;}
+  }else{
+    trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length],bio,photo:pendingPhotoData||null});
+  }
+  const wasEditing=editingTrainerId;
+  closeTrainerEditModal();
+  if(wasEditing&&trainerProfileId===wasEditing)openTrainerProfile(wasEditing);
+  renderTrainers();saveToStorage();
+}
+function openTrainerProfile(id){
+  trainerProfileId=id;
+  const tr=trainers.find(t=>t.id===id);if(!tr)return;
+  document.getElementById('tp-avatar').innerHTML=trainerAvatar(tr,72);
+  document.getElementById('tp-name').textContent=tr.name;
+  const bioEl=document.getElementById('tp-bio');
+  bioEl.textContent=tr.bio||'';bioEl.style.display=tr.bio?'block':'none';
+  const past=[],future=[];
+  Object.entries(trainings).forEach(([ds,t])=>{
+    if(!getTrainerIds(t).includes(id))return;
+    const mod=MODULES.find(m=>m.id===t.moduleId);
+    const d=new Date(ds);
+    const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const item={ds,dateLabel,modName:mod?.nazwa||'—',cat:mod?.kategoria||''};
+    if(ds<TODAY_STR)past.push(item);else future.push(item);
+  });
+  past.sort((a,b)=>b.ds.localeCompare(a.ds));
+  future.sort((a,b)=>a.ds.localeCompare(b.ds));
+  const catC={Mindset:'#8b5cf6',Skill:'#f59e0b',Kultura:'#22c55e'};
+  const fmtItem=i=>`<div class="tp-training-item"><div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div><div style="font-size:12px;font-weight:300;color:var(--text-muted);margin-top:2px;">${escHtml(i.modName)}</div></div>${i.cat?`<span style="font-size:10px;font-weight:500;color:${catC[i.cat]||'#999'};text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;">${i.cat}</span>`:''}</div>`;
+  document.getElementById('tp-future-list').innerHTML=future.length?future.map(fmtItem).join(''):'<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:6px 0;">Brak zaplanowanych szkoleń</div>';
+  document.getElementById('tp-past-list').innerHTML=past.length?past.map(fmtItem).join(''):'<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:6px 0;">Brak przeprowadzonych szkoleń</div>';
+  document.getElementById('trainer-profile-overlay').classList.add('open');
+}
+function closeTrainerProfile(){document.getElementById('trainer-profile-overlay').classList.remove('open');trainerProfileId=null;}
 function getTrainerIds(t){
   // migrate old single trainerId to array
   if(t.trainerIds)return t.trainerIds;
@@ -578,12 +694,7 @@ function renderTrainerChecks(ds){
   const el=document.getElementById('tm-trainers-list');
   if(!trainers.length){el.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--text-muted);">Brak trenerów — dodaj poniżej</div>';return;}
   const checked=ds&&trainings[ds]?new Set(getTrainerIds(trainings[ds])):new Set();
-  el.innerHTML=trainers.map(tr=>`<label class="trainer-check-item"><input type="checkbox" value="${tr.id}"${checked.has(tr.id)?' checked':''}><div style="width:10px;height:10px;border-radius:50%;background:${tr.color};flex-shrink:0;"></div><span style="font-size:13px;font-weight:300;color:var(--text);">${escHtml(tr.name)}</span></label>`).join('');
-}
-function addTrainer(){
-  const inp=document.getElementById('t-input');const name=inp.value.trim();if(!name)return;
-  trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length]});
-  inp.value='';renderTrainers();saveToStorage();
+  el.innerHTML=trainers.map(tr=>`<label class="trainer-check-item"><input type="checkbox" value="${tr.id}"${checked.has(tr.id)?' checked':''}>${trainerAvatar(tr,24)}<span style="font-size:13px;font-weight:300;color:var(--text);">${escHtml(tr.name)}</span></label>`).join('');
 }
 function addTrainerFromModal(){
   const inp=document.getElementById('tm-t-input');const name=inp.value.trim();if(!name)return;
@@ -599,29 +710,23 @@ function addTrainerFromModal(){
 function removeTrainer(id){trainers=trainers.filter(t=>t.id!==id);renderTrainers();saveToStorage();}
 function renderTrainers(){
   const el=document.getElementById('trainers-list');
-  if(!trainers.length){el.innerHTML='<div class="t-empty">Brak trenerów — dodaj poniżej</div>';return;}
-  el.innerHTML=trainers.map(t=>`<div class="trainer-item"><div class="t-dot" style="background:${t.color}"></div><span class="t-name">${escHtml(t.name)}</span><button class="t-remove" onclick="removeTrainer(${t.id})">×</button></div>`).join('');
+  if(!trainers.length){el.innerHTML='<div class="t-empty">Brak trenerów</div>';renderTrainerPanel();return;}
+  el.innerHTML=trainers.map(t=>`<div class="trainer-item" style="cursor:pointer;" onclick="openTrainerProfile(${t.id})">${trainerAvatar(t,28)}<span class="t-name">${escHtml(t.name)}</span><button class="t-remove" onclick="event.stopPropagation();removeTrainer(${t.id})">×</button></div>`).join('');
   renderTrainerPanel();
 }
 function renderTrainerPanel(){
   const el=document.getElementById('trainers-panel-list');if(!el)return;
-  if(!trainers.length){el.innerHTML='<div style="color:var(--text-muted);font-size:14px;font-weight:300;grid-column:1/-1;">Brak trenerów — dodaj poniżej</div>';return;}
+  if(!trainers.length){el.innerHTML='<div style="color:var(--text-muted);font-size:14px;font-weight:300;grid-column:1/-1;">Brak trenerów</div>';return;}
   const count={};Object.values(trainings).forEach(t=>{getTrainerIds(t).forEach(id=>{count[id]=(count[id]||0)+1;});});
-  el.innerHTML=trainers.map(t=>`<div class="trainer-card"><div style="width:14px;height:14px;border-radius:50%;background:${t.color};flex-shrink:0;"></div><div style="flex:1;"><div class="trainer-card-name">${escHtml(t.name)}</div><div class="trainer-card-meta">${count[t.id]||0} przypisanych szkoleń</div></div><button class="trainer-card-remove" onclick="removeTrainerFull(${t.id})">Usuń</button></div>`).join('');
-}
-function addTrainerFromPanel(){
-  const inp=document.getElementById('panel-t-input');const name=inp.value.trim();if(!name)return;
-  trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length]});
-  inp.value='';renderTrainers();saveToStorage();
+  el.innerHTML=trainers.map(t=>`<div class="trainer-card" style="cursor:pointer;" onclick="openTrainerProfile(${t.id})">${trainerAvatar(t,46)}<div style="flex:1;min-width:0;"><div class="trainer-card-name">${escHtml(t.name)}</div><div class="trainer-card-meta">${count[t.id]||0} szkoleń</div>${t.bio?`<div style="font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${escHtml(t.bio)}</div>`:''}</div><button class="trainer-card-remove" onclick="event.stopPropagation();removeTrainerFull(${t.id})">Usuń</button></div>`).join('');
 }
 function removeTrainerFull(id){
   trainers=trainers.filter(t=>t.id!==id);
   Object.values(trainings).forEach(t=>{t.trainerIds=getTrainerIds(t).filter(x=>x!==id);delete t.trainerId;});
   renderTrainers();saveToStorage();
 }
-document.getElementById('t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainer();});
 document.getElementById('tm-t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainerFromModal();});
-document.getElementById('panel-t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainerFromPanel();});
+document.getElementById('te-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveTrainerEdit();});
 
 function filterSb(btn){sbFilter=btn.dataset.cat;document.querySelectorAll('.sf-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSbModules();}
 function renderSbModules(){

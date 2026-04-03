@@ -178,13 +178,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .form-lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);display:block;margin-bottom:6px;}
 .form-sel{width:100%;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:14px;font-weight:300;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:14px;cursor:pointer;}
 .form-sel:focus{border-color:var(--red);}
-.dur-picker{display:flex;align-items:center;gap:12px;background:var(--navy);border-radius:12px;padding:16px 20px;margin-bottom:14px;width:fit-content;}
-.dur-unit{display:flex;flex-direction:column;align-items:center;gap:6px;}
-.dur-btn{background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:18px;line-height:1;padding:2px 8px;border-radius:4px;transition:all .15s;user-select:none;}
-.dur-btn:hover{color:var(--white);background:rgba(255,255,255,0.08);}
-.dur-btn:active{transform:scale(.9);}
-.dur-display{font-family:'Roboto',sans-serif;font-size:42px;font-weight:100;color:var(--white);line-height:1;min-width:60px;text-align:center;letter-spacing:2px;}
-.dur-label{font-size:10px;font-weight:400;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.35);}
 .modal-actions{display:flex;gap:10px;margin-top:20px;}
 #tm-expanded{animation:tmExpand .18s ease;}
 @keyframes tmExpand{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
@@ -541,14 +534,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           <label class="form-lbl">Kategoria</label>
           <select id="mds-edit-kat" class="form-sel"><option value="Mindset">Mindset</option><option value="Skill">Skill</option><option value="Kultura">Kultura</option></select>
           <label class="form-lbl">Czas trwania</label>
-          <div class="dur-picker">
-            <div class="dur-unit">
-              <button class="dur-btn" onclick="changeDur(15)">▲</button>
-              <div class="dur-display" id="dur-m">0</div>
-              <button class="dur-btn" onclick="changeDur(-15)">▼</button>
-              <div class="dur-label">min</div>
-            </div>
-          </div>
+          <input type="time" class="form-sel" id="mds-edit-czas" style="margin-bottom:14px;">
           <label class="form-lbl">Opis</label>
           <textarea id="mds-edit-opis" style="width:100%;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;resize:vertical;min-height:80px;box-sizing:border-box;margin-bottom:14px;transition:border-color .2s;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"></textarea>
           <label class="form-lbl">Korzyści <span style="font-weight:300;text-transform:none;letter-spacing:0;">(każda linijka = osobna korzyść)</span></label>
@@ -801,17 +787,6 @@ let editingTrainerId=null;
 let pendingPhotoData=null;
 let trainerProfileId=null;
 let selectedModuleId=null;
-let durM=0;
-function changeDur(delta){
-  durM=Math.max(0,durM+delta);
-  document.getElementById('dur-m').textContent=durM;
-}
-function getDurValue(){return durM>0?`${durM} min`:'';}
-function setDurValue(val){
-  durM=0;
-  if(val){const m=val.match(/(\d+)/);if(m)durM=parseInt(m[1]);}
-  document.getElementById('dur-m').textContent=durM;
-}
 let modules=[];
 let pendingProfilePhotoData=null;
 const LS_MODULES='tc_matryca_modules';
@@ -1362,7 +1337,7 @@ function openModuleDetail(id){
     document.getElementById('mds-edit').style.display='block';
     document.getElementById('mds-edit-nazwa').value='';
     document.getElementById('mds-edit-kat').value='Skill';
-    setDurValue('');
+    document.getElementById('mds-edit-czas').value='';
     document.getElementById('mds-edit-opis').value='';
     document.getElementById('mds-edit-korzysci').value='';
     document.getElementById('mds-edit-agenda').value='';
@@ -1441,7 +1416,7 @@ function toggleModuleEditMode(editMode){
     const mod=getModuleData(selectedModuleId);if(!mod)return;
     document.getElementById('mds-edit-nazwa').value=mod.nazwa||'';
     document.getElementById('mds-edit-kat').value=mod.kategoria||'Skill';
-    setDurValue(mod.czasTrwania||'');
+    document.getElementById('mds-edit-czas').value=mod.czasTrwania||'';
     document.getElementById('mds-edit-opis').value=mod.opis||'';
     document.getElementById('mds-edit-korzysci').value=mod.korzysci||'';
     document.getElementById('mds-edit-agenda').value=mod.agenda||'';
@@ -1451,7 +1426,7 @@ function saveModuleEdit(){
   const nazwa=document.getElementById('mds-edit-nazwa').value.trim();
   if(!nazwa){alert('Podaj nazwę szkolenia');return;}
   const kat=document.getElementById('mds-edit-kat').value;
-  const czasTrwania=getDurValue();
+  const czasTrwania=document.getElementById('mds-edit-czas').value||'';
   const opis=document.getElementById('mds-edit-opis').value.trim();
   const korzysci=document.getElementById('mds-edit-korzysci').value;
   const agenda=document.getElementById('mds-edit-agenda').value;

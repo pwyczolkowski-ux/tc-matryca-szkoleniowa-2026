@@ -1854,14 +1854,17 @@ function dashCardHtml(ds,t,featured){
   const pL={wysoki:'🔴 Wysoki',sredni:'🟡 Średni',niski:'🟢 Niski'};
   const catC={Mindset:'#8b5cf6',Skill:'var(--amber)',Kultura:'var(--green)'};
   const monthShort=MONTHS_PL[d.getMonth()].substring(0,3);
+  const partCount=(t.uczestnicy||[]).length;
+  const timeStr=t.time?`<span style="margin-left:4px;color:var(--text-muted);">🕐 ${t.time}</span>`:'';
+  const partStr=partCount?` · 👥 ${partCount}`:'';
   return`<div class="dash-card${featured?' featured':''}" style="cursor:pointer;" onclick="openTrainingModal('${ds}',null,${t.id})">
     <div style="text-align:center;min-width:52px;">
       <div class="dash-card-date">${d.getDate()}</div>
       <div class="dash-card-date-sub">${dow} · ${monthShort}</div>
     </div>
     <div class="dash-card-body">
-      <div class="dash-card-mod">${mod?escHtml(mod.nazwa):'—'}</div>
-      <div class="dash-card-meta">${mod?`<span style="font-weight:500;color:${catC[mod.kategoria]||'#999'};">${mod.kategoria}</span> · `:''} ${tNames.length?'👤 '+tNames.map(escHtml).join(', '):'Brak trenera'}${t.priority?' · '+pL[t.priority]:''}</div>
+      <div class="dash-card-mod">${mod?escHtml(mod.nazwa):'—'}${timeStr}</div>
+      <div class="dash-card-meta">${mod?`<span style="font-weight:500;color:${catC[mod.kategoria]||'#999'};">${mod.kategoria}</span> · `:''} ${tNames.length?'👤 '+tNames.map(escHtml).join(', '):'Brak trenera'}${t.priority?' · '+pL[t.priority]:''}${partStr}</div>
     </div>
   </div>`;
 }
@@ -2204,7 +2207,10 @@ function renderMonthlySummary(){
     const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'short',day:'numeric',month:'long'});
     const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
     const priorityBadge=t.priority?`<span class="priority-badge ${t.priority}" style="margin-left:6px;">● ${pL[t.priority]}</span>`:'';
-    return`<div class="ms-item" style="cursor:pointer;" onclick="openTrainingModal('${ds}',null,${t.id})"><div class="ms-date">${escHtml(dateLabel)}</div><div class="ms-mod">${mod?escHtml(mod.nazwa):'—'}${priorityBadge}</div><div class="ms-trainer">${tNames.length?'👤 '+tNames.map(escHtml).join(', '):''}</div></div>`;
+    const partCount=(t.uczestnicy||[]).length;
+    const timeStr=t.time?`<span style="color:var(--text-muted);margin-left:8px;font-size:12px;">🕐 ${escHtml(t.time)}</span>`:'';
+    const partStr=partCount?`<span style="color:var(--text-muted);font-size:12px;margin-left:8px;">👥 ${partCount}</span>`:'';
+    return`<div class="ms-item" style="cursor:pointer;" onclick="openTrainingModal('${ds}',null,${t.id})"><div class="ms-date">${escHtml(dateLabel)}</div><div class="ms-mod">${mod?escHtml(mod.nazwa):'—'}${priorityBadge}${timeStr}${partStr}</div><div class="ms-trainer">${tNames.length?'👤 '+tNames.map(escHtml).join(', '):''}</div></div>`;
   }).join('');
   el.innerHTML=`<div class="monthly-summary-title">Szkolenia zaplanowane w ${escHtml(MONTHS_PL[curMonth])}</div>${rows}`;
 }

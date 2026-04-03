@@ -1304,7 +1304,6 @@ function openTrainerProfile(id){
   document.getElementById('trainer-profile-overlay').classList.add('open');
 }
 function closeTrainerProfile(){document.getElementById('trainer-profile-overlay').classList.remove('open');trainerProfileId=null;}
-let pendingProfilePhotoData=null;
 function handleTrainerProfilePhotoUpload(input){
   const file=input.files[0];if(!file)return;
   if(file.size>5*1024*1024){alert('Maks. 5 MB.');return;}

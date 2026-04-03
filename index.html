@@ -1382,7 +1382,8 @@ function saveTraining(){
     savedId=Date.now();
     trainings.push({id:savedId,date:selDate,moduleId:mid,trainerIds,priority,time,uczestnicy:[]});
   }
-  closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();
+  closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();
+  pushToGitHub(true);
   if(savedId)pushSessionToGitHub(savedId);
 }
 function removeTraining(id){trainings=trainings.filter(t=>t.id!==id);renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();}
@@ -1779,8 +1780,8 @@ function renderModuleDetailView(id){
 function toggleZrealizowane(id){
   const t=trainings.find(x=>x.id===id);if(!t)return;
   t.zrealizowane=!t.zrealizowane;
-  saveToStorage();renderModuleDetailView(selectedModuleId);renderModuleCards();renderDashboard();
-  pushSessionToGitHub(id);
+  renderModuleDetailView(selectedModuleId);renderModuleCards();renderDashboard();
+  pushToGitHub(true);pushSessionToGitHub(id);
 }
 function deleteCustomModule(){
   if(selectedModuleId===null)return;
@@ -2248,6 +2249,7 @@ const GH_REPO='pwyczolkowski-ux/tc-matryca-szkoleniowa-2026';
 const GH_TOKEN=['github_pat_11B5WSPBY0kIzLpCiI0hf6','_r4i6nzFoTqcBdiIpctkXtH2RnqBfj785rWCr59jGq0FYUE2EDC7fuPsf81j'].join('');
 const GH_BRANCH='main';
 let ghSyncing=false;
+let ghPendingPush=false;
 let ghSyncTimer=null;
 
 function getGhToken(){return GH_TOKEN;}
@@ -2262,29 +2264,26 @@ async function pushToGitHub(immediate=false){
   const token=getGhToken();if(!token)return false;
   if(!immediate){
     if(ghSyncTimer)clearTimeout(ghSyncTimer);
-    ghSyncTimer=setTimeout(()=>pushToGitHub(true),2000);
+    ghSyncTimer=setTimeout(()=>pushToGitHub(true),500);
     return true;
   }
-  if(ghSyncing)return false;
-  ghSyncing=true;
-  setSyncStatus('pending','Synchronizuję…');
+  if(ghSyncing){ghPendingPush=true;return true;}
+  ghSyncing=true;ghPendingPush=false;
   try{
     const branch=getGhBranch();
     const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/data.json`;
     const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
-    // Get current SHA if file exists
     let sha=null;
-    try{
-      const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});
-      if(r.ok){const j=await r.json();sha=j.sha;}
-    }catch(e){}
+    try{const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(buildDataPayload(),null,2))));
     const body={message:'sync: aktualizacja danych matrycy szkoleniowej',content,branch};
     if(sha)body.sha=sha;
     const r=await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
-    if(r.ok||r.status===201){setSyncStatus('ok','Zsynchronizowane');ghSyncing=false;return true;}
-    else{const err=await r.json();console.error('GH sync error:',err);setSyncStatus('err','Błąd sync');ghSyncing=false;return false;}
-  }catch(e){console.error('GH sync error:',e);setSyncStatus('err','Błąd sync');ghSyncing=false;return false;}
+    ghSyncing=false;
+    if(ghPendingPush)setTimeout(()=>pushToGitHub(true),200);
+    if(r.ok||r.status===201){setSyncStatus('ok','Zsynchronizowane');return true;}
+    else{const err=await r.json();console.error('GH sync error:',err);setSyncStatus('err','Błąd sync');return false;}
+  }catch(e){console.error('GH sync error:',e);setSyncStatus('err','Błąd sync');ghSyncing=false;if(ghPendingPush)setTimeout(()=>pushToGitHub(true),200);return false;}
 }
 
 async function loadFromGitHub(){

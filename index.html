@@ -2259,7 +2259,13 @@ let ghSyncTimer=null;
 
 function getGhToken(){return GH_TOKEN;}
 function getGhBranch(){return GH_BRANCH;}
-function setSyncStatus(){}
+function setSyncStatus(state,msg){
+  let el=document.getElementById('gh-sync-status');
+  if(!el){el=document.createElement('div');el.id='gh-sync-status';Object.assign(el.style,{position:'fixed',bottom:'14px',right:'14px',padding:'6px 14px',borderRadius:'8px',fontSize:'12px',fontWeight:'500',fontFamily:'Roboto,sans-serif',zIndex:'9999',transition:'opacity .4s',pointerEvents:'none'});document.body.appendChild(el);}
+  if(state==='ok'){el.style.background='#22c55e';el.style.color='#fff';el.textContent='✓ Zapisano';el.style.opacity='1';setTimeout(()=>{el.style.opacity='0';},2000);}
+  else if(state==='err'){el.style.background='#DC143C';el.style.color='#fff';el.textContent='✗ Błąd zapisu — sprawdź konsolę';el.style.opacity='1';}
+  else{el.style.background='#121635';el.style.color='#fff';el.textContent='⏳ Zapisywanie…';el.style.opacity='1';}
+}
 
 function buildDataPayload(){
   return{trainings,trainers,modules,savedAt:new Date().toISOString()};
@@ -2293,11 +2299,14 @@ async function pushToGitHub(immediate=false){
 
 async function loadFromGitHub(){
   const branch=getGhBranch();
-  const url=`https://raw.githubusercontent.com/${GH_REPO}/${branch}/data.json?t=${Date.now()}`;
+  const token=getGhToken();
+  const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/data.json?ref=${branch}`;
   try{
-    const r=await fetch(url);
+    const headers=token?{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}:{};
+    const r=await fetch(apiUrl,{headers,cache:'no-store'});
     if(!r.ok)return false;
-    const d=await r.json();
+    const meta=await r.json();
+    const d=JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,'')))));
     if(!d.trainings&&!d.trainers)return false;
     if(d.trainings){
       const parsed=d.trainings;

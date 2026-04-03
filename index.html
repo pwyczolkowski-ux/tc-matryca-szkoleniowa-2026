@@ -226,8 +226,17 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .emp-table td.emp-name{font-weight:400;}
 .emp-table td.emp-email a{color:var(--red);text-decoration:none;}
 .emp-table td.emp-email a:hover{text-decoration:underline;}
+.emp-table tbody tr{cursor:pointer;}
 .emp-empty{padding:32px;text-align:center;color:var(--text-muted);font-size:13px;font-style:italic;}
 .emp-loading{padding:32px;text-align:center;color:var(--text-muted);font-size:13px;}
+.ep-field{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
+.ep-field:last-child{border-bottom:none;}
+.ep-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);min-width:100px;padding-top:1px;}
+.ep-val{font-size:13px;font-weight:300;color:var(--text);flex:1;}
+.ep-training{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.ep-training:last-child{border-bottom:none;}
+.ep-t-date{font-size:12px;font-weight:500;color:var(--text);min-width:110px;}
+.ep-t-mod{font-size:12px;font-weight:300;color:var(--text-muted);}
 </style>
 </head>
 <body>
@@ -599,6 +608,28 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   </div>
 </div>
 
+
+<div class="overlay" id="emp-profile-overlay" onclick="closeIfBg(event,'emp-profile-overlay')">
+  <div class="modal" style="width:540px;">
+    <button class="modal-x" onclick="document.getElementById('emp-profile-overlay').classList.remove('open')">×</button>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px;">
+      <div id="ep-avatar" style="width:56px;height:56px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:400;color:#fff;flex-shrink:0;"></div>
+      <div>
+        <div id="ep-name" style="font-size:20px;font-weight:400;color:var(--text);"></div>
+        <div id="ep-title" style="font-size:13px;color:var(--text-muted);font-weight:300;margin-top:2px;"></div>
+      </div>
+    </div>
+    <div id="ep-fields" style="margin-bottom:22px;"></div>
+    <div style="margin-bottom:18px;">
+      <div class="tp-section-title">Zaplanowane szkolenia</div>
+      <div id="ep-future"></div>
+    </div>
+    <div>
+      <div class="tp-section-title">Przeprowadzone szkolenia</div>
+      <div id="ep-past"></div>
+    </div>
+  </div>
+</div>
 
 <div class="overlay" id="delete-confirm-overlay" onclick="if(event.target.id==='delete-confirm-overlay')closeDC()">
   <div class="modal" style="width:400px;">
@@ -1846,16 +1877,52 @@ function renderEmployees(){
   if(!list.length){tbody.innerHTML='';empty.style.display='block';}
   else{
     empty.style.display='none';
-    tbody.innerHTML=list.map(e=>`<tr>
+    tbody.innerHTML=list.map((e,i)=>`<tr onclick="openEmployeeProfile(${employees.indexOf(e)})">
       <td class="emp-name">${escHtml(e['Family Name']||'')}</td>
       <td>${escHtml(e['Given Name']||'')}</td>
       <td>${escHtml(e['Organization 1 - Name']||'')}</td>
       <td>${escHtml(e['Organization 1 - Title']||'')}</td>
-      <td class="emp-email">${e['E-mail 1 - Value']?`<a href="mailto:${escHtml(e['E-mail 1 - Value'])}">${escHtml(e['E-mail 1 - Value'])}</a>`:''}</td>
+      <td class="emp-email">${e['E-mail 1 - Value']?`<a href="mailto:${escHtml(e['E-mail 1 - Value'])}" onclick="event.stopPropagation()">${escHtml(e['E-mail 1 - Value'])}</a>`:''}</td>
       <td>${escHtml(e['Phone 1 - Value']||'')}</td>
     </tr>`).join('');
   }
   document.getElementById('emp-count').textContent=`${list.length} z ${employees.length} pracowników`;
+}
+
+function openEmployeeProfile(idx){
+  const e=employees[idx];if(!e)return;
+  const name=e['Name']||((e['Given Name']||'')+' '+(e['Family Name']||'')).trim();
+  const initials=(e['Given Name']?.[0]||'')+(e['Family Name']?.[0]||'');
+  // Avatar
+  const colors=TCOLS;
+  const col=colors[idx%colors.length];
+  document.getElementById('ep-avatar').style.background=col;
+  document.getElementById('ep-avatar').textContent=initials.toUpperCase();
+  document.getElementById('ep-name').textContent=name;
+  document.getElementById('ep-title').textContent=[e['Organization 1 - Title'],e['Organization 1 - Name']].filter(Boolean).join(' · ');
+  // Fields
+  const fields=[
+    ['E-mail',e['E-mail 1 - Value']?`<a href="mailto:${escHtml(e['E-mail 1 - Value'])}" style="color:var(--red);text-decoration:none;">${escHtml(e['E-mail 1 - Value'])}</a>`:'—'],
+    ['Telefon',escHtml(e['Phone 1 - Value']||'—')],
+  ];
+  document.getElementById('ep-fields').innerHTML=fields.map(([l,v])=>`<div class="ep-field"><div class="ep-label">${l}</div><div class="ep-val">${v}</div></div>`).join('');
+  // Find trainings where this employee appears in uczestnicy
+  const past=[],future=[];
+  Object.entries(trainings).forEach(([ds,t])=>{
+    const ucz=t.uczestnicy||[];
+    if(!ucz.some(u=>u.toLowerCase()===name.toLowerCase()))return;
+    const mod=getModuleData(t.moduleId);
+    const d=new Date(ds);
+    const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const item=`<div class="ep-training"><div class="ep-t-date">${escHtml(dateLabel)}</div><div class="ep-t-mod">${mod?escHtml(mod.nazwa):'—'}</div></div>`;
+    if(ds<TODAY_STR)past.push({ds,item});else future.push({ds,item});
+  });
+  past.sort((a,b)=>b.ds.localeCompare(a.ds));
+  future.sort((a,b)=>a.ds.localeCompare(b.ds));
+  const empty='<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak</div>';
+  document.getElementById('ep-future').innerHTML=future.length?future.map(x=>x.item).join(''):empty;
+  document.getElementById('ep-past').innerHTML=past.length?past.map(x=>x.item).join(''):empty;
+  document.getElementById('emp-profile-overlay').classList.add('open');
 }
 
 function closeIfBg(e,id){if(e.target.id===id)document.getElementById(id).classList.remove('open');}

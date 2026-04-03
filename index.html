@@ -179,6 +179,15 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .form-sel{width:100%;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:14px;font-weight:300;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:14px;cursor:pointer;}
 .form-sel:focus{border-color:var(--red);}
 .modal-actions{display:flex;gap:10px;margin-top:20px;}
+.drum-picker{display:flex;align-items:flex-start;gap:6px;margin-bottom:14px;}
+.drum-col-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.drum-col{height:196px;overflow-y:scroll;width:68px;border:1px solid var(--border);border-radius:8px;background:var(--white);scroll-snap-type:y mandatory;}
+.drum-col::-webkit-scrollbar{width:3px;}.drum-col::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.drum-item{height:36px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:300;color:var(--text-muted);cursor:pointer;scroll-snap-align:start;transition:background .1s,color .1s;user-select:none;}
+.drum-item:hover{color:var(--text);}
+.drum-item.drum-sel{background:var(--offwhite);color:var(--text);font-weight:400;}
+.drum-sep{font-size:30px;font-weight:100;color:var(--text-muted);line-height:1;padding-top:74px;}
+.drum-lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);}
 #tm-expanded{animation:tmExpand .18s ease;}
 @keyframes tmExpand{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
 .btn{flex:1;padding:11px;border-radius:8px;border:none;font-family:'Roboto',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
@@ -534,7 +543,17 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           <label class="form-lbl">Kategoria</label>
           <select id="mds-edit-kat" class="form-sel"><option value="Mindset">Mindset</option><option value="Skill">Skill</option><option value="Kultura">Kultura</option></select>
           <label class="form-lbl">Czas trwania</label>
-          <input type="time" class="form-sel" id="mds-edit-czas" style="margin-bottom:14px;">
+          <div class="drum-picker">
+            <div class="drum-col-wrap">
+              <div class="drum-col" id="drum-h"></div>
+              <div class="drum-lbl">godz</div>
+            </div>
+            <div class="drum-sep">:</div>
+            <div class="drum-col-wrap">
+              <div class="drum-col" id="drum-m"></div>
+              <div class="drum-lbl">min</div>
+            </div>
+          </div>
           <label class="form-lbl">Opis</label>
           <textarea id="mds-edit-opis" style="width:100%;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;resize:vertical;min-height:80px;box-sizing:border-box;margin-bottom:14px;transition:border-color .2s;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"></textarea>
           <label class="form-lbl">Korzyści <span style="font-weight:300;text-transform:none;letter-spacing:0;">(każda linijka = osobna korzyść)</span></label>
@@ -787,6 +806,40 @@ let editingTrainerId=null;
 let pendingPhotoData=null;
 let trainerProfileId=null;
 let selectedModuleId=null;
+let durH=0,durM=0;
+const DUR_HOURS=[...Array(9)].map((_,i)=>i);
+const DUR_MINS=[0,5,10,15,20,25,30,45,60,90];
+function renderDrumPicker(){
+  const hEl=document.getElementById('drum-h');
+  const mEl=document.getElementById('drum-m');
+  if(!hEl||!mEl)return;
+  hEl.innerHTML=DUR_HOURS.map(h=>`<div class="drum-item${h===durH?' drum-sel':''}" onclick="selectDurH(${h})">${String(h).padStart(2,'0')}</div>`).join('');
+  mEl.innerHTML=DUR_MINS.map(m=>`<div class="drum-item${m===durM?' drum-sel':''}" onclick="selectDurM(${m})">${String(m).padStart(2,'0')}</div>`).join('');
+  const hIdx=DUR_HOURS.indexOf(durH);
+  const mIdx=DUR_MINS.indexOf(durM<0?0:durM);
+  if(hIdx>=0)hEl.scrollTop=hIdx*36;
+  if(mIdx>=0)mEl.scrollTop=mIdx*36;
+}
+function selectDurH(h){durH=h;renderDrumPicker();}
+function selectDurM(m){durM=m;renderDrumPicker();}
+function getDurValue(){
+  if(durH===0&&durM===0)return'';
+  if(durH===0)return`${durM} min`;
+  if(durM===0)return`${durH}h`;
+  return`${durH}h ${durM}min`;
+}
+function setDurValue(val){
+  durH=0;durM=0;
+  if(val){
+    const hm=val.match(/(\d+)\s*h/);const mm=val.match(/(\d+)\s*min/);
+    if(hm)durH=Math.min(8,parseInt(hm[1]));
+    if(mm){
+      const raw=parseInt(mm[1]);
+      durM=DUR_MINS.includes(raw)?raw:DUR_MINS.reduce((a,b)=>Math.abs(b-raw)<Math.abs(a-raw)?b:a);
+    }
+  }
+  renderDrumPicker();
+}
 let modules=[];
 let pendingProfilePhotoData=null;
 const LS_MODULES='tc_matryca_modules';
@@ -1338,7 +1391,7 @@ function openModuleDetail(id){
     document.getElementById('mds-edit').style.display='block';
     document.getElementById('mds-edit-nazwa').value='';
     document.getElementById('mds-edit-kat').value='Skill';
-    document.getElementById('mds-edit-czas').value='';
+    setDurValue('');
     document.getElementById('mds-edit-opis').value='';
     document.getElementById('mds-edit-korzysci').value='';
     document.getElementById('mds-edit-agenda').value='';
@@ -1417,7 +1470,7 @@ function toggleModuleEditMode(editMode){
     const mod=getModuleData(selectedModuleId);if(!mod)return;
     document.getElementById('mds-edit-nazwa').value=mod.nazwa||'';
     document.getElementById('mds-edit-kat').value=mod.kategoria||'Skill';
-    document.getElementById('mds-edit-czas').value=mod.czasTrwania||'';
+    setDurValue(mod.czasTrwania||'');
     document.getElementById('mds-edit-opis').value=mod.opis||'';
     document.getElementById('mds-edit-korzysci').value=mod.korzysci||'';
     document.getElementById('mds-edit-agenda').value=mod.agenda||'';
@@ -1427,7 +1480,7 @@ function saveModuleEdit(){
   const nazwa=document.getElementById('mds-edit-nazwa').value.trim();
   if(!nazwa){alert('Podaj nazwę szkolenia');return;}
   const kat=document.getElementById('mds-edit-kat').value;
-  const czasTrwania=document.getElementById('mds-edit-czas').value||'';
+  const czasTrwania=getDurValue();
   const opis=document.getElementById('mds-edit-opis').value.trim();
   const korzysci=document.getElementById('mds-edit-korzysci').value;
   const agenda=document.getElementById('mds-edit-agenda').value;

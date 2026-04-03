@@ -1006,12 +1006,15 @@ function saveTraining(){
   if(!mid){alert('Wybierz moduł szkoleniowy');return;}
   const trainerIds=Array.from(document.querySelectorAll('#tm-trainers-list input[type=checkbox]:checked')).map(cb=>parseInt(cb.value));
   const priority=document.getElementById('tm-priority').value||null;
-  // preserve existing uczestnicy if re-editing
-  const existing=trainings[selDate]||{};
-  trainings[selDate]={moduleId:mid,trainerIds,priority,uczestnicy:existing.uczestnicy||[]};
+  if(selTrainingId!==null){
+    const t=trainings.find(x=>x.id===selTrainingId);
+    if(t){t.moduleId=mid;t.trainerIds=trainerIds;t.priority=priority;}
+  }else{
+    trainings.push({id:Date.now(),date:selDate,moduleId:mid,trainerIds,priority,uczestnicy:[]});
+  }
   closeTrainingModal();renderCalendar();renderDashboard();saveToStorage();
 }
-function removeTraining(ds){delete trainings[ds];renderCalendar();renderDashboard();saveToStorage();}
+function removeTraining(id){trainings=trainings.filter(t=>t.id!==id);renderCalendar();renderDashboard();saveToStorage();}
 
 function trainerAvatar(t,size){
   if(t.photo)return`<img src="${t.photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
@@ -1063,7 +1066,8 @@ function openTrainerProfile(id){
   const bioEl=document.getElementById('tp-bio');
   bioEl.textContent=tr.bio||'';bioEl.style.display=tr.bio?'block':'none';
   const past=[],future=[];
-  Object.entries(trainings).forEach(([ds,t])=>{
+  trainings.forEach(t=>{
+    const ds=t.date;
     if(!getTrainerIds(t).includes(id))return;
     const mod=getModuleData(t.moduleId);
     const d=new Date(ds);
@@ -1114,10 +1118,10 @@ function getTrainerIds(t){
   if(t.trainerId!=null)return[t.trainerId];
   return[];
 }
-function renderTrainerChecks(ds){
+function renderTrainerChecks(ds,existingTr){
   const el=document.getElementById('tm-trainers-list');
   if(!trainers.length){el.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--text-muted);">Brak trenerów — dodaj poniżej</div>';return;}
-  const checked=ds&&trainings[ds]?new Set(getTrainerIds(trainings[ds])):new Set();
+  const checked=existingTr?new Set(getTrainerIds(existingTr)):new Set();
   el.innerHTML=trainers.map(tr=>`<label class="trainer-check-item"><input type="checkbox" value="${tr.id}"${checked.has(tr.id)?' checked':''}>${trainerAvatar(tr,24)}<span style="font-size:13px;font-weight:300;color:var(--text);">${escHtml(tr.name)}</span></label>`).join('');
 }
 function addTrainerFromModal(){
@@ -1125,7 +1129,7 @@ function addTrainerFromModal(){
   const id=Date.now();
   trainers.push({id,name,color:TCOLS[trainers.length%TCOLS.length]});
   inp.value='';
-  renderTrainerChecks(selDate);
+  renderTrainerChecks(selDate, selTrainingId ? trainings.find(x=>x.id===selTrainingId) : null);
   // auto-check the new trainer
   const cb=document.querySelector(`#tm-trainers-list input[value="${id}"]`);
   if(cb)cb.checked=true;
@@ -1150,7 +1154,7 @@ function setTrainerView(mode){
 function renderTrainerPanel(){
   const el=document.getElementById('trainers-panel-list');if(!el)return;
   if(!trainers.length){el.innerHTML='<div style="color:var(--text-muted);font-size:14px;font-weight:300;grid-column:1/-1;">Brak trenerów</div>';return;}
-  const count={};Object.values(trainings).forEach(t=>{getTrainerIds(t).forEach(id=>{count[id]=(count[id]||0)+1;});});
+  const count={};trainings.forEach(t=>{getTrainerIds(t).forEach(id=>{count[id]=(count[id]||0)+1;});});
   const avatarSize=trainerViewMode==='list'?34:46;
   el.innerHTML=trainers.map(t=>`<div class="trainer-card" style="cursor:pointer;" onclick="openTrainerProfile(${t.id})">${trainerAvatar(t,avatarSize)}<div style="flex:1;min-width:0;"><div class="trainer-card-name">${escHtml(t.name)}</div><div class="trainer-card-meta">${count[t.id]||0} szkoleń</div>${t.bio?`<div class="trainer-card-bio" style="font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${escHtml(t.bio)}</div>`:''}</div></div>`).join('');
 }
@@ -1262,18 +1266,19 @@ function renderModuleDetailView(id){
   if(agnd)agndEl.innerHTML=agnd.split('\n').filter(l=>l.trim()).map((l,i)=>`<div style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:var(--red);font-weight:500;flex-shrink:0;min-width:20px;">${i+1}.</span><span style="font-size:14px;font-weight:300;color:var(--text);">${escHtml(l.trim())}</span></div>`).join('');
   // Trainings
   const past=[],future=[];
-  Object.entries(trainings).forEach(([ds,t])=>{
+  trainings.forEach(t=>{
     if(t.moduleId!==id)return;
+    const ds=t.date;
     const d=new Date(ds);
     const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     const tNames=getTrainerIds(t).map(tid=>trainers.find(tr=>tr.id===tid)?.name).filter(Boolean);
-    const item={ds,dateLabel,tNames,uczestnicy:t.uczestnicy||[]};
+    const item={id:t.id,ds,dateLabel,tNames,uczestnicy:t.uczestnicy||[]};
     if(ds<TODAY_STR)past.push(item);else future.push(item);
   });
   past.sort((a,b)=>b.ds.localeCompare(a.ds));
   future.sort((a,b)=>a.ds.localeCompare(b.ds));
-  const fmtFuture=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div><button onclick="openParticipantsModal('${i.ds}')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Uczestnicy${i.uczestnicy.length?` (${i.uczestnicy.length})`:''}</button></div>`;
-  const fmtPast=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div><button onclick="openParticipantsModal('${i.ds}')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Uczestnicy ${i.uczestnicy.length?`(${i.uczestnicy.length})`:''}</button></div>`;
+  const fmtFuture=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div><button onclick="openParticipantsModal(${i.id})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Uczestnicy${i.uczestnicy.length?` (${i.uczestnicy.length})`:''}</button></div>`;
+  const fmtPast=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div><button onclick="openParticipantsModal(${i.id})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Uczestnicy ${i.uczestnicy.length?`(${i.uczestnicy.length})`:''}</button></div>`;
   document.getElementById('mds-future').innerHTML=future.length?future.map(fmtFuture).join(''):`<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak zaplanowanych szkoleń</div>`;
   document.getElementById('mds-past').innerHTML=past.length?past.map(fmtPast).join(''):`<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak przeprowadzonych szkoleń</div>`;
 }
@@ -1282,7 +1287,7 @@ function deleteCustomModule(){
   const mod=customModules.find(m=>m.id===selectedModuleId);if(!mod)return;
   openDC(`Usunąć szkolenie<br><strong>${escHtml(mod.nazwa)}</strong>?`,()=>{
     customModules=customModules.filter(m=>m.id!==selectedModuleId);
-    Object.keys(trainings).forEach(ds=>{if(trainings[ds].moduleId===selectedModuleId)delete trainings[ds];});
+    trainings=trainings.filter(t=>t.moduleId!==selectedModuleId);
     saveToStorage();renderModuleCards();renderSbModules();renderCalendar();renderDashboard();
     closeModuleDetail();
   });
@@ -1326,10 +1331,10 @@ function saveModuleEdit(){
   document.getElementById('mds-edit').style.display='none';
   renderModuleDetailView(selectedModuleId);
 }
-function openParticipantsModal(ds){
-  participantsDate=ds;
-  const t=trainings[ds];if(!t)return;
-  const d=new Date(ds);
+function openParticipantsModal(trainingId){
+  participantsDate=trainingId;
+  const t=trainings.find(x=>x.id===trainingId);if(!t)return;
+  const d=new Date(t.date);
   document.getElementById('part-date').textContent=d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const mod=getModuleData(t.moduleId);
   document.getElementById('part-module-name').textContent=mod?.nazwa||'';
@@ -1339,21 +1344,21 @@ function openParticipantsModal(ds){
 function closeParticipantsModal(){document.getElementById('participants-overlay').classList.remove('open');participantsDate=null;}
 function renderParticipantsList(){
   const el=document.getElementById('part-list');
-  const t=trainings[participantsDate];
+  const t=trainings.find(x=>x.id===participantsDate);
   const list=t?.uczestnicy||[];
   if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:4px 0;">Brak uczestników</div>';return;}
   el.innerHTML=list.map((name,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);"><span style="flex:1;font-size:13px;font-weight:300;color:var(--text);">${escHtml(name)}</span><button onclick="removeParticipant(${i})" style="background:none;border:none;color:rgba(0,0,0,0.3);font-size:16px;cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(0,0,0,0.3)'">×</button></div>`).join('');
 }
 function addParticipant(){
   const inp=document.getElementById('part-input');const name=inp.value.trim();if(!name)return;
-  const t=trainings[participantsDate];if(!t)return;
+  const t=trainings.find(x=>x.id===participantsDate);if(!t)return;
   if(!t.uczestnicy)t.uczestnicy=[];
   t.uczestnicy.push(name);inp.value='';
   renderParticipantsList();saveToStorage();
   if(selectedModuleId!==null)renderModuleDetailView(selectedModuleId);
 }
 function removeParticipant(idx){
-  const t=trainings[participantsDate];if(!t||!t.uczestnicy)return;
+  const t=trainings.find(x=>x.id===participantsDate);if(!t||!t.uczestnicy)return;
   t.uczestnicy.splice(idx,1);
   renderParticipantsList();saveToStorage();
   if(selectedModuleId!==null)renderModuleDetailView(selectedModuleId);
@@ -1388,9 +1393,9 @@ function dashCardHtml(ds,t,featured){
 }
 
 function renderDashboard(){
-  const all=Object.entries(trainings).sort(([a],[b])=>a.localeCompare(b));
-  const past=all.filter(([ds])=>ds<TODAY_STR).reverse();
-  const future=all.filter(([ds])=>ds>=TODAY_STR);
+  const all=trainings.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const past=all.filter(t=>t.date<TODAY_STR).reverse();
+  const future=all.filter(t=>t.date>=TODAY_STR);
 
   const nextOneEl=document.getElementById('dash-next-one');
   const nextThreeEl=document.getElementById('dash-next-three');
@@ -1398,28 +1403,28 @@ function renderDashboard(){
   if(!nextOneEl)return;
 
   if(future.length){
-    const [ds,t]=future[0];
-    nextOneEl.innerHTML=dashCardHtml(ds,t,true);
+    const t=future[0];
+    nextOneEl.innerHTML=dashCardHtml(t.date,t,true);
     const next3=future.slice(1,4);
-    nextThreeEl.innerHTML=next3.length?next3.map(([ds,t])=>dashCardHtml(ds,t,false)).join(''):`<div class="dash-empty">Brak kolejnych zaplanowanych szkoleń</div>`;
+    nextThreeEl.innerHTML=next3.length?next3.map(t=>dashCardHtml(t.date,t,false)).join(''):`<div class="dash-empty">Brak kolejnych zaplanowanych szkoleń</div>`;
   }else{
     nextOneEl.innerHTML=`<div class="dash-empty">Brak zaplanowanych szkoleń</div>`;
     nextThreeEl.innerHTML='';
   }
 
-  lastThreeEl.innerHTML=past.slice(0,3).length?past.slice(0,3).map(([ds,t])=>dashCardHtml(ds,t,false)).join(''):`<div class="dash-empty">Brak przeprowadzonych szkoleń</div>`;
+  lastThreeEl.innerHTML=past.slice(0,3).length?past.slice(0,3).map(t=>dashCardHtml(t.date,t,false)).join(''):`<div class="dash-empty">Brak przeprowadzonych szkoleń</div>`;
 }
 
 function updateSlots(){
   let count=0;
-  for(let mo=0;mo<12;mo++){const days=new Date(2026,mo+1,0).getDate();for(let d=1;d<=days;d++){const s=fmtDs(2026,mo,d);if(!isPast(s)&&isRecommended(s)&&!trainings[s])count++;}}
+  for(let mo=0;mo<12;mo++){const days=new Date(2026,mo+1,0).getDate();for(let d=1;d<=days;d++){const s=fmtDs(2026,mo,d);if(!isPast(s)&&isRecommended(s)&&!trainings.some(x=>x.date===s))count++;}}
   document.getElementById('slots-num').textContent=count;
 }
 
 function clearCalendar(){
-  if(!Object.keys(trainings).length)return;
+  if(!trainings.length)return;
   if(confirm('Usunąć wszystkie zaplanowane szkolenia z kalendarza?')){
-    trainings={};renderCalendar();saveToStorage();
+    trainings=[];renderCalendar();saveToStorage();
   }
 }
 
@@ -1430,13 +1435,13 @@ function trainingCountLabel(n){
   return`${n} zaplanowanych szkoleń`;
 }
 function updateTrainingCount(){
-  const n=Object.keys(trainings).length;
+  const n=trainings.length;
   const el=document.getElementById('training-count');
   if(el)el.textContent=trainingCountLabel(n);
 }
 
 function generatePDF(){
-  const entries=Object.entries(trainings).sort(([a],[b])=>a.localeCompare(b));
+  const entries=trainings.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(t=>[t.date,t]);
   if(!entries.length){alert('Brak zaplanowanych szkoleń. Najpierw zaplanuj szkolenia w kalendarzu.');return;}
 
   const btn=document.getElementById('pdf-btn');
@@ -1685,7 +1690,7 @@ function calcMonthSlots(m){
     const dow=new Date(y,m,d).getDay();
     if(dow===0||dow===6)continue;
     if(isPast(ds))continue;
-    if(trainings[ds])continue;
+    if(trainings.some(x=>x.date===ds))continue;
     if(isHoliday(ds)||isBlocked(ds))continue;
     // July(6) and August(7): all free weekdays are slots
     if(m===6||m===7){count++;}
@@ -1708,13 +1713,14 @@ function updateMonthSlots(){
 function renderMonthlySummary(){
   const el=document.getElementById('monthly-summary');if(!el)return;
   const y=2026,m=curMonth;
-  const entries=Object.entries(trainings).filter(([ds])=>{
-    const d=new Date(ds);return d.getFullYear()===y&&d.getMonth()===m;
-  }).sort(([a],[b])=>a.localeCompare(b));
+  const entries=trainings.filter(t=>{
+    const d=new Date(t.date);return d.getFullYear()===y&&d.getMonth()===m;
+  }).slice().sort((a,b)=>a.date.localeCompare(b.date));
   if(!entries.length){el.style.display='none';return;}
   el.style.display='block';
   const pL={wysoki:'Wysoki',sredni:'Średni',niski:'Niski'};
-  const rows=entries.map(([ds,t])=>{
+  const rows=entries.map(t=>{
+    const ds=t.date;
     const mod=getModuleData(t.moduleId);
     const d=new Date(ds);
     const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'short',day:'numeric',month:'long'});
@@ -1831,9 +1837,9 @@ function importData(input){
 // ── Monthly PDF ───────────────────────────────────────────────────
 function generateMonthlyPDF(){
   const y=2026,m=curMonth;
-  const entries=Object.entries(trainings).filter(([ds])=>{
-    const d=new Date(ds);return d.getFullYear()===y&&d.getMonth()===m;
-  }).sort(([a],[b])=>a.localeCompare(b));
+  const entries=trainings.filter(t=>{
+    const d=new Date(t.date);return d.getFullYear()===y&&d.getMonth()===m;
+  }).slice().sort((a,b)=>a.date.localeCompare(b.date)).map(t=>[t.date,t]);
   if(!entries.length){alert('Brak zaplanowanych szkoleń w '+MONTHS_PL[m]+'. Zaplanuj szkolenia i spróbuj ponownie.');return;}
 
   const btn=document.getElementById('monthly-pdf-btn');
@@ -2002,7 +2008,8 @@ function openEmployeeProfile(idx){
   document.getElementById('ep-fields').innerHTML=fields.map(([l,v])=>`<div class="ep-field"><div class="ep-label">${l}</div><div class="ep-val">${v}</div></div>`).join('');
   // Find trainings where this employee appears in uczestnicy
   const past=[],future=[];
-  Object.entries(trainings).forEach(([ds,t])=>{
+  trainings.forEach(t=>{
+    const ds=t.date;
     const ucz=t.uczestnicy||[];
     if(!ucz.some(u=>u.toLowerCase()===name.toLowerCase()))return;
     const mod=getModuleData(t.moduleId);

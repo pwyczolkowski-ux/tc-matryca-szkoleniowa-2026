@@ -643,6 +643,12 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </div>
     <label class="form-lbl">Imię i nazwisko</label>
     <input id="te-name" class="form-sel" placeholder="np. Jan Kowalski" maxlength="60">
+    <label class="form-lbl">Rola / stanowisko</label>
+    <input id="te-rola" class="form-sel" placeholder="np. Trener biznesowy" maxlength="80">
+    <label class="form-lbl">E-mail</label>
+    <input id="te-email" class="form-sel" type="email" placeholder="jan@example.com">
+    <label class="form-lbl">Telefon</label>
+    <input id="te-telefon" class="form-sel" type="tel" placeholder="+48 000 000 000">
     <label class="form-lbl">O trenerze</label>
     <textarea id="te-bio" placeholder="Specjalizacje, doświadczenie, styl pracy..." style="width:100%;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;resize:vertical;min-height:80px;box-sizing:border-box;margin-bottom:14px;transition:border-color .2s;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"></textarea>
     <div class="modal-actions">
@@ -653,24 +659,30 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 </div>
 
 <div class="overlay" id="trainer-profile-overlay" onclick="closeIfBg(event,'trainer-profile-overlay')">
-  <div class="modal" style="width:520px;">
+  <div class="modal" style="width:580px;max-height:90vh;overflow-y:auto;">
     <button class="modal-x" onclick="closeTrainerProfile()">×</button>
     <!-- VIEW MODE -->
     <div id="tp-view-mode">
-      <div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:24px;">
+      <div style="display:flex;align-items:flex-start;gap:20px;margin-bottom:24px;">
         <div id="tp-avatar" style="flex-shrink:0;"></div>
         <div style="flex:1;min-width:0;">
-          <div id="tp-name" style="font-size:22px;font-weight:300;color:var(--text);margin-bottom:6px;"></div>
+          <div id="tp-name" style="font-size:24px;font-weight:300;color:var(--text);margin-bottom:4px;"></div>
+          <div id="tp-rola" style="font-size:13px;font-weight:400;color:var(--red);margin-bottom:10px;"></div>
+          <div id="tp-contact" style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;"></div>
           <div id="tp-bio" style="font-size:13px;color:var(--text-muted);line-height:1.7;"></div>
         </div>
         <button onclick="toggleTrainerEditMode(true)" class="btn btn-gray" style="flex-shrink:0;padding:7px 14px;font-size:12px;">Edytuj</button>
       </div>
+      <!-- Stats -->
+      <div style="display:flex;gap:10px;margin-bottom:24px;" id="tp-stats"></div>
+      <!-- Upcoming -->
       <div style="margin-bottom:20px;">
         <div class="tp-section-title">Zaplanowane szkolenia</div>
         <div id="tp-future-list"></div>
       </div>
+      <!-- Past -->
       <div>
-        <div class="tp-section-title">Przeprowadzone szkolenia</div>
+        <div class="tp-section-title">Zrealizowane szkolenia</div>
         <div id="tp-past-list"></div>
       </div>
       <div class="modal-actions" style="margin-top:20px;">
@@ -692,6 +704,12 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       </div>
       <label class="form-lbl">Imię i nazwisko</label>
       <input id="tp-edit-name" class="form-sel" placeholder="np. Jan Kowalski" maxlength="60">
+      <label class="form-lbl">Rola / stanowisko</label>
+      <input id="tp-edit-rola" class="form-sel" placeholder="np. Trener biznesowy" maxlength="80">
+      <label class="form-lbl">E-mail</label>
+      <input id="tp-edit-email" class="form-sel" type="email" placeholder="jan@example.com">
+      <label class="form-lbl">Telefon</label>
+      <input id="tp-edit-telefon" class="form-sel" type="tel" placeholder="+48 000 000 000">
       <label class="form-lbl">O trenerze</label>
       <textarea id="tp-edit-bio" placeholder="Specjalizacje, doświadczenie, styl pracy..." style="width:100%;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;resize:vertical;min-height:80px;box-sizing:border-box;margin-bottom:14px;transition:border-color .2s;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"></textarea>
       <div class="modal-actions">
@@ -1192,6 +1210,9 @@ function openTrainerEditModal(id=null){
   const tr=id?trainers.find(t=>t.id===id):null;
   document.getElementById('te-title').textContent=id?'Edytuj trenera':'Dodaj trenera';
   document.getElementById('te-name').value=tr?.name||'';
+  document.getElementById('te-rola').value=tr?.rola||'';
+  document.getElementById('te-email').value=tr?.email||'';
+  document.getElementById('te-telefon').value=tr?.telefon||'';
   document.getElementById('te-bio').value=tr?.bio||'';
   document.getElementById('te-photo-input').value='';
   const prev=document.getElementById('te-photo-preview');
@@ -1212,12 +1233,15 @@ function handlePhotoUpload(input){
 function saveTrainerEdit(){
   const name=document.getElementById('te-name').value.trim();
   if(!name){alert('Podaj imię i nazwisko trenera');return;}
+  const rola=document.getElementById('te-rola').value.trim();
+  const email=document.getElementById('te-email').value.trim();
+  const telefon=document.getElementById('te-telefon').value.trim();
   const bio=document.getElementById('te-bio').value.trim();
   if(editingTrainerId){
     const tr=trainers.find(t=>t.id===editingTrainerId);
-    if(tr){tr.name=name;tr.bio=bio;if(pendingPhotoData!==null)tr.photo=pendingPhotoData;}
+    if(tr){tr.name=name;tr.rola=rola;tr.email=email;tr.telefon=telefon;tr.bio=bio;if(pendingPhotoData!==null)tr.photo=pendingPhotoData;}
   }else{
-    trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length],bio,photo:pendingPhotoData||null});
+    trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length],rola,email,telefon,bio,photo:pendingPhotoData||null});
   }
   const wasEditing=editingTrainerId;
   closeTrainerEditModal();
@@ -1227,26 +1251,56 @@ function saveTrainerEdit(){
 function openTrainerProfile(id){
   trainerProfileId=id;
   const tr=trainers.find(t=>t.id===id);if(!tr)return;
+  document.getElementById('tp-view-mode').style.display='block';
+  document.getElementById('tp-edit-mode').style.display='none';
   document.getElementById('tp-avatar').innerHTML=trainerAvatar(tr,72);
   document.getElementById('tp-name').textContent=tr.name;
+  const rolaEl=document.getElementById('tp-rola');
+  rolaEl.textContent=tr.rola||'';rolaEl.style.display=tr.rola?'block':'none';
+  // Contact
+  const contactEl=document.getElementById('tp-contact');
+  const contactParts=[];
+  if(tr.email)contactParts.push(`<span style="font-size:12px;color:var(--text-muted);">✉ <a href="mailto:${escHtml(tr.email)}" style="color:var(--text-muted);text-decoration:none;">${escHtml(tr.email)}</a></span>`);
+  if(tr.telefon)contactParts.push(`<span style="font-size:12px;color:var(--text-muted);">📞 ${escHtml(tr.telefon)}</span>`);
+  contactEl.innerHTML=contactParts.join('');contactEl.style.display=contactParts.length?'flex':'none';
   const bioEl=document.getElementById('tp-bio');
   bioEl.textContent=tr.bio||'';bioEl.style.display=tr.bio?'block':'none';
+  // Build training lists
   const past=[],future=[];
+  const catCount={Mindset:0,Skill:0,Kultura:0};
   trainings.forEach(t=>{
-    const ds=t.date;
     if(!getTrainerIds(t).includes(id))return;
     const mod=getModuleData(t.moduleId);
-    const d=new Date(ds);
-    const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const item={ds,dateLabel,modName:mod?.nazwa||'—',cat:mod?.kategoria||''};
-    if(ds<TODAY_STR)past.push(item);else future.push(item);
+    const d=new Date(t.date);
+    const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+    const item={ds:t.date,dateLabel,modName:mod?.nazwa||'—',cat:mod?.kategoria||''};
+    if(t.date<TODAY_STR)past.push(item);else future.push(item);
+    if(catCount[mod?.kategoria]!==undefined)catCount[mod.kategoria]++;
   });
   past.sort((a,b)=>b.ds.localeCompare(a.ds));
   future.sort((a,b)=>a.ds.localeCompare(b.ds));
+  // Stats
+  const total=past.length+future.length;
   const catC={Mindset:'#8b5cf6',Skill:'#f59e0b',Kultura:'#22c55e'};
+  const statsEl=document.getElementById('tp-stats');
+  statsEl.innerHTML=`
+    <div style="flex:1;background:var(--offwhite);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;">
+      <div style="font-size:32px;font-weight:100;color:var(--text);">${total}</div>
+      <div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-top:4px;">Łącznie</div>
+    </div>
+    <div style="flex:1;background:var(--offwhite);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;">
+      <div style="font-size:32px;font-weight:100;color:var(--text);">${past.length}</div>
+      <div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-top:4px;">Zrealizowane</div>
+    </div>
+    <div style="flex:1;background:var(--offwhite);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;">
+      <div style="font-size:32px;font-weight:100;color:var(--text);">${future.length}</div>
+      <div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-top:4px;">Zaplanowane</div>
+    </div>
+    ${Object.entries(catCount).filter(([,v])=>v>0).map(([k,v])=>`<div style="flex:1;background:var(--offwhite);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;border-top:3px solid ${catC[k]};"><div style="font-size:32px;font-weight:100;color:var(--text);">${v}</div><div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:${catC[k]};margin-top:4px;">${k}</div></div>`).join('')}
+  `;
   const fmtItem=i=>`<div class="tp-training-item"><div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div><div style="font-size:12px;font-weight:300;color:var(--text-muted);margin-top:2px;">${escHtml(i.modName)}</div></div>${i.cat?`<span style="font-size:10px;font-weight:500;color:${catC[i.cat]||'#999'};text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;">${i.cat}</span>`:''}</div>`;
   document.getElementById('tp-future-list').innerHTML=future.length?future.map(fmtItem).join(''):'<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:6px 0;">Brak zaplanowanych szkoleń</div>';
-  document.getElementById('tp-past-list').innerHTML=past.length?past.map(fmtItem).join(''):'<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:6px 0;">Brak przeprowadzonych szkoleń</div>';
+  document.getElementById('tp-past-list').innerHTML=past.length?past.map(fmtItem).join(''):'<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:6px 0;">Brak zrealizowanych szkoleń</div>';
   document.getElementById('trainer-profile-overlay').classList.add('open');
 }
 function closeTrainerProfile(){document.getElementById('trainer-profile-overlay').classList.remove('open');trainerProfileId=null;}

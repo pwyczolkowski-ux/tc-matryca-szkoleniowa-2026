@@ -37,6 +37,10 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .slots-num{font-size:52px;font-weight:100;color:var(--white);line-height:1;}
 .slots-lbl{font-size:11px;font-weight:400;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px;}
 .slots-sub{font-size:11px;font-weight:300;color:rgba(255,255,255,0.3);margin-top:6px;}
+.sb-mini-row{display:flex;gap:8px;margin-top:8px;}
+.sb-mini-stat{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 6px;text-align:center;}
+.sb-mini-num{font-size:28px;font-weight:100;color:var(--white);line-height:1;}
+.sb-mini-lbl{font-size:9px;font-weight:400;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.8px;margin-top:3px;}
 .trainer-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px 10px;margin-bottom:6px;}
 .t-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .t-name{flex:1;font-size:13px;font-weight:300;color:var(--white);}
@@ -321,11 +325,21 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </div>
     <div class="sb-content">
       <div class="sb-section">
-        <div class="sb-title">Wolne sloty</div>
+        <div class="sb-title">Rok 2026</div>
         <div class="slots-box">
           <div class="slots-num" id="slots-num">—</div>
-          <div class="slots-lbl">dostępnych terminów</div>
-          <div class="slots-sub">Czwartki i piątki · 2026</div>
+          <div class="slots-lbl">wolnych slotów</div>
+          <div class="slots-sub">Czwartki i piątki do końca roku</div>
+        </div>
+        <div class="sb-mini-row">
+          <div class="sb-mini-stat">
+            <div class="sb-mini-num" id="sb-planned-num">—</div>
+            <div class="sb-mini-lbl">Zaplanowane</div>
+          </div>
+          <div class="sb-mini-stat">
+            <div class="sb-mini-num" id="sb-conducted-num">—</div>
+            <div class="sb-mini-lbl">Przeprowadzone</div>
+          </div>
         </div>
       </div>
       <div class="sb-ribbon">
@@ -534,8 +548,10 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       <div class="ee-title">Istniejące wydarzenia tego dnia</div>
       <div id="tm-event-list"></div>
     </div>
-    <label class="form-lbl">Moduł szkoleniowy</label>
-    <select class="form-sel" id="tm-module"><option value="">— wybierz moduł —</option></select>
+    <label class="form-lbl">Szkolenie</label>
+    <select class="form-sel" id="tm-module"><option value="">— wybierz szkolenie —</option></select>
+    <label class="form-lbl">Godzina (opcjonalnie)</label>
+    <input type="time" class="form-sel" id="tm-time" style="margin-bottom:14px;">
     <label class="form-lbl">Trener / Trenerzy</label>
     <div class="trainer-check-list" id="tm-trainers-list"></div>
     <div style="display:flex;gap:7px;margin-bottom:14px;">
@@ -552,7 +568,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeTrainingModal()">Anuluj</button>
       <button id="tm-delete-btn" class="btn btn-gray" style="display:none;color:var(--red);border-color:rgba(220,20,60,0.3);" onclick="deleteCurrentTraining()">Usuń</button>
-      <button class="btn btn-red" onclick="saveTraining()">Zaplanuj szkolenie</button>
+      <button id="tm-save-btn" class="btn btn-red" onclick="saveTraining()">Zaplanuj</button>
     </div>
   </div>
 </div>
@@ -676,6 +692,13 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       </div>
     </div>
     <div id="ep-fields" style="margin-bottom:22px;"></div>
+    <div id="ep-add-section" style="margin-bottom:22px;display:none;">
+      <div class="tp-section-title">Dodaj do szkolenia</div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <select id="ep-add-select" class="form-sel" style="margin-bottom:0;flex:1;font-size:13px;"></select>
+        <button onclick="addCurrentEmpToTraining()" style="background:var(--red);border:none;border-radius:8px;color:#fff;font-family:'Roboto',sans-serif;font-size:13px;padding:0 16px;cursor:pointer;flex-shrink:0;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Dodaj</button>
+      </div>
+    </div>
     <div style="margin-bottom:18px;">
       <div class="tp-section-title">Zaplanowane szkolenia</div>
       <div id="ep-future"></div>
@@ -690,12 +713,10 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 <div class="overlay" id="delete-confirm-overlay" onclick="if(event.target.id==='delete-confirm-overlay')closeDC()">
   <div class="modal" style="width:400px;">
     <div class="modal-ttl">Potwierdź usunięcie</div>
-    <div id="dc-subtitle" style="font-size:13px;color:var(--text-muted);margin-bottom:18px;font-weight:300;line-height:1.5;"></div>
-    <label class="form-lbl">Wpisz hasło aby potwierdzić</label>
-    <input id="dc-input" class="form-sel" placeholder="potwierdzam" autocomplete="off" oninput="document.getElementById('dc-confirm-btn').disabled=this.value!=='potwierdzam'" onkeydown="if(event.key==='Enter')executeDC()">
+    <div id="dc-subtitle" style="font-size:14px;color:var(--text-muted);margin-bottom:24px;font-weight:300;line-height:1.5;"></div>
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeDC()">Anuluj</button>
-      <button id="dc-confirm-btn" class="btn btn-red" disabled onclick="executeDC()">Usuń</button>
+      <button id="dc-confirm-btn" class="btn btn-red" onclick="executeDC()">Tak, usuń</button>
     </div>
   </div>
 </div>
@@ -751,7 +772,8 @@ let customModules=[];
 let pendingProfilePhotoData=null;
 const LS_MODULE_EXTRAS='tc_matryca_module_extras';
 const LS_CUSTOM_MODULES='tc_matryca_custom_modules';
-let participantsTrainingId=null;
+let participantsDate=null;
+let currentEmpIdx=null;
 
 const LS_TRAININGS='tc_matryca_trainings';
 const LS_TRAINERS='tc_matryca_trainers';
@@ -785,6 +807,7 @@ function loadFromStorage(){
           uczestnicy:tr.uczestnicy||[]
         }));
       }
+      trainings=trainings.filter(tr=>tr.date&&tr.date>='2026-01-01'&&tr.date<='2026-12-31');
     }
     if(tr)trainers=JSON.parse(tr);
     if(me)moduleExtras=JSON.parse(me);
@@ -945,7 +968,8 @@ function renderCalendar(){
         const mod=getModuleData(t.moduleId);
         const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
         const partCount=(t.uczestnicy||[]).length;
-        html+=`<div class="day-training-badge"><span class="dtb-text" style="cursor:pointer;" onclick="event.stopPropagation();openEditTraining(${t.id})">📚 ${mod?escHtml(mod.nazwa):'?'}</span>${!past?`<button class="dtb-remove" onclick="event.stopPropagation();removeTraining(${t.id})">×</button>`:''}</div>`;
+        const timeStr=t.time?`<span style="font-size:10px;font-weight:400;color:rgba(220,20,60,0.8);margin-left:4px;">${escHtml(t.time)}</span>`:'';
+        html+=`<div class="day-training-badge"><span class="dtb-text" style="cursor:pointer;" onclick="event.stopPropagation();openEditTraining(${t.id})">📚 ${mod?escHtml(mod.nazwa):'?'}${timeStr}</span>${!past?`<button class="dtb-remove" onclick="event.stopPropagation();removeTraining(${t.id})">×</button>`:''}</div>`;
         if(tNames.length)html+=`<div class="dtb-trainer">👤 ${tNames.map(escHtml).join(', ')}</div>`;
         if(t.priority){html+=`<div class="priority-badge ${t.priority}">● ${pL[t.priority]||t.priority}</div>`;}
         html+=`<button class="dtb-part-btn" onclick="event.stopPropagation();openParticipantsModal(${t.id})">👥 Uczestnicy${partCount?` (${partCount})`:''}</button>`;
@@ -964,6 +988,7 @@ function openTrainingModal(ds,preModId,editId=null){
   const d=new Date(ds);
   document.getElementById('tm-date').textContent=d.toLocaleDateString('pl-PL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   document.getElementById('tm-title').textContent=editId!==null?'Edytuj szkolenie':'Zaplanuj szkolenie';
+  document.getElementById('tm-save-btn').textContent=editId!==null?'Zapisz zmiany':'Zaplanuj';
   document.getElementById('tm-delete-btn').style.display=editId!==null?'block':'none';
   const evts=RAW_EVENTS[ds];
   const existEl=document.getElementById('tm-existing');
@@ -982,6 +1007,7 @@ function openTrainingModal(ds,preModId,editId=null){
     });ms.appendChild(og);
   });
   document.getElementById('tm-priority').value=existingTr?.priority||'';
+  document.getElementById('tm-time').value=existingTr?.time||'';
   renderTrainerChecks(ds,existingTr);
   document.getElementById('training-overlay').classList.add('open');
 }
@@ -1003,14 +1029,15 @@ function deleteCurrentTraining(){
 function saveTraining(){
   if(!selDate)return;
   const mid=parseInt(document.getElementById('tm-module').value);
-  if(!mid){alert('Wybierz moduł szkoleniowy');return;}
+  if(!mid){alert('Wybierz szkolenie');return;}
   const trainerIds=Array.from(document.querySelectorAll('#tm-trainers-list input[type=checkbox]:checked')).map(cb=>parseInt(cb.value));
   const priority=document.getElementById('tm-priority').value||null;
+  const time=document.getElementById('tm-time').value||null;
   if(selTrainingId!==null){
     const t=trainings.find(x=>x.id===selTrainingId);
-    if(t){t.moduleId=mid;t.trainerIds=trainerIds;t.priority=priority;}
+    if(t){t.moduleId=mid;t.trainerIds=trainerIds;t.priority=priority;t.time=time;}
   }else{
-    trainings.push({id:Date.now(),date:selDate,moduleId:mid,trainerIds,priority,uczestnicy:[]});
+    trainings.push({id:Date.now(),date:selDate,moduleId:mid,trainerIds,priority,time,uczestnicy:[]});
   }
   closeTrainingModal();renderCalendar();renderDashboard();saveToStorage();
 }
@@ -1098,17 +1125,13 @@ let dcCallback=null;
 function openDC(subtitle,cb){
   dcCallback=cb;
   document.getElementById('dc-subtitle').innerHTML=subtitle;
-  document.getElementById('dc-input').value='';
-  document.getElementById('dc-confirm-btn').disabled=true;
   document.getElementById('delete-confirm-overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('dc-input').focus(),80);
 }
 function closeDC(){
   document.getElementById('delete-confirm-overlay').classList.remove('open');
   dcCallback=null;
 }
 function executeDC(){
-  if(document.getElementById('dc-input').value!=='potwierdzam')return;
   closeDC();
   if(dcCallback)dcCallback();
 }
@@ -1419,6 +1442,10 @@ function updateSlots(){
   let count=0;
   for(let mo=0;mo<12;mo++){const days=new Date(2026,mo+1,0).getDate();for(let d=1;d<=days;d++){const s=fmtDs(2026,mo,d);if(!isPast(s)&&isRecommended(s)&&!trainings.some(x=>x.date===s))count++;}}
   document.getElementById('slots-num').textContent=count;
+  const pEl=document.getElementById('sb-planned-num');
+  const cEl=document.getElementById('sb-conducted-num');
+  if(pEl)pEl.textContent=trainings.filter(t=>t.date>=TODAY_STR).length;
+  if(cEl)cEl.textContent=trainings.filter(t=>t.date<TODAY_STR).length;
 }
 
 function clearCalendar(){
@@ -1796,6 +1823,7 @@ async function loadFromGitHub(){
           uczestnicy:tr.uczestnicy||[]
         }));
       }
+      trainings=trainings.filter(tr=>tr.date&&tr.date>='2026-01-01'&&tr.date<='2026-12-31');
     }
     if(d.trainers)trainers=d.trainers;
     if(d.moduleExtras)moduleExtras=d.moduleExtras;
@@ -1990,6 +2018,7 @@ function renderEmployees(){
 }
 
 function openEmployeeProfile(idx){
+  currentEmpIdx=idx;
   const e=employees[idx];if(!e)return;
   const name=e['Name']||((e['Given Name']||'')+' '+(e['Family Name']||'')).trim();
   const initials=(e['Given Name']?.[0]||'')+(e['Family Name']?.[0]||'');
@@ -2023,7 +2052,35 @@ function openEmployeeProfile(idx){
   const empty='<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak</div>';
   document.getElementById('ep-future').innerHTML=future.length?future.map(x=>x.item).join(''):empty;
   document.getElementById('ep-past').innerHTML=past.length?past.map(x=>x.item).join(''):empty;
+  // Populate "add to training" dropdown with future trainings not already containing this employee
+  const addSection=document.getElementById('ep-add-section');
+  const addSelect=document.getElementById('ep-add-select');
+  const futureTr=trainings.filter(t=>t.date>=TODAY_STR).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const available=futureTr.filter(t=>!(t.uczestnicy||[]).some(u=>u.toLowerCase()===name.toLowerCase()));
+  if(available.length){
+    addSelect.innerHTML=available.map(t=>{
+      const mod=getModuleData(t.moduleId);
+      const d=new Date(t.date);
+      const dl=d.toLocaleDateString('pl-PL',{day:'numeric',month:'short'});
+      const timeStr=t.time?` ${t.time}`:'';
+      return`<option value="${t.id}">${dl}${timeStr} — ${mod?escHtml(mod.nazwa):'?'}</option>`;
+    }).join('');
+    addSection.style.display='block';
+  }else{
+    addSection.style.display='none';
+  }
   document.getElementById('emp-profile-overlay').classList.add('open');
+}
+function addCurrentEmpToTraining(){
+  if(currentEmpIdx===null)return;
+  const e=employees[currentEmpIdx];if(!e)return;
+  const name=e['Name']||((e['Given Name']||'')+' '+(e['Family Name']||'')).trim();
+  const sel=document.getElementById('ep-add-select');
+  const trainingId=parseInt(sel.value);if(!trainingId)return;
+  const t=trainings.find(x=>x.id===trainingId);if(!t)return;
+  if(!t.uczestnicy)t.uczestnicy=[];
+  if(!t.uczestnicy.includes(name)){t.uczestnicy.push(name);saveToStorage();}
+  openEmployeeProfile(currentEmpIdx);
 }
 
 function closeIfBg(e,id){if(e.target.id===id)document.getElementById(id).classList.remove('open');}

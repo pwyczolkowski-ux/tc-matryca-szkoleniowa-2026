@@ -607,16 +607,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       <div id="tm-participants-section" style="display:none;margin-top:4px;">
         <label class="form-lbl" id="tm-part-label">Uczestnicy</label>
         <div id="tm-part-list" style="margin-bottom:8px;min-height:20px;"></div>
-        <div style="position:relative;margin-bottom:14px;">
-          <div style="display:flex;gap:7px;">
-            <input id="tm-part-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Szukaj pracownika..." maxlength="80"
-              oninput="tmFilterEmployees()" onfocus="tmFilterEmployees()"
-              onblur="setTimeout(tmHideEmpDrop,160)"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();tmAddParticipantFromInput();}if(event.key==='Escape')tmHideEmpDrop();"/>
-            <button onclick="tmAddParticipantFromInput()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
-          </div>
-          <div id="tm-emp-drop" style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:48px;background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.1);max-height:200px;overflow-y:auto;z-index:200;"></div>
-        </div>
+        <button onclick="openEmpPicker()" style="width:100%;background:none;border:1px dashed var(--border);border-radius:8px;padding:9px 14px;font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-muted);cursor:pointer;transition:all .2s;margin-bottom:14px;text-align:left;" onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">+ Wybierz uczestników z listy pracowników</button>
       </div>
     </div>
     <div class="modal-actions">
@@ -731,6 +722,26 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
         <button class="btn btn-gray" onclick="toggleTrainerEditMode(false)">Anuluj</button>
         <button class="btn btn-red" onclick="saveTrainerFromProfile()">Zapisz</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Employee picker overlay -->
+<div class="overlay" id="emp-picker-overlay" onclick="closeIfBg(event,'emp-picker-overlay')">
+  <div class="modal" style="width:700px;max-width:96vw;max-height:88vh;display:flex;flex-direction:column;">
+    <button class="modal-x" onclick="closeEmpPicker()">×</button>
+    <div class="modal-ttl" style="margin-bottom:12px;">Wybierz uczestników</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-shrink:0;">
+      <input id="ep-search" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Szukaj po imieniu, nazwisku, stanowisku…" oninput="renderEmpPicker()"/>
+      <select id="ep-org-filter" class="form-sel" style="margin-bottom:0;width:180px;flex-shrink:0;" onchange="renderEmpPicker()">
+        <option value="">Wszystkie działy</option>
+      </select>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;flex-shrink:0;" id="ep-count-lbl"></div>
+    <div id="ep-list" style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:8px;"></div>
+    <div class="modal-actions" style="margin-top:12px;flex-shrink:0;">
+      <button class="btn btn-gray" onclick="closeEmpPicker()">Anuluj</button>
+      <button class="btn btn-red" id="ep-add-btn" onclick="confirmEmpPicker()">Dodaj zaznaczonych (0)</button>
     </div>
   </div>
 </div>
@@ -1214,45 +1225,77 @@ function renderTmParticipants(){
   if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:4px 0 8px;">Brak uczestników</div>';return;}
   el.innerHTML=list.map((name,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;"><span>${escHtml(name)}</span><button onclick="tmRemoveParticipant(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;line-height:1;padding:0 4px;">×</button></div>`).join('');
 }
-function tmFilterEmployees(){
-  const inp=document.getElementById('tm-part-input');
-  const drop=document.getElementById('tm-emp-drop');
-  if(!inp||!drop)return;
-  const q=(inp.value||'').trim().toLowerCase();
-  if(!empLoaded){drop.innerHTML='<div style="padding:10px 12px;font-size:13px;color:var(--text-muted);">Ładowanie listy pracowników…</div>';drop.style.display='block';loadEmployees().then(()=>tmFilterEmployees());return;}
+let empPickerSelected=new Set();
+function openEmpPicker(){
+  if(!empLoaded){loadEmployees().then(()=>openEmpPicker());return;}
+  empPickerSelected=new Set();
+  // populate org filter
+  const sel=document.getElementById('ep-org-filter');
+  sel.innerHTML='<option value="">Wszystkie działy</option>';
+  const orgs=[...new Set(employees.map(e=>e['Organization 1 - Name']).filter(Boolean))].sort();
+  orgs.forEach(o=>{const opt=document.createElement('option');opt.value=o;opt.textContent=o;sel.appendChild(opt);});
+  document.getElementById('ep-search').value='';
+  renderEmpPicker();
+  document.getElementById('emp-picker-overlay').classList.add('open');
+}
+function closeEmpPicker(){document.getElementById('emp-picker-overlay').classList.remove('open');}
+function renderEmpPicker(){
+  const q=(document.getElementById('ep-search')?.value||'').toLowerCase();
+  const org=document.getElementById('ep-org-filter')?.value||'';
   const t=trainings.find(x=>x.id===selTrainingId);
   const existing=new Set((t?.uczestnicy||[]).map(n=>n.toLowerCase()));
-  const matches=employees.filter(e=>{
-    const name=(e['Name']||((e['Given Name']||'')+' '+(e['Family Name']||'')).trim());
-    return name&&(q?name.toLowerCase().includes(q):true)&&!existing.has(name.toLowerCase());
-  }).slice(0,9);
-  if(!matches.length){drop.style.display='none';return;}
-  drop.innerHTML=matches.map(e=>{
+  let list=employees.filter(e=>{
+    if(org&&e['Organization 1 - Name']!==org)return false;
+    if(q){const hay=[e['Name'],e['Given Name'],e['Family Name'],e['Organization 1 - Title'],e['Organization 1 - Name']].join(' ').toLowerCase();if(!hay.includes(q))return false;}
+    return true;
+  });
+  list.sort((a,b)=>(a['Family Name']||'').localeCompare(b['Family Name']||'','pl'));
+  document.getElementById('ep-count-lbl').textContent=`${list.length} z ${employees.length} pracowników`;
+  const el=document.getElementById('ep-list');
+  if(!list.length){el.innerHTML='<div style="padding:16px;font-size:13px;color:var(--text-muted);text-align:center;">Brak wyników</div>';return;}
+  el.innerHTML=list.map(e=>{
     const name=e['Name']||((e['Given Name']||'')+' '+(e['Family Name']||'')).trim();
     const title=e['Organization 1 - Title']||'';
-    const org=e['Organization 1 - Name']||'';
-    const sub=[title,org].filter(Boolean).join(' · ');
-    return`<div class="tm-emp-item" data-name="${escHtml(name)}" onmousedown="tmAddParticipantName(this.dataset.name)" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;" onmouseover="this.style.background='var(--offwhite)'" onmouseout="this.style.background=''">
-      <div style="font-size:13px;font-weight:400;color:var(--text);">${escHtml(name)}</div>
-      ${sub?`<div style="font-size:11px;color:var(--text-muted);margin-top:1px;">${escHtml(sub)}</div>`:''}
-    </div>`;
+    const org2=e['Organization 1 - Name']||'';
+    const sub=[title,org2].filter(Boolean).join(' · ');
+    const isIn=existing.has(name.toLowerCase());
+    const isSel=empPickerSelected.has(name);
+    return`<label style="display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--border);cursor:${isIn?'default':'pointer'};background:${isIn?'var(--offwhite)':''};" onmouseover="if(!${isIn})this.style.background='var(--offwhite)'" onmouseout="if(!${isIn})this.style.background=''">
+      <input type="checkbox" data-name="${escHtml(name)}" ${isSel?'checked':''} ${isIn?'disabled checked':''} onchange="epToggle(this)" style="accent-color:var(--red);width:15px;height:15px;flex-shrink:0;cursor:pointer;">
+      <div>
+        <div style="font-size:13px;font-weight:400;color:${isIn?'var(--text-muted)':'var(--text)'};">${escHtml(name)}${isIn?' <span style="font-size:11px;color:var(--red);">już dodany</span>':''}</div>
+        ${sub?`<div style="font-size:11px;color:var(--text-muted);">${escHtml(sub)}</div>`:''}
+      </div>
+    </label>`;
   }).join('');
-  drop.style.display='block';
+  updateEpAddBtn();
 }
-function tmHideEmpDrop(){const d=document.getElementById('tm-emp-drop');if(d)d.style.display='none';}
+function epToggle(cb){
+  const name=cb.dataset.name;
+  if(cb.checked)empPickerSelected.add(name);else empPickerSelected.delete(name);
+  updateEpAddBtn();
+}
+function updateEpAddBtn(){
+  const btn=document.getElementById('ep-add-btn');
+  const n=empPickerSelected.size;
+  btn.textContent=n?`Dodaj zaznaczonych (${n})`:'Dodaj zaznaczonych';
+  btn.disabled=n===0;
+}
+function confirmEmpPicker(){
+  if(!empPickerSelected.size)return;
+  const t=trainings.find(x=>x.id===selTrainingId);if(!t)return;
+  if(!t.uczestnicy)t.uczestnicy=[];
+  empPickerSelected.forEach(name=>{if(!t.uczestnicy.includes(name))t.uczestnicy.push(name);});
+  closeEmpPicker();
+  renderTmParticipants();saveToStorage();refreshModuleIfOpen();renderDashboard();pushSessionToGitHub(selTrainingId);
+}
 function tmAddParticipantName(name){
   const t=trainings.find(x=>x.id===selTrainingId);if(!t)return;
   if(!t.uczestnicy)t.uczestnicy=[];
   if(!t.uczestnicy.includes(name))t.uczestnicy.push(name);
-  const inp=document.getElementById('tm-part-input');if(inp)inp.value='';
-  tmHideEmpDrop();
   renderTmParticipants();saveToStorage();refreshModuleIfOpen();renderDashboard();pushSessionToGitHub(selTrainingId);
 }
-function tmAddParticipantFromInput(){
-  const inp=document.getElementById('tm-part-input');const name=(inp?.value||'').trim();if(!name)return;
-  tmAddParticipantName(name);
-}
-function tmAddParticipant(){tmAddParticipantFromInput();}
+function tmAddParticipant(){}
 function tmRemoveParticipant(idx){
   const t=trainings.find(x=>x.id===selTrainingId);if(!t||!t.uczestnicy)return;
   openDC(`Usunąć uczestnika <strong>${escHtml(t.uczestnicy[idx])}</strong>?`,()=>{

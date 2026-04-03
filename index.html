@@ -739,24 +739,37 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 
 
 <div class="overlay" id="emp-profile-overlay" onclick="closeIfBg(event,'emp-profile-overlay')">
-  <div class="modal" style="width:540px;">
-    <button class="modal-x" onclick="document.getElementById('emp-profile-overlay').classList.remove('open')">×</button>
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px;">
-      <div id="ep-avatar" style="width:56px;height:56px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:400;color:#fff;flex-shrink:0;"></div>
-      <div>
-        <div id="ep-name" style="font-size:20px;font-weight:400;color:var(--text);"></div>
-        <div id="ep-title" style="font-size:13px;color:var(--text-muted);font-weight:300;margin-top:2px;"></div>
+  <div class="modal" style="width:560px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-x" onclick="closeEmpProfile()">×</button>
+    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;">
+      <div id="ep-avatar" style="flex-shrink:0;"></div>
+      <div style="flex:1;min-width:0;">
+        <div id="ep-name" style="font-size:22px;font-weight:300;color:var(--text);margin-bottom:4px;"></div>
+        <div id="ep-title" style="font-size:13px;color:var(--red);font-weight:400;margin-bottom:4px;"></div>
+        <div id="ep-org" style="font-size:12px;color:var(--text-muted);margin-bottom:6px;"></div>
+        <div id="ep-contact" style="display:flex;flex-direction:column;gap:3px;"></div>
       </div>
     </div>
-    <div id="ep-fields" style="margin-bottom:22px;"></div>
     <div id="ep-add-section" style="margin-bottom:22px;display:none;">
-      <div class="tp-section-title">Dodaj do szkolenia</div>
+      <div class="tp-section-title">Dodaj szkolenie</div>
       <div style="display:flex;gap:8px;margin-top:8px;">
-        <select id="ep-add-select" class="form-sel" style="margin-bottom:0;flex:1;font-size:13px;"></select>
-        <button onclick="addCurrentEmpToTraining()" style="background:var(--red);border:none;border-radius:8px;color:#fff;font-family:'Roboto',sans-serif;font-size:13px;padding:0 16px;cursor:pointer;flex-shrink:0;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Dodaj</button>
+        <input type="date" id="ep-add-date" class="form-sel" style="flex:1;margin-bottom:0;">
+        <select id="ep-add-module" class="form-sel" style="flex:2;margin-bottom:0;"></select>
+      </div>
+      <textarea id="ep-add-notes" placeholder="Notatki (opcjonalnie)" style="width:100%;margin-top:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;resize:vertical;min-height:60px;box-sizing:border-box;transition:border-color .2s;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end;">
+        <button class="btn btn-gray" onclick="document.getElementById('ep-add-section').style.display='none'">Anuluj</button>
+        <button class="btn btn-red" onclick="saveEmpTraining()">Zapisz</button>
       </div>
     </div>
-    <div style="margin-bottom:18px;">
+    <div style="margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div class="tp-section-title" style="margin-bottom:0;">Zrealizowane szkolenia</div>
+        <button onclick="openEmpAddTraining()" style="background:var(--red);border:none;border-radius:6px;padding:5px 14px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:500;color:#fff;cursor:pointer;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">+ Dodaj</button>
+      </div>
+      <div id="ep-trainings-list"></div>
+    </div>
+    <div style="margin-bottom:10px;">
       <div class="tp-section-title">Zaplanowane szkolenia</div>
       <div id="ep-future"></div>
     </div>
@@ -2216,6 +2229,102 @@ async function loadEmployees(){
   }
 }
 
+async function pushEmployeesToGitHub(){
+  const token=getGhToken();if(!token)return;
+  try{
+    const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/pracownicy.json`;
+    const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
+    let sha=null;
+    try{const r=await fetch(`${apiUrl}?ref=main`,{headers});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(employees,null,2))));
+    const body={message:'sync: aktualizacja danych pracowników',content,branch:'main'};
+    if(sha)body.sha=sha;
+    await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
+  }catch(e){console.error('Employee push error:',e);}
+}
+
+let currentEmpEmail=null;
+function openEmpProfile(email){
+  currentEmpEmail=email;
+  const emp=employees.find(e=>e['E-mail 1 - Value']===email);if(!emp)return;
+  document.getElementById('ep-add-section').style.display='none';
+  // Avatar initials
+  const initials=(emp['Given Name']||'?').charAt(0).toUpperCase()+(emp['Family Name']||'').charAt(0).toUpperCase();
+  document.getElementById('ep-avatar').innerHTML=`<div style="width:56px;height:56px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:400;color:#fff;">${escHtml(initials)}</div>`;
+  document.getElementById('ep-name').textContent=emp['Name']||'';
+  document.getElementById('ep-title').textContent=emp['Organization 1 - Title']||'';
+  document.getElementById('ep-org').textContent=emp['Organization 1 - Name']||'';
+  const contact=[];
+  if(emp['E-mail 1 - Value'])contact.push(`<span style="font-size:12px;color:var(--text-muted);">✉ ${escHtml(emp['E-mail 1 - Value'])}</span>`);
+  if(emp['Phone 1 - Value'])contact.push(`<span style="font-size:12px;color:var(--text-muted);">📞 ${escHtml(emp['Phone 1 - Value'])}</span>`);
+  document.getElementById('ep-contact').innerHTML=contact.join('');
+  // Fill module select
+  const sel=document.getElementById('ep-add-module');
+  sel.innerHTML='<option value="">— wybierz szkolenie —</option>'+modules.map(m=>`<option value="${escHtml(m.nazwa)}">[${escHtml(m.kategoria)}] ${escHtml(m.nazwa)}</option>`).join('');
+  // Set today as default date
+  document.getElementById('ep-add-date').value=TODAY_STR;
+  renderEmpTrainings();
+  renderEmpScheduled();
+  document.getElementById('emp-profile-overlay').classList.add('open');
+}
+function closeEmpProfile(){document.getElementById('emp-profile-overlay').classList.remove('open');currentEmpEmail=null;}
+function renderEmpTrainings(){
+  const emp=employees.find(e=>e['E-mail 1 - Value']===currentEmpEmail);
+  const list=emp?.szkolenia||[];
+  const el=document.getElementById('ep-trainings-list');
+  if(!list.length){el.innerHTML='<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:6px 0;">Brak zrealizowanych szkoleń</div>';return;}
+  el.innerHTML=list.slice().sort((a,b)=>b.data.localeCompare(a.data)).map((s,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:400;color:var(--text);">${escHtml(s.modulNazwa)}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${escHtml(s.data)}${s.uwagi?` · ${escHtml(s.uwagi)}`:''}</div>
+      </div>
+      <button onclick="deleteEmpTraining(${i})" style="background:none;border:none;color:rgba(220,20,60,0.4);cursor:pointer;font-size:16px;padding:0 4px;transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(220,20,60,0.4)'">×</button>
+    </div>`).join('');
+}
+function renderEmpScheduled(){
+  const emp=employees.find(e=>e['E-mail 1 - Value']===currentEmpEmail);if(!emp)return;
+  const name=emp['Name']||'';
+  const past=[],future=[];
+  trainings.forEach(t=>{
+    const ucz=(t.uczestnicy||[]);
+    if(!ucz.some(u=>u.toLowerCase()===name.toLowerCase()))return;
+    const mod=getModuleData(t.moduleId);
+    const d=new Date(t.date);
+    const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+    const item=`<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;"><span style="font-weight:400;color:var(--text);">${escHtml(mod?.nazwa||'—')}</span><span style="color:var(--text-muted);margin-left:8px;">${escHtml(dateLabel)}</span></div>`;
+    if(t.date<TODAY_STR)past.push({ds:t.date,html:item});else future.push({ds:t.date,html:item});
+  });
+  future.sort((a,b)=>a.ds.localeCompare(b.ds));
+  past.sort((a,b)=>b.ds.localeCompare(a.ds));
+  document.getElementById('ep-future').innerHTML=future.length?future.map(x=>x.html).join(''):'<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:6px 0;">Brak</div>';
+  document.getElementById('ep-past').innerHTML=past.length?past.map(x=>x.html).join(''):'<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:6px 0;">Brak</div>';
+}
+function openEmpAddTraining(){
+  document.getElementById('ep-add-section').style.display='block';
+  document.getElementById('ep-add-notes').value='';
+}
+function saveEmpTraining(){
+  const data=document.getElementById('ep-add-date').value;
+  const modulNazwa=document.getElementById('ep-add-module').value;
+  const uwagi=document.getElementById('ep-add-notes').value.trim();
+  if(!data||!modulNazwa){alert('Wybierz datę i szkolenie');return;}
+  const emp=employees.find(e=>e['E-mail 1 - Value']===currentEmpEmail);if(!emp)return;
+  if(!emp.szkolenia)emp.szkolenia=[];
+  emp.szkolenia.push({data,modulNazwa,uwagi});
+  document.getElementById('ep-add-section').style.display='none';
+  renderEmpTrainings();
+  renderEmployees();
+  pushEmployeesToGitHub();
+}
+function deleteEmpTraining(idx){
+  const emp=employees.find(e=>e['E-mail 1 - Value']===currentEmpEmail);if(!emp||!emp.szkolenia)return;
+  emp.szkolenia.splice(idx,1);
+  renderEmpTrainings();
+  renderEmployees();
+  pushEmployeesToGitHub();
+}
+
 function empSort(col){
   if(empSortCol===col){empSortAsc=!empSortAsc;}else{empSortCol=col;empSortAsc=true;}
   renderEmployees();
@@ -2247,14 +2356,17 @@ function renderEmployees(){
   if(!list.length){tbody.innerHTML='';empty.style.display='block';}
   else{
     empty.style.display='none';
-    tbody.innerHTML=list.map((e,i)=>`<tr onclick="openEmployeeProfile(${employees.indexOf(e)})">
-      <td class="emp-name">${escHtml(e['Family Name']||'')}</td>
+    tbody.innerHTML=list.map((e,i)=>{
+      const trainCount=(e.szkolenia||[]).length;
+      const badge=trainCount?`<span style="display:inline-block;margin-left:6px;background:var(--red);color:#fff;font-size:10px;font-weight:500;border-radius:10px;padding:1px 6px;vertical-align:middle;">${trainCount}</span>`:'';
+      return`<tr style="cursor:pointer;" onclick="openEmpProfile('${escHtml(e['E-mail 1 - Value']||'')}')">
+      <td class="emp-name">${escHtml(e['Family Name']||'')}${badge}</td>
       <td>${escHtml(e['Given Name']||'')}</td>
       <td>${escHtml(e['Organization 1 - Name']||'')}</td>
       <td>${escHtml(e['Organization 1 - Title']||'')}</td>
       <td class="emp-email">${e['E-mail 1 - Value']?`<a href="mailto:${escHtml(e['E-mail 1 - Value'])}" onclick="event.stopPropagation()">${escHtml(e['E-mail 1 - Value'])}</a>`:''}</td>
       <td>${escHtml(e['Phone 1 - Value']||'')}</td>
-    </tr>`).join('');
+    </tr>`;}).join('');
   }
   document.getElementById('emp-count').textContent=`${list.length} z ${employees.length} pracowników`;
 }

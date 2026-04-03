@@ -778,11 +778,10 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </div>
     <div id="ep-add-section" style="margin-bottom:22px;display:none;">
       <div class="tp-section-title">Dodaj szkolenie</div>
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <input type="date" id="ep-add-date" class="form-sel" style="flex:1;margin-bottom:0;">
-        <select id="ep-add-module" class="form-sel" style="flex:2;margin-bottom:0;"></select>
+      <div style="margin-top:8px;">
+        <input type="date" id="ep-add-date" style="display:none;">
+        <select id="ep-add-module" class="form-sel" style="width:100%;margin-bottom:0;"></select>
       </div>
-      <textarea id="ep-add-notes" placeholder="Notatki (opcjonalnie)" style="width:100%;margin-top:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;resize:vertical;min-height:60px;box-sizing:border-box;transition:border-color .2s;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"></textarea>
       <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end;">
         <button class="btn btn-gray" onclick="document.getElementById('ep-add-section').style.display='none'">Anuluj</button>
         <button class="btn btn-red" onclick="saveEmpTraining()">Zapisz</button>
@@ -2517,14 +2516,13 @@ function renderEmpScheduled(){
 }
 function openEmpAddTraining(){
   document.getElementById('ep-add-section').style.display='block';
-  document.getElementById('ep-add-notes').value='';
 }
 function saveEmpTraining(){
   const trainingId=parseInt(document.getElementById('ep-add-module').value);
   const t=trainings.find(x=>x.id===trainingId);
-  const data=t?t.date:document.getElementById('ep-add-date').value;
+  const data=t?t.date:'';
   const modulNazwa=t?getModuleData(t.moduleId)?.nazwa||'':'';
-  const uwagi=document.getElementById('ep-add-notes').value.trim();
+  const uwagi='';
   if(!data||!modulNazwa){alert('Wybierz termin szkolenia');return;}
   const emp=employees.find(e=>e['E-mail 1 - Value']===currentEmpEmail);if(!emp)return;
   if(!emp.szkolenia)emp.szkolenia=[];

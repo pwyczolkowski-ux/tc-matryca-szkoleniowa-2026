@@ -240,11 +240,12 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .ep-t-mod{font-size:12px;font-weight:300;color:var(--text-muted);}
 
 @media(max-width:768px){
-  header{padding:0 12px;gap:8px;}
-  .logo{font-size:16px;flex-shrink:0;}
-  .tab-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-shrink:1;}
+  header{padding:8px 16px 0;flex-wrap:wrap;height:auto;gap:0;}
+  .logo{font-size:16px;flex:1;padding:4px 0 8px;}
+  .tab-nav{order:3;width:calc(100% + 32px);margin:0 -16px;border-top:1px solid rgba(255,255,255,0.08);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 8px;}
   .tab-nav::-webkit-scrollbar{display:none;}
-  .tab-btn{padding:0 12px;font-size:11px;letter-spacing:.5px;white-space:nowrap;}
+  .tab-btn{padding:0 14px;font-size:12px;letter-spacing:.5px;white-space:nowrap;height:44px;}
+  header > div:last-child{display:none;}
   .sidebar{display:none!important;}
   .cal-panel,.modules-panel,.dash-panel{padding:14px 12px;}
   .month-nav{padding:10px 12px;flex-wrap:wrap;gap:8px;}
@@ -737,9 +738,10 @@ const TCOLS=["#DC143C","#22c55e","#f59e0b","#8b5cf6","#06b6d4","#f97316","#ec489
 
 let curMonth=TODAY.getMonth();
 let trainers=[];
-let trainings={};
+let trainings=[];
 let sbFilter="all";
 let selDate=null;
+let selTrainingId=null;
 let editingTrainerId=null;
 let pendingPhotoData=null;
 let trainerProfileId=null;
@@ -749,7 +751,7 @@ let customModules=[];
 let pendingProfilePhotoData=null;
 const LS_MODULE_EXTRAS='tc_matryca_module_extras';
 const LS_CUSTOM_MODULES='tc_matryca_custom_modules';
-let participantsDate=null;
+let participantsTrainingId=null;
 
 const LS_TRAININGS='tc_matryca_trainings';
 const LS_TRAINERS='tc_matryca_trainers';
@@ -769,7 +771,21 @@ function loadFromStorage(){
     const tr=localStorage.getItem(LS_TRAINERS);
     const me=localStorage.getItem(LS_MODULE_EXTRAS);
     const cm=localStorage.getItem(LS_CUSTOM_MODULES);
-    if(t)trainings=JSON.parse(t);
+    if(t){
+      const parsed=JSON.parse(t);
+      if(Array.isArray(parsed))trainings=parsed;
+      else{
+        // migrate old object format
+        trainings=Object.entries(parsed).map(([date,tr])=>({
+          id:Date.now()+Math.random(),
+          date,
+          moduleId:tr.moduleId,
+          trainerIds:tr.trainerIds||(tr.trainerId!=null?[tr.trainerId]:[]),
+          priority:tr.priority||null,
+          uczestnicy:tr.uczestnicy||[]
+        }));
+      }
+    }
     if(tr)trainers=JSON.parse(tr);
     if(me)moduleExtras=JSON.parse(me);
     if(cm)customModules=JSON.parse(cm);
@@ -874,7 +890,8 @@ function renderCalendar(){
     const past=isPast(ds);
     const hol=HOLIDAYS[ds];
     const blk=isBlocked(ds);
-    const hasTrain=!!trainings[ds];
+    const dayTrains=trainings.filter(t=>t.date===ds);
+    const hasTrain=dayTrains.length>0;
     const ccBlk=!past&&!hol&&!blk&&!wknd&&!hasTrain&&hasCCMeeting(ds);
     const rec=!past&&!hol&&!blk&&!wknd&&isRecommended(ds);
     const isToday=ds===TODAY_STR;
@@ -903,7 +920,7 @@ function renderCalendar(){
     }
     if(past&&hasTrain){
       cell.style.cursor='pointer';
-      cell.addEventListener('click',()=>openParticipantsModal(ds));
+      cell.addEventListener('click',()=>openParticipantsModal(dayTrains[0].id));
     }
 
     let html=`<div class="day-num">${d}</div>`;
@@ -923,14 +940,16 @@ function renderCalendar(){
       html+='</div>';
     }
     if(hasTrain){
-      const t=trainings[ds];
-      const mod=getModuleData(t.moduleId);
-      const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
-      const partCount=(t.uczestnicy||[]).length;
-      html+=`<div class="day-training-badge"><span class="dtb-text">📚 ${mod?escHtml(mod.nazwa):'?'}</span>${!past?`<button class="dtb-remove" onclick="event.stopPropagation();removeTraining('${ds}')">×</button>`:''}</div>`;
-      if(tNames.length)html+=`<div class="dtb-trainer">👤 ${tNames.map(escHtml).join(', ')}</div>`;
-      if(t.priority){const pL={wysoki:'Wysoki',sredni:'Średni',niski:'Niski'};html+=`<div class="priority-badge ${t.priority}">● ${pL[t.priority]||t.priority}</div>`;}
-      html+=`<button class="dtb-part-btn" onclick="event.stopPropagation();openParticipantsModal('${ds}')">👥 Uczestnicy${partCount?` (${partCount})`:''}</button>`;
+      const pL={wysoki:'Wysoki',sredni:'Średni',niski:'Niski'};
+      dayTrains.forEach(t=>{
+        const mod=getModuleData(t.moduleId);
+        const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
+        const partCount=(t.uczestnicy||[]).length;
+        html+=`<div class="day-training-badge"><span class="dtb-text" style="cursor:pointer;" onclick="event.stopPropagation();openEditTraining(${t.id})">📚 ${mod?escHtml(mod.nazwa):'?'}</span>${!past?`<button class="dtb-remove" onclick="event.stopPropagation();removeTraining(${t.id})">×</button>`:''}</div>`;
+        if(tNames.length)html+=`<div class="dtb-trainer">👤 ${tNames.map(escHtml).join(', ')}</div>`;
+        if(t.priority){html+=`<div class="priority-badge ${t.priority}">● ${pL[t.priority]||t.priority}</div>`;}
+        html+=`<button class="dtb-part-btn" onclick="event.stopPropagation();openParticipantsModal(${t.id})">👥 Uczestnicy${partCount?` (${partCount})`:''}</button>`;
+      });
     }
     cell.innerHTML=html;grid.appendChild(cell);
   }
@@ -940,37 +959,44 @@ function renderCalendar(){
   renderMonthlySummary();
 }
 
-function openTrainingModal(ds,preModId){
-  selDate=ds;
+function openTrainingModal(ds,preModId,editId=null){
+  selDate=ds;selTrainingId=editId;
   const d=new Date(ds);
   document.getElementById('tm-date').textContent=d.toLocaleDateString('pl-PL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('tm-title').textContent=trainings[ds]?'Edytuj szkolenie':'Zaplanuj szkolenie';
-  document.getElementById('tm-delete-btn').style.display=trainings[ds]?'block':'none';
+  document.getElementById('tm-title').textContent=editId!==null?'Edytuj szkolenie':'Zaplanuj szkolenie';
+  document.getElementById('tm-delete-btn').style.display=editId!==null?'block':'none';
   const evts=RAW_EVENTS[ds];
   const existEl=document.getElementById('tm-existing');
   if(evts&&evts.length){existEl.style.display='block';document.getElementById('tm-event-list').innerHTML=evts.map(e=>`<div class="ee-item">${e}</div>`).join('');}
   else existEl.style.display='none';
+  const existingTr=editId!==null?trainings.find(x=>x.id===editId):null;
   const ms=document.getElementById('tm-module');
   ms.innerHTML='<option value="">— wybierz moduł —</option>';
   ['Mindset','Skill','Kultura'].forEach(cat=>{
     const og=document.createElement('optgroup');og.label=cat;
     getAllModules().filter(x=>x.kategoria===cat).forEach(mod=>{
       const o=document.createElement('option');o.value=mod.id;o.textContent=mod.nazwa;
-      if(trainings[ds]?.moduleId===mod.id)o.selected=true;
+      if(existingTr?.moduleId===mod.id)o.selected=true;
       if(preModId===mod.id)o.selected=true;
       og.appendChild(o);
     });ms.appendChild(og);
   });
-  document.getElementById('tm-priority').value=trainings[ds]?.priority||'';
-  renderTrainerChecks(ds);
+  document.getElementById('tm-priority').value=existingTr?.priority||'';
+  renderTrainerChecks(ds,existingTr);
   document.getElementById('training-overlay').classList.add('open');
 }
-function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');document.getElementById('tm-t-input').value='';selDate=null;}
+function openEditTraining(id){
+  const t=trainings.find(x=>x.id===id);
+  if(!t)return;
+  openTrainingModal(t.date,null,id);
+}
+function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');document.getElementById('tm-t-input').value='';selDate=null;selTrainingId=null;}
 function deleteCurrentTraining(){
-  if(!selDate)return;
-  const mod=getModuleData(trainings[selDate]?.moduleId);
-  openDC(`Usunąć szkolenie<br><strong>${mod?escHtml(mod.nazwa):selDate}</strong>?`,()=>{
-    delete trainings[selDate];
+  if(selTrainingId===null)return;
+  const t=trainings.find(x=>x.id===selTrainingId);if(!t)return;
+  const mod=getModuleData(t.moduleId);
+  openDC(`Usunąć szkolenie<br><strong>${mod?escHtml(mod.nazwa):t.date}</strong>?`,()=>{
+    trainings=trainings.filter(x=>x.id!==selTrainingId);
     closeTrainingModal();renderCalendar();renderDashboard();saveToStorage();
   });
 }
@@ -1751,7 +1777,20 @@ async function loadFromGitHub(){
     if(!r.ok)return false;
     const d=await r.json();
     if(!d.trainings&&!d.trainers)return false;
-    if(d.trainings)trainings=d.trainings;
+    if(d.trainings){
+      const parsed=d.trainings;
+      if(Array.isArray(parsed))trainings=parsed;
+      else{
+        trainings=Object.entries(parsed).map(([date,tr])=>({
+          id:Date.now()+Math.random(),
+          date,
+          moduleId:tr.moduleId,
+          trainerIds:tr.trainerIds||(tr.trainerId!=null?[tr.trainerId]:[]),
+          priority:tr.priority||null,
+          uczestnicy:tr.uczestnicy||[]
+        }));
+      }
+    }
     if(d.trainers)trainers=d.trainers;
     if(d.moduleExtras)moduleExtras=d.moduleExtras;
     if(d.customModules)customModules=d.customModules;

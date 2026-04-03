@@ -605,7 +605,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       </select>
       <!-- Uczestnicy — widoczne tylko w trybie edycji -->
       <div id="tm-participants-section" style="display:none;margin-top:4px;">
-        <label class="form-lbl">Uczestnicy</label>
+        <label class="form-lbl" id="tm-part-label">Uczestnicy</label>
         <div id="tm-part-list" style="margin-bottom:8px;min-height:20px;"></div>
         <div style="display:flex;gap:7px;margin-bottom:14px;">
           <input id="tm-part-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Dodaj uczestnika..." maxlength="80" onkeydown="if(event.key==='Enter')tmAddParticipant()"/>
@@ -1198,6 +1198,8 @@ function renderTmParticipants(){
   const el=document.getElementById('tm-part-list');if(!el)return;
   const t=trainings.find(x=>x.id===selTrainingId);
   const list=t?.uczestnicy||[];
+  const lbl=document.getElementById('tm-part-label');
+  if(lbl)lbl.textContent=list.length?`Uczestnicy (${list.length})`:'Uczestnicy';
   if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:4px 0 8px;">Brak uczestników</div>';return;}
   el.innerHTML=list.map((name,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;"><span>${escHtml(name)}</span><button onclick="tmRemoveParticipant(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;line-height:1;padding:0 4px;">×</button></div>`).join('');
 }
@@ -1206,13 +1208,13 @@ function tmAddParticipant(){
   const t=trainings.find(x=>x.id===selTrainingId);if(!t)return;
   if(!t.uczestnicy)t.uczestnicy=[];
   t.uczestnicy.push(name);inp.value='';
-  renderTmParticipants();saveToStorage();pushSessionToGitHub(selTrainingId);
+  renderTmParticipants();saveToStorage();refreshModuleIfOpen();renderDashboard();pushSessionToGitHub(selTrainingId);
 }
 function tmRemoveParticipant(idx){
   const t=trainings.find(x=>x.id===selTrainingId);if(!t||!t.uczestnicy)return;
   openDC(`Usunąć uczestnika <strong>${escHtml(t.uczestnicy[idx])}</strong>?`,()=>{
     t.uczestnicy.splice(idx,1);
-    renderTmParticipants();saveToStorage();pushSessionToGitHub(selTrainingId);
+    renderTmParticipants();saveToStorage();refreshModuleIfOpen();renderDashboard();pushSessionToGitHub(selTrainingId);
   });
 }
 function deleteCurrentTraining(){

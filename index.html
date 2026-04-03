@@ -242,6 +242,10 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <select class="form-sel" id="tm-module"><option value="">— wybierz moduł —</option></select>
     <label class="form-lbl">Trener / Trenerzy</label>
     <select class="form-sel" id="tm-trainer"><option value="">— wybierz trenera —</option></select>
+    <div style="display:flex;gap:7px;margin-top:-8px;margin-bottom:14px;">
+      <input id="tm-t-input" class="form-sel" style="margin-bottom:0;flex:1;" placeholder="Lub dodaj nowego trenera..." maxlength="60"/>
+      <button onclick="addTrainerFromModal()" style="background:var(--navy);border:none;border-radius:8px;color:var(--white);font-size:22px;width:44px;flex-shrink:0;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">+</button>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeTrainingModal()">Anuluj</button>
       <button class="btn btn-red" onclick="saveTraining()">Zaplanuj szkolenie</button>
@@ -494,7 +498,7 @@ function openTrainingModal(ds,preModId){
   trainers.forEach(tr=>{const o=document.createElement('option');o.value=tr.id;o.textContent=tr.name;if(trainings[ds]?.trainerId===tr.id)o.selected=true;ts.appendChild(o);});
   document.getElementById('training-overlay').classList.add('open');
 }
-function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');selDate=null;}
+function closeTrainingModal(){document.getElementById('training-overlay').classList.remove('open');document.getElementById('tm-t-input').value='';selDate=null;}
 function saveTraining(){
   if(!selDate)return;
   const mid=parseInt(document.getElementById('tm-module').value);
@@ -510,6 +514,16 @@ function addTrainer(){
   trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length]});
   inp.value='';renderTrainers();saveToStorage();
 }
+function addTrainerFromModal(){
+  const inp=document.getElementById('tm-t-input');const name=inp.value.trim();if(!name)return;
+  const id=Date.now();
+  trainers.push({id,name,color:TCOLS[trainers.length%TCOLS.length]});
+  inp.value='';
+  const ts=document.getElementById('tm-trainer');
+  const o=document.createElement('option');o.value=id;o.textContent=name;o.selected=true;
+  ts.appendChild(o);
+  renderTrainers();saveToStorage();
+}
 function removeTrainer(id){trainers=trainers.filter(t=>t.id!==id);renderTrainers();saveToStorage();}
 function renderTrainers(){
   const el=document.getElementById('trainers-list');
@@ -517,6 +531,7 @@ function renderTrainers(){
   el.innerHTML=trainers.map(t=>`<div class="trainer-item"><div class="t-dot" style="background:${t.color}"></div><span class="t-name">${escHtml(t.name)}</span><button class="t-remove" onclick="removeTrainer(${t.id})">×</button></div>`).join('');
 }
 document.getElementById('t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainer();});
+document.getElementById('tm-t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainerFromModal();});
 
 function filterSb(btn){sbFilter=btn.dataset.cat;document.querySelectorAll('.sf-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSbModules();}
 function renderSbModules(){

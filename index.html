@@ -151,34 +151,22 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .mod-card-footer{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .mod-card-time{font-size:11px;color:var(--text-muted);}
 .mod-card-cta{font-size:11px;font-weight:500;color:var(--red);text-transform:uppercase;letter-spacing:1px;}
-/* Catalog view */
-.mod-catalog-item{background:var(--white);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;border-left:4px solid transparent;}
-.mod-catalog-item.cat-Mindset{border-left-color:#8b5cf6;}
-.mod-catalog-item.cat-Skill{border-left-color:var(--amber);}
-.mod-catalog-item.cat-Kultura{border-left-color:var(--green);}
-.mci-header{padding:16px 20px;display:flex;align-items:flex-start;gap:14px;}
-.mci-info{flex:1;min-width:0;}
-.mci-name{font-size:16px;font-weight:400;color:var(--text);line-height:1.4;margin-bottom:4px;}
-.mci-desc{font-size:12px;font-weight:300;color:var(--text-muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.mci-actions{display:flex;gap:6px;flex-shrink:0;margin-top:2px;}
-.mci-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:400;color:var(--text-muted);cursor:pointer;font-family:'Roboto',sans-serif;transition:all .2s;white-space:nowrap;}
-.mci-btn:hover{border-color:var(--text);color:var(--text);}
-.mci-btn.primary{background:var(--red);border-color:var(--red);color:#fff;}.mci-btn.primary:hover{opacity:.85;}
-.mci-sessions{border-top:1px solid var(--border);}
-.mci-session-row{display:flex;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--offwhite);transition:background .15s;}
-.mci-session-row:hover{background:var(--offwhite);}
-.mci-session-row:last-child{border-bottom:none;}
-.mci-session-row.is-past{opacity:.6;}
-.mci-s-date{font-size:12px;font-weight:500;color:var(--text);min-width:72px;white-space:nowrap;}
-.mci-s-time{font-size:11px;font-weight:500;color:var(--red);min-width:40px;}
-.mci-s-meta{flex:1;font-size:12px;font-weight:300;color:var(--text-muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
-.mci-s-actions{display:flex;gap:4px;flex-shrink:0;}
-.mci-s-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:3px 9px;font-size:11px;color:var(--text-muted);cursor:pointer;font-family:'Roboto',sans-serif;transition:all .2s;white-space:nowrap;}
-.mci-s-btn:hover{border-color:var(--text);color:var(--text);}
-.mci-add-row{padding:8px 20px;}
-.mci-add-btn{background:none;border:1px dashed var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:300;color:var(--text-muted);cursor:pointer;font-family:'Roboto',sans-serif;transition:all .2s;width:100%;text-align:left;}
-.mci-add-btn:hover{border-color:var(--red);color:var(--red);}
-.mci-empty{padding:10px 20px 14px;font-size:12px;color:var(--text-muted);font-style:italic;}
+.mod-list-item{display:flex;align-items:center;gap:14px;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 20px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.mod-list-item:hover{border-color:#c5cad8;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.mod-list-name{flex:1;font-size:15px;font-weight:400;color:var(--text);}
+.mod-list-count{font-size:12px;color:var(--text-muted);font-weight:300;white-space:nowrap;margin-right:6px;}
+.mod-list-arrow{font-size:18px;color:#ccc;font-weight:300;}
+.sess-table{width:100%;}
+.sess-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.sess-row:last-child{border-bottom:none;}
+.sess-row.is-past{opacity:.6;}
+.sess-date{font-size:13px;font-weight:500;color:var(--text);min-width:110px;white-space:nowrap;}
+.sess-time{font-size:12px;font-weight:500;color:var(--red);min-width:44px;}
+.sess-trainer{flex:1;font-size:13px;font-weight:300;color:var(--text-muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.sess-parts{font-size:12px;color:var(--text-muted);min-width:60px;text-align:right;}
+.sess-btns{display:flex;gap:4px;flex-shrink:0;}
+.sess-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:3px 9px;font-size:11px;color:var(--text-muted);cursor:pointer;font-family:'Roboto',sans-serif;transition:all .2s;white-space:nowrap;}
+.sess-btn:hover{border-color:var(--text);color:var(--text);}
 .overlay{position:fixed;inset:0;background:rgba(18,22,53,0.6);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;}
 .overlay.open{display:flex;}
 @media(max-width:480px){.overlay.open{align-items:flex-end;}.modal{border-radius:16px 16px 0 0!important;width:100%!important;max-width:100%!important;max-height:92vh;}}
@@ -442,14 +430,18 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </div>
     <div class="tab-panel" id="panel-modules">
       <div class="modules-panel">
-        <div class="mp-title">Szkolenia</div>
-        <div class="mp-sub">Program Matrycy Szkoleniowej The Company 2026 · kliknij szkolenie aby zobaczyć szczegóły lub edytować</div>
-        <div class="mod-filter-bar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap;">
+          <div>
+            <div class="mp-title">Baza szkoleń</div>
+            <div class="mp-sub">Kliknij szkolenie, aby zarządzać opisem i terminami</div>
+          </div>
+          <button onclick="openModuleDetail(null)" style="background:var(--navy);border:none;border-radius:8px;padding:9px 20px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#fff;cursor:pointer;transition:opacity .2s;flex-shrink:0;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">+ Dodaj szkolenie</button>
+        </div>
+        <div class="mod-filter-bar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
           <button class="mod-filter-btn f-all active" data-mf="all" onclick="filterModTab(this)">Wszystkie</button>
           <button class="mod-filter-btn f-Mindset" data-mf="Mindset" onclick="filterModTab(this)">Mindset</button>
           <button class="mod-filter-btn f-Skill" data-mf="Skill" onclick="filterModTab(this)">Skill</button>
           <button class="mod-filter-btn f-Kultura" data-mf="Kultura" onclick="filterModTab(this)">Kultura</button>
-          <button onclick="openModuleDetail(null)" style="margin-left:auto;background:var(--navy);border:none;border-radius:8px;padding:7px 16px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#fff;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">+ Dodaj szkolenie</button>
         </div>
         <div id="modules-by-cat"></div>
       </div>
@@ -527,13 +519,12 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
             <div class="cat-hdr"><span>Agenda</span></div>
             <div id="mds-agenda"></div>
           </div>
-          <div style="margin-bottom:24px;">
-            <div class="cat-hdr"><span>Zaplanowane szkolenia</span></div>
-            <div id="mds-future"></div>
-          </div>
-          <div>
-            <div class="cat-hdr"><span>Przeprowadzone szkolenia</span></div>
-            <div id="mds-past"></div>
+          <div style="margin-top:32px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <div class="cat-hdr" style="margin-bottom:0;flex:1;"><span>Terminy</span></div>
+              <button onclick="openTrainingModal(null,selectedModuleId,null)" style="background:var(--red);border:none;border-radius:7px;padding:6px 16px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:500;color:#fff;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">+ Dodaj termin</button>
+            </div>
+            <div id="mds-sessions"></div>
           </div>
         </div>
         <!-- EDIT MODE -->
@@ -1100,8 +1091,13 @@ function deleteCurrentTraining(){
   const mod=getModuleData(t.moduleId);
   openDC(`Usunąć szkolenie<br><strong>${mod?escHtml(mod.nazwa):t.date}</strong>?`,()=>{
     trainings=trainings.filter(x=>x.id!==selTrainingId);
-    closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();saveToStorage();
+    closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();
   });
+}
+function refreshModuleIfOpen(){
+  if(selectedModuleId!==null && document.getElementById('panel-module-detail').classList.contains('active')){
+    renderModuleDetailView(selectedModuleId);
+  }
 }
 function saveTraining(){
   if(!selDate){selDate=document.getElementById('tm-date-pick').value||null;}
@@ -1117,9 +1113,9 @@ function saveTraining(){
   }else{
     trainings.push({id:Date.now(),date:selDate,moduleId:mid,trainerIds,priority,time,uczestnicy:[]});
   }
-  closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();saveToStorage();
+  closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();
 }
-function removeTraining(id){trainings=trainings.filter(t=>t.id!==id);renderCalendar();renderDashboard();renderModuleCards();saveToStorage();}
+function removeTraining(id){trainings=trainings.filter(t=>t.id!==id);renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();}
 
 function trainerAvatar(t,size){
   if(t.photo)return`<img src="${t.photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
@@ -1282,48 +1278,16 @@ function renderModuleCards(){
     const mods=allMods.filter(m=>m.kategoria===cat);
     if(!mods.length)return'';
     const items=mods.map(m=>{
-      const sessions=trainings.filter(t=>t.moduleId===m.id).slice().sort((a,b)=>a.date.localeCompare(b.date));
-      const future=sessions.filter(t=>t.date>=TODAY_STR);
-      const past=sessions.filter(t=>t.date<TODAY_STR);
-      const totalSessions=sessions.length;
-      const sessHtml=sessions.map(t=>{
-        const d=new Date(t.date);
-        const dateStr=d.toLocaleDateString('pl-PL',{day:'numeric',month:'short'});
-        const tNames=getTrainerIds(t).map(id=>trainers.find(x=>x.id===id)?.name).filter(Boolean);
-        const partCount=(t.uczestnicy||[]).length;
-        const meta=[tNames.length?'👤 '+tNames.map(escHtml).join(', '):null, partCount?`👥 ${partCount}`:null].filter(Boolean).join(' · ');
-        const isPastRow=t.date<TODAY_STR;
-        return`<div class="mci-session-row${isPastRow?' is-past':''}">
-          <div class="mci-s-date">${escHtml(dateStr)}</div>
-          <div class="mci-s-time">${t.time?escHtml(t.time):''}</div>
-          <div class="mci-s-meta">${meta||'—'}</div>
-          <div class="mci-s-actions">
-            <button class="mci-s-btn" onclick="event.stopPropagation();openEditTraining(${t.id})">Edytuj</button>
-            <button class="mci-s-btn" onclick="event.stopPropagation();openParticipantsModal(${t.id})">👥${partCount?` ${partCount}`:''}</button>
-          </div>
-        </div>`;
-      }).join('');
-      const countBadge=totalSessions?`<span style="font-size:11px;font-weight:400;color:var(--text-muted);margin-left:8px;">${totalSessions} ${totalSessions===1?'termin':'terminów'}</span>`:'';
-      return`<div class="mod-catalog-item cat-${m.kategoria}">
-        <div class="mci-header">
-          <div class="mci-info">
-            <div class="mci-name">${escHtml(m.nazwa)}${countBadge}</div>
-            ${m.opis?`<div class="mci-desc">${escHtml(m.opis)}</div>`:''}
-          </div>
-          <div class="mci-actions">
-            <button class="mci-btn" onclick="event.stopPropagation();openModuleDetail(${m.id})">Edytuj opis</button>
-          </div>
-        </div>
-        <div class="mci-sessions">
-          ${sessHtml}
-          ${!totalSessions?`<div class="mci-empty">Brak zaplanowanych terminów</div>`:''}
-          <div class="mci-add-row">
-            <button class="mci-add-btn" onclick="openTrainingModal(null,${m.id},null)">+ Zaplanuj termin</button>
-          </div>
-        </div>
+      const count=trainings.filter(t=>t.moduleId===m.id).length;
+      const countTxt=count===0?'brak terminów':count===1?'1 termin':`${count} terminy/terminów`;
+      return`<div class="mod-list-item" onclick="openModuleDetail(${m.id})">
+        <span class="cat-tag ${m.kategoria}" style="flex-shrink:0;">${m.kategoria}</span>
+        <span class="mod-list-name">${escHtml(m.nazwa)}</span>
+        <span class="mod-list-count">${countTxt}</span>
+        <span class="mod-list-arrow">›</span>
       </div>`;
     }).join('');
-    return`<div class="cat-section"><div class="cat-hdr"><span class="cat-tag ${cat}">${cat}</span></div>${items}</div>`;
+    return`<div class="cat-section"><div class="cat-hdr"><span>${cat}</span></div>${items}</div>`;
   }).join('');
 }
 
@@ -1396,23 +1360,29 @@ function renderModuleDetailView(id){
   const agnd=(mod.agenda||'').trim();
   document.getElementById('mds-agenda-wrap').style.display=agnd?'block':'none';
   if(agnd)agndEl.innerHTML=agnd.split('\n').filter(l=>l.trim()).map((l,i)=>`<div style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:var(--red);font-weight:500;flex-shrink:0;min-width:20px;">${i+1}.</span><span style="font-size:14px;font-weight:300;color:var(--text);">${escHtml(l.trim())}</span></div>`).join('');
-  // Trainings
-  const past=[],future=[];
-  trainings.forEach(t=>{
-    if(t.moduleId!==id)return;
-    const ds=t.date;
-    const d=new Date(ds);
-    const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  // Sessions
+  const sessions=trainings.filter(t=>t.moduleId===id).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const sesEl=document.getElementById('mds-sessions');if(!sesEl)return;
+  if(!sessions.length){sesEl.innerHTML='<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak terminów — kliknij „Dodaj termin" aby zaplanować pierwsze szkolenie</div>';return;}
+  const rows=sessions.map(t=>{
+    const d=new Date(t.date);
+    const dateLabel=d.toLocaleDateString('pl-PL',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
     const tNames=getTrainerIds(t).map(tid=>trainers.find(tr=>tr.id===tid)?.name).filter(Boolean);
-    const item={id:t.id,ds,dateLabel,tNames,uczestnicy:t.uczestnicy||[]};
-    if(ds<TODAY_STR)past.push(item);else future.push(item);
-  });
-  past.sort((a,b)=>b.ds.localeCompare(a.ds));
-  future.sort((a,b)=>a.ds.localeCompare(b.ds));
-  const fmtFuture=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div><button onclick="openParticipantsModal(${i.id})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Uczestnicy${i.uczestnicy.length?` (${i.uczestnicy.length})`:''}</button></div>`;
-  const fmtPast=i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><div style="flex:1;"><div style="font-size:14px;font-weight:400;color:var(--text);">${escHtml(i.dateLabel)}</div>${i.tNames.length?`<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">👤 ${i.tNames.map(escHtml).join(', ')}</div>`:''}</div><button onclick="openParticipantsModal(${i.id})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Uczestnicy ${i.uczestnicy.length?`(${i.uczestnicy.length})`:''}</button></div>`;
-  document.getElementById('mds-future').innerHTML=future.length?future.map(fmtFuture).join(''):`<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak zaplanowanych szkoleń</div>`;
-  document.getElementById('mds-past').innerHTML=past.length?past.map(fmtPast).join(''):`<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;">Brak przeprowadzonych szkoleń</div>`;
+    const partCount=(t.uczestnicy||[]).length;
+    const isPast=t.date<TODAY_STR;
+    return`<div class="sess-row${isPast?' is-past':''}">
+      <div class="sess-date">${escHtml(dateLabel)}</div>
+      <div class="sess-time">${t.time?escHtml(t.time):''}</div>
+      <div class="sess-trainer">${tNames.length?'👤 '+tNames.map(escHtml).join(', '):'—'}</div>
+      <div class="sess-parts">👥 ${partCount}</div>
+      <div class="sess-btns">
+        <button class="sess-btn" onclick="openEditTraining(${t.id})">Edytuj</button>
+        <button class="sess-btn" onclick="openParticipantsModal(${t.id})">Uczestnicy</button>
+        <button class="sess-btn" style="color:var(--red);border-color:rgba(220,20,60,0.2);" onclick="openDC('Usunąć ten termin?',()=>{removeTraining(${t.id});renderModuleDetailView(selectedModuleId);})">Usuń</button>
+      </div>
+    </div>`;
+  }).join('');
+  sesEl.innerHTML=`<div class="sess-table">${rows}</div>`;
 }
 function deleteCustomModule(){
   if(selectedModuleId===null)return;

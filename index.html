@@ -159,7 +159,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
 .sess-table{width:100%;}
 .sess-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
 .sess-row:last-child{border-bottom:none;}
-.sess-row.is-past{opacity:.6;}
+.sess-row.is-past{opacity:.65;}.sess-row.is-realized{opacity:1;background:rgba(34,197,94,0.04);}
 .sess-date{font-size:13px;font-weight:500;color:var(--text);min-width:110px;white-space:nowrap;}
 .sess-time{font-size:12px;font-weight:500;color:var(--red);min-width:44px;}
 .sess-trainer{flex:1;font-size:13px;font-weight:300;color:var(--text-muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
@@ -1639,7 +1639,7 @@ function renderModuleCards(){
     const items=mods.map(m=>{
       const all=trainings.filter(t=>t.moduleId===m.id);
       const planned=all.filter(t=>t.date>=TODAY_STR).length;
-      const done=all.filter(t=>t.date<TODAY_STR).length;
+      const done=all.filter(t=>t.zrealizowane).length;
       let countTxt,countStyle='';
       if(!all.length){countTxt='brak terminów';countStyle='color:var(--text-muted);';}
       else{
@@ -1739,12 +1739,18 @@ function renderModuleDetailView(id){
     const tNames=getTrainerIds(t).map(tid=>trainers.find(tr=>tr.id===tid)?.name).filter(Boolean);
     const partCount=(t.uczestnicy||[]).length;
     const isPast=t.date<TODAY_STR;
-    return`<div class="sess-row${isPast?' is-past':''}" style="cursor:pointer;" onclick="openTrainingModal('${t.date}',null,${t.id})">
+    const isRealized=!!t.zrealizowane;
+    const checkboxHtml=isPast?`<label onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:5px;cursor:pointer;flex-shrink:0;margin-right:8px;">
+      <input type="checkbox" ${isRealized?'checked':''} onchange="event.stopPropagation();toggleZrealizowane(${t.id})" style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;">
+      <span style="font-size:12px;font-weight:${isRealized?'500':'300'};color:${isRealized?'var(--green)':'var(--text-muted)'};">${isRealized?'Zrealizowane':'Oznacz'}</span>
+    </label>`:'';
+    return`<div class="sess-row${isPast?' is-past':''}${isRealized?' is-realized':''}" style="cursor:pointer;" onclick="openTrainingModal('${t.date}',null,${t.id})">
       <div class="sess-date">${escHtml(dateLabel)}</div>
       <div class="sess-time">${t.time?escHtml(t.time):''}</div>
       <div class="sess-trainer">${tNames.length?'👤 '+tNames.map(escHtml).join(', '):'—'}</div>
       <div class="sess-parts">👥 ${partCount}</div>
       <div class="sess-btns">
+        ${checkboxHtml}
         <button class="sess-btn" onclick="event.stopPropagation();openTrainingModal('${t.date}',null,${t.id})">Edytuj</button>
         <button class="sess-btn" onclick="event.stopPropagation();openParticipantsModal(${t.id})">Uczestnicy</button>
         <button class="sess-btn" style="color:var(--red);border-color:rgba(220,20,60,0.2);" onclick="event.stopPropagation();openDC('Usunąć ten termin?',()=>{removeTraining(${t.id});renderModuleDetailView(selectedModuleId);})">Usuń</button>
@@ -1752,6 +1758,12 @@ function renderModuleDetailView(id){
     </div>`;
   }).join('');
   sesEl.innerHTML=`<div class="sess-table">${rows}</div>`;
+}
+function toggleZrealizowane(id){
+  const t=trainings.find(x=>x.id===id);if(!t)return;
+  t.zrealizowane=!t.zrealizowane;
+  saveToStorage();renderModuleDetailView(selectedModuleId);renderModuleCards();renderDashboard();
+  pushSessionToGitHub(id);
 }
 function deleteCustomModule(){
   if(selectedModuleId===null)return;

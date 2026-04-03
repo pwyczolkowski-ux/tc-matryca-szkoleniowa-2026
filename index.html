@@ -1446,6 +1446,40 @@ function handlePhotoUpload(input){
   };
   reader.readAsDataURL(file);
 }
+function getTrainerPath(tr){return`trainers/${slugify(tr.name)}-${tr.id}.json`;}
+function buildTrainerPayload(tr){
+  return{id:tr.id,name:tr.name,rola:tr.rola||'',email:tr.email||'',telefon:tr.telefon||'',bio:tr.bio||'',color:tr.color||'',updatedAt:new Date().toISOString()};
+}
+async function pushTrainerToGitHub(trainerId){
+  const token=getGhToken();if(!token)return;
+  const tr=trainers.find(x=>x.id===trainerId);if(!tr)return;
+  try{
+    const branch=getGhBranch();
+    const path=getTrainerPath(tr);
+    const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+    const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
+    let sha=null;
+    try{const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(buildTrainerPayload(tr),null,2))));
+    const body={message:`trainer: ${tr.name}`,content,branch};
+    if(sha)body.sha=sha;
+    await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
+  }catch(e){console.error('Trainer push error:',e);}
+}
+async function deleteTrainerFileFromGitHub(tr){
+  const token=getGhToken();if(!token)return;
+  try{
+    const branch=getGhBranch();
+    const path=getTrainerPath(tr);
+    const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+    const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
+    const r=await fetch(`${apiUrl}?ref=${branch}`,{headers});
+    if(!r.ok)return;
+    const j=await r.json();
+    await fetch(apiUrl,{method:'DELETE',headers,body:JSON.stringify({message:`trainer delete: ${tr.name}`,sha:j.sha,branch})});
+  }catch(e){console.error('Trainer delete error:',e);}
+}
+
 function saveTrainerEdit(){
   const name=document.getElementById('te-name').value.trim();
   if(!name){alert('Podaj imię i nazwisko trenera');return;}
@@ -1459,10 +1493,11 @@ function saveTrainerEdit(){
   }else{
     trainers.push({id:Date.now(),name,color:TCOLS[trainers.length%TCOLS.length],rola,email,telefon,bio,photo:pendingPhotoData||null});
   }
+  const savedId=editingTrainerId||trainers[trainers.length-1]?.id;
   const wasEditing=editingTrainerId;
   closeTrainerEditModal();
   if(wasEditing&&trainerProfileId===wasEditing)openTrainerProfile(wasEditing);
-  renderTrainers();saveToStorage();
+  renderTrainers();pushToGitHub(true);if(savedId)pushTrainerToGitHub(savedId);
 }
 function openTrainerProfile(id){
   trainerProfileId=id;
@@ -1556,7 +1591,7 @@ function saveTrainerFromProfile(){
   const tr=trainers.find(t=>t.id===trainerProfileId);
   if(tr){tr.name=name;tr.rola=rola;tr.email=email;tr.telefon=telefon;tr.bio=bio;if(pendingProfilePhotoData!==null)tr.photo=pendingProfilePhotoData;}
   pendingProfilePhotoData=null;
-  renderTrainers();saveToStorage();
+  renderTrainers();pushToGitHub(true);if(tr)pushTrainerToGitHub(tr.id);
   openTrainerProfile(trainerProfileId);
 }
 function deleteTrainerFromProfile(){
@@ -1622,9 +1657,10 @@ function addTrainerFromModal(){
   // auto-check the new trainer
   const cb=document.querySelector(`#tm-trainers-list input[value="${id}"]`);
   if(cb)cb.checked=true;
-  updateTrainerChips();renderTrainers();saveToStorage();
+  const newId=trainers[trainers.length-1]?.id;
+  updateTrainerChips();renderTrainers();pushToGitHub(true);if(newId)pushTrainerToGitHub(newId);
 }
-function removeTrainer(id){trainers=trainers.filter(t=>t.id!==id);renderTrainers();saveToStorage();}
+function removeTrainer(id){const deleted=trainers.find(t=>t.id===id);trainers=trainers.filter(t=>t.id!==id);renderTrainers();pushToGitHub(true);if(deleted)deleteTrainerFileFromGitHub(deleted);}
 function renderTrainers(){
   renderTrainerPanel();
 }
@@ -1645,9 +1681,10 @@ function renderTrainerPanel(){
   el.innerHTML=trainers.map(t=>`<div class="trainer-card" style="cursor:pointer;" onclick="openTrainerProfile(${t.id})">${trainerAvatar(t,avatarSize)}<div style="flex:1;min-width:0;"><div class="trainer-card-name">${escHtml(t.name)}</div>${t.rola?`<div style="font-size:11px;color:var(--red);font-weight:400;margin-top:1px;">${escHtml(t.rola)}</div>`:''}<div class="trainer-card-meta">${count[t.id]||0} szkoleń</div>${t.bio?`<div class="trainer-card-bio" style="font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${escHtml(t.bio)}</div>`:''}</div></div>`).join('');
 }
 function removeTrainerFull(id){
+  const deleted=trainers.find(t=>t.id===id);
   trainers=trainers.filter(t=>t.id!==id);
   Object.values(trainings).forEach(t=>{t.trainerIds=getTrainerIds(t).filter(x=>x!==id);delete t.trainerId;});
-  renderTrainers();saveToStorage();
+  renderTrainers();pushToGitHub(true);if(deleted)deleteTrainerFileFromGitHub(deleted);
 }
 document.getElementById('tm-t-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTrainerFromModal();});
 document.getElementById('te-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveTrainerEdit();});

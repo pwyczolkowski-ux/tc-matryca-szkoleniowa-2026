@@ -554,7 +554,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <div class="modal-ttl">Potwierdź usunięcie</div>
     <div id="dc-subtitle" style="font-size:13px;color:var(--text-muted);margin-bottom:18px;font-weight:300;line-height:1.5;"></div>
     <label class="form-lbl">Wpisz hasło aby potwierdzić</label>
-    <input id="dc-input" class="form-sel" placeholder="Patryk" autocomplete="off" oninput="document.getElementById('dc-confirm-btn').disabled=this.value!=='Patryk'" onkeydown="if(event.key==='Enter')executeDC()">
+    <input id="dc-input" class="form-sel" placeholder="potwierdzam" autocomplete="off" oninput="document.getElementById('dc-confirm-btn').disabled=this.value!=='potwierdzam'" onkeydown="if(event.key==='Enter')executeDC()">
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeDC()">Anuluj</button>
       <button id="dc-confirm-btn" class="btn btn-red" disabled onclick="executeDC()">Usuń</button>
@@ -940,7 +940,7 @@ function closeDC(){
   dcCallback=null;
 }
 function executeDC(){
-  if(document.getElementById('dc-input').value!=='Patryk')return;
+  if(document.getElementById('dc-input').value!=='potwierdzam')return;
   closeDC();
   if(dcCallback)dcCallback();
 }

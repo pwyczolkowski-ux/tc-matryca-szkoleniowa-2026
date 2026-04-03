@@ -500,7 +500,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:8px;">
             <div style="flex:1;">
               <div id="mds-name" style="font-size:28px;font-weight:300;color:var(--text);line-height:1.3;margin-bottom:6px;"></div>
-              <div id="mds-orig" style="font-size:12px;color:var(--text-muted);font-style:italic;margin-bottom:8px;"></div>
               <div id="mds-czas-wrap" style="display:none;margin-bottom:16px;"><span style="display:inline-flex;align-items:center;gap:6px;background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:400;color:var(--text-muted);">⏱ <span id="mds-czas"></span></span></div>
             </div>
             <div style="display:flex;gap:8px;flex-shrink:0;">
@@ -1360,7 +1359,6 @@ function renderModuleDetailView(id){
   const catEl=document.getElementById('mds-cat');
   catEl.textContent=mod.kategoria;catEl.className=`mod-detail-cat ${mod.kategoria}`;
   document.getElementById('mds-name').textContent=mod.nazwa;
-  document.getElementById('mds-orig').textContent=mod.oryginalny?`"${mod.oryginalny}"`:'';
   const czasWrap=document.getElementById('mds-czas-wrap');
   if(mod.czasTrwania){czasWrap.style.display='block';document.getElementById('mds-czas').textContent=mod.czasTrwania;}else{czasWrap.style.display='none';}
   document.getElementById('mds-opis').textContent=mod.opis||'';

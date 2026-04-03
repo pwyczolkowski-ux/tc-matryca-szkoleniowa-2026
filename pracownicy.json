@@ -1,0 +1,2297 @@
+[
+  {
+    "Name": "Adam Grzeszkiewicz",
+    "Given Name": "Adam",
+    "Family Name": "Grzeszkiewicz",
+    "E-mail 1 - Value": "a.grzeszkiewicz@tc.pl",
+    "Phone 1 - Value": "533311987",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Manager ds. Operacyjnych"
+  },
+  {
+    "Name": "Adam Malinowski",
+    "Given Name": "Adam",
+    "Family Name": "Malinowski",
+    "E-mail 1 - Value": "am@tc.pl",
+    "Phone 1 - Value": "510000894",
+    "Organization 1 - Name": "Zarząd",
+    "Organization 1 - Title": "Członek Zarządu ds. Sprzedaży"
+  },
+  {
+    "Name": "Adam Wroczyński",
+    "Given Name": "Adam",
+    "Family Name": "Wroczyński",
+    "E-mail 1 - Value": "aw@tc.pl",
+    "Phone 1 - Value": "535622701",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Dyrektor Operacyjny"
+  },
+  {
+    "Name": "Adrian Karpiel",
+    "Given Name": "Adrian",
+    "Family Name": "Karpiel",
+    "E-mail 1 - Value": "a.karpiel@bnipolska.pl",
+    "Phone 1 - Value": "694765438",
+    "Organization 1 - Name": "Region Wrocław",
+    "Organization 1 - Title": "Dyrektor Obszaru"
+  },
+  {
+    "Name": "Agata Cimaj",
+    "Given Name": "Agata",
+    "Family Name": "Cimaj",
+    "E-mail 1 - Value": "a.cimaj@bnipolska.pl",
+    "Phone 1 - Value": "576090606",
+    "Organization 1 - Name": "Region Wrocław",
+    "Organization 1 - Title": "Kierownik Zespołu Koordynatorów"
+  },
+  {
+    "Name": "Agata Okońska",
+    "Given Name": "Agata",
+    "Family Name": "Okońska",
+    "E-mail 1 - Value": "a.okonska@thinktanktc.org",
+    "Phone 1 - Value": "533641153",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Project Manager ds. Fundraisingu"
+  },
+  {
+    "Name": "Agata Wilczyńska",
+    "Given Name": "Agata",
+    "Family Name": "Wilczyńska",
+    "E-mail 1 - Value": "agata.wilczynska@tc.pl",
+    "Phone 1 - Value": "666653242",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Strategic Communications Manager"
+  },
+  {
+    "Name": "Agnieszka Cieplak",
+    "Given Name": "Agnieszka",
+    "Family Name": "Cieplak",
+    "E-mail 1 - Value": "a.cieplak@tc.pl",
+    "Phone 1 - Value": "536124498",
+    "Organization 1 - Name": "Dział Finansów",
+    "Organization 1 - Title": "Główna Księgowa"
+  },
+  {
+    "Name": "Agnieszka Dudek",
+    "Given Name": "Agnieszka",
+    "Family Name": "Dudek",
+    "E-mail 1 - Value": "a.dudek@bnipolska.pl",
+    "Phone 1 - Value": "533658057",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Koordynator Wsparcia Sprzedaży BNI+"
+  },
+  {
+    "Name": "Agnieszka Jeglorz",
+    "Given Name": "Agnieszka",
+    "Family Name": "Jeglorz",
+    "E-mail 1 - Value": "a.jeglorz@bnipolska.pl",
+    "Phone 1 - Value": "537657247",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Koordynator Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Agnieszka Ronert",
+    "Given Name": "Agnieszka",
+    "Family Name": "Ronert",
+    "E-mail 1 - Value": "a.ronert@cc.pl",
+    "Phone 1 - Value": "517259690",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Koordynatorka ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Agnieszka Taracha",
+    "Given Name": "Agnieszka",
+    "Family Name": "Taracha",
+    "E-mail 1 - Value": "a.taracha@bnipolska.pl",
+    "Phone 1 - Value": "535622846",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Koordynator Regionalny"
+  },
+  {
+    "Name": "Aleksander Sztuka",
+    "Given Name": "Aleksander",
+    "Family Name": "Sztuka",
+    "E-mail 1 - Value": "aleksander.sztuka@bnipolska.pl",
+    "Phone 1 - Value": "535975762",
+    "Organization 1 - Name": "Member Service Center",
+    "Organization 1 - Title": "Stażysta w Dziale MSC"
+  },
+  {
+    "Name": "Aleksandra Jeżowska",
+    "Given Name": "Aleksandra",
+    "Family Name": "Jeżowska",
+    "E-mail 1 - Value": "a.jezowska@tc.pl",
+    "Phone 1 - Value": "530108947",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Marketing Traffic & Operations Manager"
+  },
+  {
+    "Name": "Aleksandra Kujawa",
+    "Given Name": "Aleksandra",
+    "Family Name": "Kujawa",
+    "E-mail 1 - Value": "a.kujawa@cc.pl",
+    "Phone 1 - Value": "602122438",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Dyrektor ds. Klientów Strategicznych"
+  },
+  {
+    "Name": "Aleksandra Toborek",
+    "Given Name": "Aleksandra",
+    "Family Name": "Toborek",
+    "E-mail 1 - Value": "a.toborek@bnipolska.pl",
+    "Phone 1 - Value": "537954093",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Młodszy Koordynator Regionalny"
+  },
+  {
+    "Name": "Aleksandra Tomys",
+    "Given Name": "Aleksandra",
+    "Family Name": "Tomys",
+    "E-mail 1 - Value": "a.tomys@cc.pl",
+    "Phone 1 - Value": "537130365",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Manager Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Alicja Bąkowska-Dudal",
+    "Given Name": "Alicja",
+    "Family Name": "Bąkowska-Dudal",
+    "E-mail 1 - Value": "a.bakowska-dudal@bnipolska.pl",
+    "Phone 1 - Value": "535855432",
+    "Organization 1 - Name": "HQ",
+    "Organization 1 - Title": "Dyrektor Sprzedaży BNI Poland"
+  },
+  {
+    "Name": "Alicja Łapińska",
+    "Given Name": "Alicja",
+    "Family Name": "Łapińska",
+    "E-mail 1 - Value": "a.lapinska@bnipolska.pl",
+    "Phone 1 - Value": "667482507",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor Obszaru"
+  },
+  {
+    "Name": "Andrzej Sobieraj",
+    "Given Name": "Andrzej",
+    "Family Name": "Sobieraj",
+    "E-mail 1 - Value": "a.sobieraj@cc.pl",
+    "Phone 1 - Value": "534831254",
+    "Organization 1 - Name": "CC CEO",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Andrzej Stepanów",
+    "Given Name": "Andrzej",
+    "Family Name": "Stepanów",
+    "E-mail 1 - Value": "a.stepanow@cc.pl",
+    "Phone 1 - Value": "666653015",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Relacji"
+  },
+  {
+    "Name": "Aneta Kłosowska",
+    "Given Name": "Aneta",
+    "Family Name": "Kłosowska",
+    "E-mail 1 - Value": "a.klosowska@bnipolska.pl",
+    "Phone 1 - Value": "570570333",
+    "Organization 1 - Name": "Region Bielsko-Biała",
+    "Organization 1 - Title": "Dyrektor ds Rozwoju i Onboardingu"
+  },
+  {
+    "Name": "Aneta Pierzchalska",
+    "Given Name": "Aneta",
+    "Family Name": "Pierzchalska",
+    "E-mail 1 - Value": "a.pierzchalska@cc.pl",
+    "Phone 1 - Value": "535622594",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor Regionu ds. Relacji"
+  },
+  {
+    "Name": "Anika Cimochowska",
+    "Given Name": "Anika",
+    "Family Name": "Cimochowska",
+    "E-mail 1 - Value": "a.cimochowska@bnipolska.pl",
+    "Phone 1 - Value": "533654761",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Manager Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Anna Cabajewska",
+    "Given Name": "Anna",
+    "Family Name": "Cabajewska",
+    "E-mail 1 - Value": "a.cabajewska@tc.pl",
+    "Phone 1 - Value": "535622452",
+    "Organization 1 - Name": "Dział Finansów",
+    "Organization 1 - Title": "Dyrektor ds. Finansów"
+  },
+  {
+    "Name": "Anna Gustak",
+    "Given Name": "Anna",
+    "Family Name": "Gustak",
+    "E-mail 1 - Value": "a.gustak@bnipolska.pl",
+    "Phone 1 - Value": "696115791",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor Regionalny / Członek"
+  },
+  {
+    "Name": "Anna Milewska",
+    "Given Name": "Anna",
+    "Family Name": "Milewska",
+    "E-mail 1 - Value": "a.milewska@bnipolska.pl",
+    "Phone 1 - Value": "513011680",
+    "Organization 1 - Name": "Region Lublin",
+    "Organization 1 - Title": "Koordynator Regionalny"
+  },
+  {
+    "Name": "Anna Prochownik",
+    "Given Name": "Anna",
+    "Family Name": "Prochownik",
+    "E-mail 1 - Value": "a.prochownik@bnipolska.pl",
+    "Phone 1 - Value": "503010709",
+    "Organization 1 - Name": "Region Bielsko-Biała",
+    "Organization 1 - Title": "Koordynator Regionalny"
+  },
+  {
+    "Name": "Anna Radzka",
+    "Given Name": "Anna",
+    "Family Name": "Radzka",
+    "E-mail 1 - Value": "a.radzka@tc.pl",
+    "Phone 1 - Value": "534010631",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Content Marketing Specialist"
+  },
+  {
+    "Name": "Anna Skopicz-Radkiewicz",
+    "Given Name": "Anna",
+    "Family Name": "Skopicz-Radkiewicz",
+    "E-mail 1 - Value": "a.skopicz-radkiewicz@tc.pl",
+    "Phone 1 - Value": "530883672",
+    "Organization 1 - Name": "Dział Finansów",
+    "Organization 1 - Title": "Prawnik"
+  },
+  {
+    "Name": "Anna Wilczyńska",
+    "Given Name": "Anna",
+    "Family Name": "Wilczyńska",
+    "E-mail 1 - Value": "aw@cc.pl",
+    "Phone 1 - Value": "535622747",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "HR Business Partner"
+  },
+  {
+    "Name": "Anna Żuczek",
+    "Given Name": "Anna",
+    "Family Name": "Żuczek",
+    "E-mail 1 - Value": "a.zuczek@bnipolska.pl",
+    "Phone 1 - Value": "530250457",
+    "Organization 1 - Name": "Region Rzeszów",
+    "Organization 1 - Title": "Koordynator Regionalny BNI"
+  },
+  {
+    "Name": "Antoni Holik",
+    "Given Name": "Antoni",
+    "Family Name": "Holik",
+    "E-mail 1 - Value": "a.holik@cc.pl",
+    "Phone 1 - Value": "535622486",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Koordynator Biura Zarządu"
+  },
+  {
+    "Name": "Arkadiusz Karpiński",
+    "Given Name": "Arkadiusz",
+    "Family Name": "Karpiński",
+    "E-mail 1 - Value": "a.karpinski@bnipolska.pl",
+    "Phone 1 - Value": "577800948",
+    "Organization 1 - Name": "Region Łódź",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Arkadiusz Pacyna",
+    "Given Name": "Arkadiusz",
+    "Family Name": "Pacyna",
+    "E-mail 1 - Value": "a.pacyna@tc.pl",
+    "Phone 1 - Value": "666653372",
+    "Organization 1 - Name": "Zespół Wsparcia Sprzedaży",
+    "Organization 1 - Title": "Specjalista ds. analiz i raportowania"
+  },
+  {
+    "Name": "Arkadiusz Sztuka",
+    "Given Name": "Arkadiusz",
+    "Family Name": "Sztuka",
+    "E-mail 1 - Value": "a.sztuka@bnipolska.pl",
+    "Phone 1 - Value": "533383773",
+    "Organization 1 - Name": "HQ",
+    "Organization 1 - Title": "Dyrektor Generalny BNI"
+  },
+  {
+    "Name": "Artur Sitek",
+    "Given Name": "Artur",
+    "Family Name": "Sitek",
+    "E-mail 1 - Value": "a.sitek@bnipolska.pl",
+    "Phone 1 - Value": "537120903",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Artur Skurzyński",
+    "Given Name": "Artur",
+    "Family Name": "Skurzyński",
+    "E-mail 1 - Value": "a.skurzynski@bnipolska.pl",
+    "Phone 1 - Value": "535305537",
+    "Organization 1 - Name": "Region Toruń",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Barbara Skowrońska",
+    "Given Name": "Barbara",
+    "Family Name": "Skowrońska",
+    "E-mail 1 - Value": "b.skowronska@thinktanktc.org",
+    "Phone 1 - Value": "533315940",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Dyrektor PR"
+  },
+  {
+    "Name": "Barbara Waśkiewicz",
+    "Given Name": "Barbara",
+    "Family Name": "Waśkiewicz",
+    "E-mail 1 - Value": "b.waskiewicz@tc.pl",
+    "Phone 1 - Value": "535619547",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Dyrektor Biura Zarządu"
+  },
+  {
+    "Name": "Bartłomiej Gruszczak",
+    "Given Name": "Bartłomiej",
+    "Family Name": "Gruszczak",
+    "E-mail 1 - Value": "b.gruszczak@bnipolska.pl",
+    "Phone 1 - Value": "514477131",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor Regionalny"
+  },
+  {
+    "Name": "Bartłomiej Jakimiuk",
+    "Given Name": "Bartłomiej",
+    "Family Name": "Jakimiuk",
+    "E-mail 1 - Value": "b.jakimiuk@cc.pl",
+    "Phone 1 - Value": "530822594",
+    "Organization 1 - Name": "CC CEO",
+    "Organization 1 - Title": "Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Bartosz Buczkowski",
+    "Given Name": "Bartosz",
+    "Family Name": "Buczkowski",
+    "E-mail 1 - Value": "b.buczkowski@tc.pl",
+    "Phone 1 - Value": "666653284",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Digital Project Manager"
+  },
+  {
+    "Name": "Bartosz Cieślik",
+    "Given Name": "Bartosz",
+    "Family Name": "Cieślik",
+    "E-mail 1 - Value": "b.cieslik@tc.pl",
+    "Phone 1 - Value": "530020456",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Project Manager"
+  },
+  {
+    "Name": "Bartosz Światłowski",
+    "Given Name": "Bartosz",
+    "Family Name": "Światłowski",
+    "E-mail 1 - Value": "b.swiatlowski@tc.pl",
+    "Phone 1 - Value": "535342983",
+    "Organization 1 - Name": "Dział Partnerstw Strategicznych",
+    "Organization 1 - Title": "Relationship Manager Partnerstwa Strategiczne"
+  },
+  {
+    "Name": "Ben Erwin",
+    "Given Name": "Ben",
+    "Family Name": "Erwin",
+    "E-mail 1 - Value": "b.erwin@cc-usa.com",
+    "Phone 1 - Value": "1(917)471-0120",
+    "Organization 1 - Name": "CC USA",
+    "Organization 1 - Title": "CEO USA"
+  },
+  {
+    "Name": "Błażej Dzierżyński",
+    "Given Name": "Błażej",
+    "Family Name": "Dzierżyński",
+    "E-mail 1 - Value": "b.dzierzynski@bnipolska.pl",
+    "Phone 1 - Value": "507048079",
+    "Organization 1 - Name": "Region Białystok",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Christina Chaplin",
+    "Given Name": "Christina",
+    "Family Name": "Chaplin",
+    "E-mail 1 - Value": "c.chaplin@cc.pl",
+    "Phone 1 - Value": "666653455",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Personal Assistant"
+  },
+  {
+    "Name": "Dagmara Krzemińska",
+    "Given Name": "Dagmara",
+    "Family Name": "Krzemińska",
+    "E-mail 1 - Value": "d.krzeminska@bnipolska.pl",
+    "Phone 1 - Value": "512736397",
+    "Organization 1 - Name": "Region Śląsk",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Daniel Pawluczuk",
+    "Given Name": "Daniel",
+    "Family Name": "Pawluczuk",
+    "E-mail 1 - Value": "d.pawluczuk@bnipolska.pl",
+    "Phone 1 - Value": "570099644",
+    "Organization 1 - Name": "Region Trójmiasto",
+    "Organization 1 - Title": "Koordynator Regionalny"
+  },
+  {
+    "Name": "Danuta Kowalewska",
+    "Given Name": "Danuta",
+    "Family Name": "Kowalewska",
+    "E-mail 1 - Value": "d.kowalewska@bnipolska.pl",
+    "Phone 1 - Value": "534399225",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Daria Jas",
+    "Given Name": "Daria",
+    "Family Name": "Jas",
+    "E-mail 1 - Value": "d.jas@bnipolska.pl",
+    "Phone 1 - Value": "530594785",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Team Leader Działu Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Dawid Sarowski",
+    "Given Name": "Dawid",
+    "Family Name": "Sarowski",
+    "E-mail 1 - Value": "d.sarowski@cc.pl",
+    "Phone 1 - Value": "534649460",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Manager Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Dawid Marceli Typa",
+    "Given Name": "Dawid Marceli",
+    "Family Name": "Typa",
+    "E-mail 1 - Value": "dm.typa@cc.pl",
+    "Phone 1 - Value": "698622164",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Relationship Manager CC"
+  },
+  {
+    "Name": "Dominika Kubiak",
+    "Given Name": "Dominika",
+    "Family Name": "Kubiak",
+    "E-mail 1 - Value": "d.kubiak@tc.pl",
+    "Phone 1 - Value": "512044758",
+    "Organization 1 - Name": "Zespół Wsparcia Sprzedaży",
+    "Organization 1 - Title": "Specjalistka ds. raportowania i analiz"
+  },
+  {
+    "Name": "Dominika Wiśniewska",
+    "Given Name": "Dominika",
+    "Family Name": "Wiśniewska",
+    "E-mail 1 - Value": "d.wisniewska@tc.pl",
+    "Phone 1 - Value": "666653364",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Executive Assistant"
+  },
+  {
+    "Name": "Dorota Jarosik",
+    "Given Name": "Dorota",
+    "Family Name": "Jarosik",
+    "E-mail 1 - Value": "d.jarosik@bnipolska.pl",
+    "Phone 1 - Value": "537981645",
+    "Organization 1 - Name": "Region Śląsk",
+    "Organization 1 - Title": "Dyrektor Makroregionu BNI"
+  },
+  {
+    "Name": "Edyta Kaczmar",
+    "Given Name": "Edyta",
+    "Family Name": "Kaczmar",
+    "E-mail 1 - Value": "e.kaczmar@bnipolska.pl",
+    "Phone 1 - Value": "530265307",
+    "Organization 1 - Name": "Member Service Center",
+    "Organization 1 - Title": "Dyrektor Wsparcia BNI"
+  },
+  {
+    "Name": "Edyta Matusz-Bulińska",
+    "Given Name": "Edyta",
+    "Family Name": "Matusz-Bulińska",
+    "E-mail 1 - Value": "e.bulinska@tc.pl",
+    "Phone 1 - Value": "535828228",
+    "Organization 1 - Name": "Dział Finansów",
+    "Organization 1 - Title": "Manager ds. Finansów"
+  },
+  {
+    "Name": "Edyta Salamon",
+    "Given Name": "Edyta",
+    "Family Name": "Salamon",
+    "E-mail 1 - Value": "e.salamon@bnipolska.pl",
+    "Phone 1 - Value": "535612520",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor Makroregionu BNI+"
+  },
+  {
+    "Name": "Eliza Bielik",
+    "Given Name": "Eliza",
+    "Family Name": "Bielik",
+    "E-mail 1 - Value": "e.bielik@tc.pl",
+    "Phone 1 - Value": "536481972",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Specjalista ds. korporacyjnych"
+  },
+  {
+    "Name": "Eliza Kruczkowska",
+    "Given Name": "Eliza",
+    "Family Name": "Kruczkowska",
+    "E-mail 1 - Value": "e.kruczkowska@thinktanktc.org",
+    "Phone 1 - Value": "666653523",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Dyrektor Zarządzająca FWP"
+  },
+  {
+    "Name": "Eliza Perzyna",
+    "Given Name": "Eliza",
+    "Family Name": "Perzyna",
+    "E-mail 1 - Value": "e.perzyna@bnipolska.pl",
+    "Phone 1 - Value": "536309126",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor Makroregionu"
+  },
+  {
+    "Name": "Emilia Boś-Banasiak",
+    "Given Name": "Emilia",
+    "Family Name": "Boś-Banasiak",
+    "E-mail 1 - Value": "e.bos-banasik@bnipolska.pl",
+    "Phone 1 - Value": "730125678",
+    "Organization 1 - Name": "Region Lublin",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Emilia Ostrowska",
+    "Given Name": "Emilia",
+    "Family Name": "Ostrowska",
+    "E-mail 1 - Value": "e.ostrowska@tc.pl",
+    "Phone 1 - Value": "792292202",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Dyrektor Marketingu"
+  },
+  {
+    "Name": "Ewa Dzierzchowska",
+    "Given Name": "Ewa",
+    "Family Name": "Dzierzchowska",
+    "E-mail 1 - Value": "e.dzierzchowska@tc.pl",
+    "Phone 1 - Value": "536098046",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Recepcjonistka"
+  },
+  {
+    "Name": "Ewa Madeja",
+    "Given Name": "Ewa",
+    "Family Name": "Madeja",
+    "E-mail 1 - Value": "e.madeja@bnipolska.pl",
+    "Phone 1 - Value": "694655789",
+    "Organization 1 - Name": "Region Toruń",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Ewa Megger",
+    "Given Name": "Ewa",
+    "Family Name": "Megger",
+    "E-mail 1 - Value": "e.megger@bnipolska.pl",
+    "Phone 1 - Value": "509974574",
+    "Organization 1 - Name": "Region Toruń",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Ewelina Dalke",
+    "Given Name": "Ewelina",
+    "Family Name": "Dalke",
+    "E-mail 1 - Value": "e.dalke@tc.pl",
+    "Phone 1 - Value": "512044732",
+    "Organization 1 - Name": "Dział Finansów",
+    "Organization 1 - Title": "Manager Działu Controllingu"
+  },
+  {
+    "Name": "Ewelina Jarzębowska",
+    "Given Name": "Ewelina",
+    "Family Name": "Jarzębowska",
+    "E-mail 1 - Value": "e.jarzebowska@tc.pl",
+    "Phone 1 - Value": "534032531",
+    "Organization 1 - Name": "Zespół Wsparcia Sprzedaży",
+    "Organization 1 - Title": "Ekspert ds. Raportowania"
+  },
+  {
+    "Name": "Ewelina Kęska",
+    "Given Name": "Ewelina",
+    "Family Name": "Kęska",
+    "E-mail 1 - Value": "e.keska@tc.pl",
+    "Phone 1 - Value": "512044763",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "Specjalista ds. kadr i płac"
+  },
+  {
+    "Name": "Ewelina Massalska",
+    "Given Name": "Ewelina",
+    "Family Name": "Massalska",
+    "E-mail 1 - Value": "e.massalska@bnipolska.pl",
+    "Phone 1 - Value": "884666320",
+    "Organization 1 - Name": "Region Bielsko-Biała",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Fabian Gołąbek",
+    "Given Name": "Fabian",
+    "Family Name": "Gołąbek",
+    "E-mail 1 - Value": "f.golabek@thinktanktc.org",
+    "Phone 1 - Value": "790568100",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Młodszy Specjalista ds. Deregulacji"
+  },
+  {
+    "Name": "Grzegorz Danikiewicz",
+    "Given Name": "Grzegorz",
+    "Family Name": "Danikiewicz",
+    "E-mail 1 - Value": "gd@cc.pl",
+    "Phone 1 - Value": "510032251",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Partner"
+  },
+  {
+    "Name": "Grzegorz Korzeniowski",
+    "Given Name": "Grzegorz",
+    "Family Name": "Korzeniowski",
+    "E-mail 1 - Value": "g.korzeniowski@bnipolska.pl",
+    "Phone 1 - Value": "790668876",
+    "Organization 1 - Name": "Region Wrocław",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Ilona Korycka",
+    "Given Name": "Ilona",
+    "Family Name": "Korycka",
+    "E-mail 1 - Value": "i.korycka@tc.pl",
+    "Phone 1 - Value": "535622796",
+    "Organization 1 - Name": "Zespół Komunikacji",
+    "Organization 1 - Title": "Manager ds. Komunikacji"
+  },
+  {
+    "Name": "Iwo Kolasiński",
+    "Given Name": "Iwo",
+    "Family Name": "Kolasiński",
+    "E-mail 1 - Value": "i.kolasinski@tc.pl",
+    "Phone 1 - Value": "530487652",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Senior Graphic Designer"
+  },
+  {
+    "Name": "Iwona Golińska",
+    "Given Name": "Iwona",
+    "Family Name": "Golińska",
+    "E-mail 1 - Value": "i.golinska@cc.pl",
+    "Phone 1 - Value": "574552869",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Lider Wsparcia Zespołu Eventowego"
+  },
+  {
+    "Name": "Iwona Olbryś",
+    "Given Name": "Iwona",
+    "Family Name": "Olbryś",
+    "E-mail 1 - Value": "i.olbrys@tc.pl",
+    "Phone 1 - Value": "570353460",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "Dyrektor ds. Relacji Pracowniczych"
+  },
+  {
+    "Name": "Iwona Szwan",
+    "Given Name": "Iwona",
+    "Family Name": "Szwan",
+    "E-mail 1 - Value": "i.szwan@cc.pl",
+    "Phone 1 - Value": "535622137",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Relacji"
+  },
+  {
+    "Name": "Izabela Durda",
+    "Given Name": "Izabela",
+    "Family Name": "Durda",
+    "E-mail 1 - Value": "i.durda@bnipolska.pl",
+    "Phone 1 - Value": "530508478",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Specjalista ds. administracji"
+  },
+  {
+    "Name": "Jakub Bielecki",
+    "Given Name": "Jakub",
+    "Family Name": "Bielecki",
+    "E-mail 1 - Value": "j.bielecki@tc.pl",
+    "Phone 1 - Value": "535623181",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Specjalista ds. Produkcji Filmowych"
+  },
+  {
+    "Name": "Jakub Brzuszkiewicz",
+    "Given Name": "Jakub",
+    "Family Name": "Brzuszkiewicz",
+    "E-mail 1 - Value": "j.brzuszkiewicz@bnipolska.pl",
+    "Phone 1 - Value": "576560465",
+    "Organization 1 - Name": "Region Lublin",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Jakub Gutkowski",
+    "Given Name": "Jakub",
+    "Family Name": "Gutkowski",
+    "E-mail 1 - Value": "j.gutkowski@cc.pl",
+    "Phone 1 - Value": "666653032",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Dyrektor ds. Relacji CC+"
+  },
+  {
+    "Name": "Jakub Marczyński",
+    "Given Name": "Jakub",
+    "Family Name": "Marczyński",
+    "E-mail 1 - Value": "jm@cc.pl",
+    "Phone 1 - Value": "605900100",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Jakub Młodzikowski",
+    "Given Name": "Jakub",
+    "Family Name": "Młodzikowski",
+    "E-mail 1 - Value": "j.mlodzikowski@thinktanktc.org",
+    "Phone 1 - Value": "534094305",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Chief of Staff"
+  },
+  {
+    "Name": "Jakub Ponikarczyk",
+    "Given Name": "Jakub",
+    "Family Name": "Ponikarczyk",
+    "E-mail 1 - Value": "j.ponikarczyk@bnipolska.pl",
+    "Phone 1 - Value": "727906021",
+    "Organization 1 - Name": "Region Białystok",
+    "Organization 1 - Title": "Franczyzobiorca"
+  },
+  {
+    "Name": "Jakub Winiarski",
+    "Given Name": "Jakub",
+    "Family Name": "Winiarski",
+    "E-mail 1 - Value": "j.winiarski@tc.pl",
+    "Phone 1 - Value": "536899682",
+    "Organization 1 - Name": "Dział Partnerstw Strategicznych",
+    "Organization 1 - Title": "Relationship Manager Partnerstwa Strategiczne"
+  },
+  {
+    "Name": "Jakub Zahorski",
+    "Given Name": "Jakub",
+    "Family Name": "Zahorski",
+    "E-mail 1 - Value": "j.zahorski@bnipolska.pl",
+    "Phone 1 - Value": "531541191",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Młodszy Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Jan Górski",
+    "Given Name": "Jan",
+    "Family Name": "Górski",
+    "E-mail 1 - Value": "j.gorski@cc.pl",
+    "Phone 1 - Value": "530874795",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Młodszy Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Jan Mystkowski",
+    "Given Name": "Jan",
+    "Family Name": "Mystkowski",
+    "E-mail 1 - Value": "j.mystkowski@thinktanktc.org",
+    "Phone 1 - Value": "530077886",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Stażysta FWP"
+  },
+  {
+    "Name": "Jarosław Fuchs",
+    "Given Name": "Jarosław",
+    "Family Name": "Fuchs",
+    "E-mail 1 - Value": "j.fuchs@tc.pl",
+    "Phone 1 - Value": "666653580",
+    "Organization 1 - Name": "HQ",
+    "Organization 1 - Title": "Executive Sales Director"
+  },
+  {
+    "Name": "Joanna Gajewska",
+    "Given Name": "Joanna",
+    "Family Name": "Gajewska",
+    "E-mail 1 - Value": "j.gajewska@cc.pl",
+    "Phone 1 - Value": "570328358",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Szef Zespołu Dyrektorów ds. Relacji"
+  },
+  {
+    "Name": "Joanna Kurek",
+    "Given Name": "Joanna",
+    "Family Name": "Kurek",
+    "E-mail 1 - Value": "j.kurek@tc.pl",
+    "Phone 1 - Value": "531452901",
+    "Organization 1 - Name": "Zespół Wsparcia Sprzedaży",
+    "Organization 1 - Title": "Specjalista ds. Procesów i Procedur"
+  },
+  {
+    "Name": "Joanna Moskal",
+    "Given Name": "Joanna",
+    "Family Name": "Moskal",
+    "E-mail 1 - Value": "j.moskal@tc.pl",
+    "Phone 1 - Value": "530735477",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Recepcjonistka"
+  },
+  {
+    "Name": "Joshua Davis",
+    "Given Name": "Joshua",
+    "Family Name": "Davis",
+    "E-mail 1 - Value": "j.davis@cc-usa.com",
+    "Phone 1 - Value": "1(917)471-2414",
+    "Organization 1 - Name": "CC USA",
+    "Organization 1 - Title": "HR Business Partner"
+  },
+  {
+    "Name": "Julia Kobza",
+    "Given Name": "Julia",
+    "Family Name": "Kobza",
+    "E-mail 1 - Value": "j.kobza@tc.pl",
+    "Phone 1 - Value": "530655597",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Graphic Designer"
+  },
+  {
+    "Name": "Julia Maciejczyk",
+    "Given Name": "Julia",
+    "Family Name": "Maciejczyk",
+    "E-mail 1 - Value": "j.maciejczyk@tc.pl",
+    "Phone 1 - Value": "666653410",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Recepcjonistka"
+  },
+  {
+    "Name": "Julia Sokołowska",
+    "Given Name": "Julia",
+    "Family Name": "Sokołowska",
+    "E-mail 1 - Value": "j.sokolowska@bnipolska.pl",
+    "Phone 1 - Value": "574568392",
+    "Organization 1 - Name": "Member Service Center",
+    "Organization 1 - Title": "Koordynator w MSC"
+  },
+  {
+    "Name": "Justyna Aniśko",
+    "Given Name": "Justyna",
+    "Family Name": "Aniśko",
+    "E-mail 1 - Value": "j.anisko@bnipolska.pl",
+    "Phone 1 - Value": "535621324",
+    "Organization 1 - Name": "Member Service Center",
+    "Organization 1 - Title": "Koordynator ds. Szkoleń"
+  },
+  {
+    "Name": "Justyna Borowska",
+    "Given Name": "Justyna",
+    "Family Name": "Borowska",
+    "E-mail 1 - Value": "j.borowska@tc.pl",
+    "Phone 1 - Value": "534176418",
+    "Organization 1 - Name": "Dział Partnerstw Strategicznych",
+    "Organization 1 - Title": "Specjalista ds. Wsparcia Partnerstw Strategicznych"
+  },
+  {
+    "Name": "Justyna Juszczak-Chodubska",
+    "Given Name": "Justyna",
+    "Family Name": "Juszczak-Chodubska",
+    "E-mail 1 - Value": "j.juszczak-chodubska@cc.pl",
+    "Phone 1 - Value": "534807286",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Koordynator Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Kacper Bartel",
+    "Given Name": "Kacper",
+    "Family Name": "Bartel",
+    "E-mail 1 - Value": "k.bartel@cc-usa.com",
+    "Phone 1 - Value": "1(917)471-0199",
+    "Organization 1 - Name": "CC USA",
+    "Organization 1 - Title": "Operation Manager"
+  },
+  {
+    "Name": "Kaja Kołodziej",
+    "Given Name": "Kaja",
+    "Family Name": "Kołodziej",
+    "E-mail 1 - Value": "biuro.lublin@bnipolska.pl",
+    "Phone 1 - Value": "533503419",
+    "Organization 1 - Name": "Region Lublin",
+    "Organization 1 - Title": "Asystentka Biura"
+  },
+  {
+    "Name": "Kajetan Homka",
+    "Given Name": "Kajetan",
+    "Family Name": "Homka",
+    "E-mail 1 - Value": "k.homka@tc.pl",
+    "Phone 1 - Value": "534216443",
+    "Organization 1 - Name": "Zespół Wsparcia Sprzedaży",
+    "Organization 1 - Title": "Dyrektor Wsparcia Sprzedaży CC"
+  },
+  {
+    "Name": "Kamil Kamiński",
+    "Given Name": "Kamil",
+    "Family Name": "Kamiński",
+    "E-mail 1 - Value": "k.kaminski@cc.pl",
+    "Phone 1 - Value": "537583564",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Dyrektor Makroregionu CC"
+  },
+  {
+    "Name": "Kamil Kardaś",
+    "Given Name": "Kamil",
+    "Family Name": "Kardaś",
+    "E-mail 1 - Value": "k.kardas@tc.pl",
+    "Phone 1 - Value": "533656744",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Manager ds. Marketingu"
+  },
+  {
+    "Name": "Kamil Osypiuk",
+    "Given Name": "Kamil",
+    "Family Name": "Osypiuk",
+    "E-mail 1 - Value": "k.osypiuk@bnipolska.pl",
+    "Phone 1 - Value": "531948360",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Team Leader Działu Wsparcia BNI"
+  },
+  {
+    "Name": "Kamil Radwański",
+    "Given Name": "Kamil",
+    "Family Name": "Radwański",
+    "E-mail 1 - Value": "k.radwanski@cc.pl",
+    "Phone 1 - Value": "530706987",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Specjalista ds. floty"
+  },
+  {
+    "Name": "Kamil Stolecki",
+    "Given Name": "Kamil",
+    "Family Name": "Stolecki",
+    "E-mail 1 - Value": "k.stolecki@bnipolska.pl",
+    "Phone 1 - Value": "530339598",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Dyrektor ds. Relacji BNI+"
+  },
+  {
+    "Name": "Kamila Juźwiak",
+    "Given Name": "Kamila",
+    "Family Name": "Juźwiak",
+    "E-mail 1 - Value": "k.juzwiak@cc.pl",
+    "Phone 1 - Value": "666653146",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Kamila Waliszak",
+    "Given Name": "Kamila",
+    "Family Name": "Waliszak",
+    "E-mail 1 - Value": "k.waliszak@bnipolska.pl",
+    "Phone 1 - Value": "535622477",
+    "Organization 1 - Name": "Region Śląsk",
+    "Organization 1 - Title": "Asystent Biura Regionalnego BNI"
+  },
+  {
+    "Name": "Karolina Bąk",
+    "Given Name": "Karolina",
+    "Family Name": "Bąk",
+    "E-mail 1 - Value": "k.bak@cc.pl",
+    "Phone 1 - Value": "795040459",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Karolina Kordal",
+    "Given Name": "Karolina",
+    "Family Name": "Kordal",
+    "E-mail 1 - Value": "k.kordal@cc.pl",
+    "Phone 1 - Value": "533062317",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "po. Dyrektora Wsparcia Sprzedaży "
+  },
+  {
+    "Name": "Karolina Molągowska",
+    "Given Name": "Karolina",
+    "Family Name": "Molągowska",
+    "E-mail 1 - Value": "k.molagowska@cc.pl",
+    "Phone 1 - Value": "570981717",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Karolina Szumacher",
+    "Given Name": "Karolina",
+    "Family Name": "Szumacher",
+    "E-mail 1 - Value": "k.szumacher@tc.pl",
+    "Phone 1 - Value": "534486270",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Manager ds. Doskonalenia Procesów Wewnętrznych"
+  },
+  {
+    "Name": "Katarzyna Bieńkowska",
+    "Given Name": "Katarzyna",
+    "Family Name": "Bieńkowska",
+    "E-mail 1 - Value": "k.bienkowska@tc.pl",
+    "Phone 1 - Value": "535093232",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "Chief People Officer"
+  },
+  {
+    "Name": "Katarzyna Czynszak",
+    "Given Name": "Katarzyna",
+    "Family Name": "Czynszak",
+    "E-mail 1 - Value": "k.czynszak@tc.pl",
+    "Phone 1 - Value": "666653220",
+    "Organization 1 - Name": "Corporate Events",
+    "Organization 1 - Title": "Szef Produkcji"
+  },
+  {
+    "Name": "Katarzyna Gutkowska",
+    "Given Name": "Katarzyna",
+    "Family Name": "Gutkowska",
+    "E-mail 1 - Value": "k.gutkowska@tc.pl",
+    "Phone 1 - Value": "535114661",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Office Manager"
+  },
+  {
+    "Name": "Katarzyna Honisz",
+    "Given Name": "Katarzyna",
+    "Family Name": "Honisz",
+    "E-mail 1 - Value": "k.honisz@cc.pl",
+    "Phone 1 - Value": "535076682",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Katarzyna Jeglińska",
+    "Given Name": "Katarzyna",
+    "Family Name": "Jeglińska",
+    "E-mail 1 - Value": "k.jeglinska@tc.pl",
+    "Phone 1 - Value": "534333716",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "Koordynator ds. HR"
+  },
+  {
+    "Name": "Katarzyna Nowakowska",
+    "Given Name": "Katarzyna",
+    "Family Name": "Nowakowska",
+    "E-mail 1 - Value": "k.nowakowska@thinktanktc.org",
+    "Phone 1 - Value": "535613130",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Project Manager"
+  },
+  {
+    "Name": "Katarzyna Pawlak",
+    "Given Name": "Katarzyna",
+    "Family Name": "Pawlak",
+    "E-mail 1 - Value": "k.pawlak@tc.pl",
+    "Phone 1 - Value": "535718221",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Specjalista ds. Komunikacji"
+  },
+  {
+    "Name": "Katarzyna Węgrzyński",
+    "Given Name": "Katarzyna",
+    "Family Name": "Węgrzyński",
+    "E-mail 1 - Value": "k.wegrzynski@thecompany.us",
+    "Phone 1 - Value": "1(917)379-4229",
+    "Organization 1 - Name": "CC USA",
+    "Organization 1 - Title": "Project Manager"
+  },
+  {
+    "Name": "Kinga Drab",
+    "Given Name": "Kinga",
+    "Family Name": "Drab",
+    "E-mail 1 - Value": "k.drab@bnipolska.pl",
+    "Phone 1 - Value": "533444884",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Kinga Romanowska",
+    "Given Name": "Kinga",
+    "Family Name": "Romanowska",
+    "E-mail 1 - Value": "k.romanowska@cc.pl",
+    "Phone 1 - Value": "535029791",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor Wsparcia Sprzedaży CC"
+  },
+  {
+    "Name": "Kinga Sistermann",
+    "Given Name": "Kinga",
+    "Family Name": "Sistermann",
+    "E-mail 1 - Value": "k.sistermann@cc.pl",
+    "Phone 1 - Value": "536773042",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Kinga Woźniak",
+    "Given Name": "Kinga",
+    "Family Name": "Woźniak",
+    "E-mail 1 - Value": "k.wozniak@tc.pl",
+    "Phone 1 - Value": "533471320",
+    "Organization 1 - Name": "Dział Finansów",
+    "Organization 1 - Title": "Młodszy specjalista ds. finansów"
+  },
+  {
+    "Name": "Klaudia Banaszek",
+    "Given Name": "Klaudia",
+    "Family Name": "Banaszek",
+    "E-mail 1 - Value": "k.banaszek@tc.pl",
+    "Phone 1 - Value": "535620667",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Specjalistka ds. Obsługi Recepcji"
+  },
+  {
+    "Name": "Klaudia Karwat",
+    "Given Name": "Klaudia",
+    "Family Name": "Karwat",
+    "E-mail 1 - Value": "k.karwat@tc.pl",
+    "Phone 1 - Value": "533655328",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Koordynator Floty"
+  },
+  {
+    "Name": "Klaudia Piotrowska",
+    "Given Name": "Klaudia",
+    "Family Name": "Piotrowska",
+    "E-mail 1 - Value": "k.piotrowska@bnipolska.pl",
+    "Phone 1 - Value": "577800199",
+    "Organization 1 - Name": "Region Łódź",
+    "Organization 1 - Title": "Koordynator Regionalny BNI"
+  },
+  {
+    "Name": "Kornelia Szatow",
+    "Given Name": "Kornelia",
+    "Family Name": "Szatow",
+    "E-mail 1 - Value": "k.szatow@tc.pl",
+    "Phone 1 - Value": "533484272",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Specjalista ds. Operacyjnych"
+  },
+  {
+    "Name": "Krzysztof Dudek",
+    "Given Name": "Krzysztof",
+    "Family Name": "Dudek",
+    "E-mail 1 - Value": "k.dudek@bnipolska.pl",
+    "Phone 1 - Value": "602801306",
+    "Organization 1 - Name": "Region Bielsko-Biała",
+    "Organization 1 - Title": "Franczyzobiorca"
+  },
+  {
+    "Name": "Krzysztof Godlewski",
+    "Given Name": "Krzysztof",
+    "Family Name": "Godlewski",
+    "E-mail 1 - Value": "k.godlewski@bnipolska.pl",
+    "Phone 1 - Value": "509456731",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor Obszaru"
+  },
+  {
+    "Name": "Krzysztof Kowaleczko",
+    "Given Name": "Krzysztof",
+    "Family Name": "Kowaleczko",
+    "E-mail 1 - Value": "k.kowaleczko@bnipolska.pl",
+    "Phone 1 - Value": "666653351",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Krzysztof Mędrala",
+    "Given Name": "Krzysztof",
+    "Family Name": "Mędrala",
+    "E-mail 1 - Value": "k.medrala@cc.pl",
+    "Phone 1 - Value": "536315270",
+    "Organization 1 - Name": "HQ",
+    "Organization 1 - Title": "Chief Development Officer"
+  },
+  {
+    "Name": "Krzysztof Michalski",
+    "Given Name": "Krzysztof",
+    "Family Name": "Michalski",
+    "E-mail 1 - Value": "k.michalski@thinktanktc.org",
+    "Phone 1 - Value": "531910057",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Project Manager"
+  },
+  {
+    "Name": "Krzysztof Sokulski",
+    "Given Name": "Krzysztof",
+    "Family Name": "Sokulski",
+    "E-mail 1 - Value": "k.sokulski@bnipolska.pl",
+    "Phone 1 - Value": "512457925",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Laura Bąkowska",
+    "Given Name": "Laura",
+    "Family Name": "Bąkowska",
+    "E-mail 1 - Value": "l.bakowska@tc.pl",
+    "Phone 1 - Value": "530789189",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Stażysta w Dziale Marketingu"
+  },
+  {
+    "Name": "Lidia Cieszewska",
+    "Given Name": "Lidia",
+    "Family Name": "Cieszewska",
+    "E-mail 1 - Value": "l.cieszewska@tc.pl",
+    "Phone 1 - Value": "530559649",
+    "Organization 1 - Name": "Dział Finansów",
+    "Organization 1 - Title": "Specjalista ds. Rozliczeń"
+  },
+  {
+    "Name": "Lilianna Kosmela",
+    "Given Name": "Lilianna",
+    "Family Name": "Kosmela",
+    "E-mail 1 - Value": "l.kosmela@bnipolska.pl",
+    "Phone 1 - Value": "694544417",
+    "Organization 1 - Name": "Region Bydgoszcz",
+    "Organization 1 - Title": "Dyrektor Regionalny"
+  },
+  {
+    "Name": "Lucyna Kuźniar-Lasota",
+    "Given Name": "Lucyna",
+    "Family Name": "Kuźniar-Lasota",
+    "E-mail 1 - Value": "l.kuzniar-lasota@bnipolska.pl",
+    "Phone 1 - Value": "533393120",
+    "Organization 1 - Name": "Region Rzeszów",
+    "Organization 1 - Title": "Dyrektor Makroregionu BNI"
+  },
+  {
+    "Name": "Łukasz Biedulski",
+    "Given Name": "Łukasz",
+    "Family Name": "Biedulski",
+    "E-mail 1 - Value": "l.biedulski@cc.pl",
+    "Phone 1 - Value": "530019911",
+    "Organization 1 - Name": "CC CEO",
+    "Organization 1 - Title": "Dyrektor Regionu CC CEO"
+  },
+  {
+    "Name": "Łukasz Kantorski",
+    "Given Name": "Łukasz",
+    "Family Name": "Kantorski",
+    "E-mail 1 - Value": "l.kantorski@bnipolska.pl",
+    "Phone 1 - Value": "696054864",
+    "Organization 1 - Name": "Region Toruń",
+    "Organization 1 - Title": "Dyrektor Obszaru"
+  },
+  {
+    "Name": "Łukasz Milewski",
+    "Given Name": "Łukasz",
+    "Family Name": "Milewski",
+    "E-mail 1 - Value": "l.milewski@bnipolska.pl",
+    "Phone 1 - Value": "500242606",
+    "Organization 1 - Name": "Region Lublin",
+    "Organization 1 - Title": "Dyrektor Obszaru"
+  },
+  {
+    "Name": "Łukasz Pałasz",
+    "Given Name": "Łukasz",
+    "Family Name": "Pałasz",
+    "E-mail 1 - Value": "l.palasz@bnipolska.pl",
+    "Phone 1 - Value": "796466812",
+    "Organization 1 - Name": "Region Wrocław",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Łukasz Pasikowski",
+    "Given Name": "Łukasz",
+    "Family Name": "Pasikowski",
+    "E-mail 1 - Value": "l.pasikowski@tc.pl",
+    "Phone 1 - Value": "531162512",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "CRM Manager"
+  },
+  {
+    "Name": "Maciej Cherczyński",
+    "Given Name": "Maciej",
+    "Family Name": "Cherczyński",
+    "E-mail 1 - Value": "m.cherczynski@tc.pl",
+    "Phone 1 - Value": "533670329",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Recepcjonista"
+  },
+  {
+    "Name": "Maciej Malski",
+    "Given Name": "Maciej",
+    "Family Name": "Malski",
+    "E-mail 1 - Value": "mm@cc.pl",
+    "Phone 1 - Value": "662266811",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Maciej Pontus",
+    "Given Name": "Maciej",
+    "Family Name": "Pontus",
+    "E-mail 1 - Value": "m.pontus@tc.pl",
+    "Phone 1 - Value": "534127791",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Specjalista ds. IT"
+  },
+  {
+    "Name": "Maciej Samokar",
+    "Given Name": "Maciej",
+    "Family Name": "Samokar",
+    "E-mail 1 - Value": "m.samokar@cc.pl",
+    "Phone 1 - Value": "666653202",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Project Manager CC+"
+  },
+  {
+    "Name": "Maciej Studenny",
+    "Given Name": "Maciej",
+    "Family Name": "Studenny",
+    "E-mail 1 - Value": "m.studenny@bnipolska.pl",
+    "Phone 1 - Value": "695860385",
+    "Organization 1 - Name": "Region Lublin",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Maciej Świerczyński",
+    "Given Name": "Maciej",
+    "Family Name": "Świerczyński",
+    "E-mail 1 - Value": "m.swierczynski@bnipolska.pl",
+    "Phone 1 - Value": "791511550",
+    "Organization 1 - Name": "Region Bydgoszcz",
+    "Organization 1 - Title": "Franczyzobiorca"
+  },
+  {
+    "Name": "Maciej Turchan",
+    "Given Name": "Maciej",
+    "Family Name": "Turchan",
+    "E-mail 1 - Value": "m.turchan@cc.pl",
+    "Phone 1 - Value": "533142883",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Dyrektor ds. Relacji"
+  },
+  {
+    "Name": "Maciej Tymusz",
+    "Given Name": "Maciej",
+    "Family Name": "Tymusz",
+    "E-mail 1 - Value": "mt@tc.pl",
+    "Phone 1 - Value": "666884211",
+    "Organization 1 - Name": "Zarząd",
+    "Organization 1 - Title": "Członek Zarządu ds. Operacji"
+  },
+  {
+    "Name": "Magdalena Jackowska",
+    "Given Name": "Magdalena",
+    "Family Name": "Jackowska",
+    "E-mail 1 - Value": "m.jackowska@cc.pl",
+    "Phone 1 - Value": "531527540",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Magdalena Karpińska",
+    "Given Name": "Magdalena",
+    "Family Name": "Karpińska",
+    "E-mail 1 - Value": "m.karpinska@tc.pl",
+    "Phone 1 - Value": "534258832",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Project Manager"
+  },
+  {
+    "Name": "Magdalena Kozyra",
+    "Given Name": "Magdalena",
+    "Family Name": "Kozyra",
+    "E-mail 1 - Value": "m.kozyra@cc.pl",
+    "Phone 1 - Value": "535722476",
+    "Organization 1 - Name": "CC USA",
+    "Organization 1 - Title": "Project Manager"
+  },
+  {
+    "Name": "Magdalena Leszczyńska",
+    "Given Name": "Magdalena",
+    "Family Name": "Leszczyńska",
+    "E-mail 1 - Value": "m.leszczynska@bnipolska.pl",
+    "Phone 1 - Value": "533830543",
+    "Organization 1 - Name": "Member Service Center",
+    "Organization 1 - Title": "Asystentka Biura Narodowego"
+  },
+  {
+    "Name": "Magdalena Polus",
+    "Given Name": "Magdalena",
+    "Family Name": "Polus",
+    "E-mail 1 - Value": "m.polus@tc.pl",
+    "Phone 1 - Value": "530562819",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "Ekspert ds. Szkoleń i Rozwoju"
+  },
+  {
+    "Name": "Magdalena Rapacka-Wojdat",
+    "Given Name": "Magdalena",
+    "Family Name": "Rapacka-Wojdat",
+    "E-mail 1 - Value": "m.rapacka-wojdat@tc.pl",
+    "Phone 1 - Value": "666653447",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "HR Project Manager"
+  },
+  {
+    "Name": "Małgorzata Czarnecka",
+    "Given Name": "Małgorzata",
+    "Family Name": "Czarnecka",
+    "E-mail 1 - Value": "m.czarnecka@bnipolska.pl",
+    "Phone 1 - Value": "508359468",
+    "Organization 1 - Name": "Region Wrocław",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Małgorzata Czarny",
+    "Given Name": "Małgorzata",
+    "Family Name": "Czarny",
+    "E-mail 1 - Value": "torun@bnipolska.pl",
+    "Phone 1 - Value": "534874857",
+    "Organization 1 - Name": "Region Toruń",
+    "Organization 1 - Title": "Koordynator Regionalny BNI"
+  },
+  {
+    "Name": "Małgorzata Kot",
+    "Given Name": "Małgorzata",
+    "Family Name": "Kot",
+    "E-mail 1 - Value": "m.kot@cc.pl",
+    "Phone 1 - Value": "537026631",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor Makroregionu CC Warszawa"
+  },
+  {
+    "Name": "Małgorzata Ławniczuk",
+    "Given Name": "Małgorzata",
+    "Family Name": "Ławniczuk",
+    "E-mail 1 - Value": "m.lawniczuk@bnipolska.pl",
+    "Phone 1 - Value": "576326000",
+    "Organization 1 - Name": "Region Białystok",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Małgorzata Pasikowska",
+    "Given Name": "Małgorzata",
+    "Family Name": "Pasikowska",
+    "E-mail 1 - Value": "m.pasikowska@tc.pl",
+    "Phone 1 - Value": "531042526",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "Dyrektor HR"
+  },
+  {
+    "Name": "Małgorzata Słupska-Mądry",
+    "Given Name": "Małgorzata",
+    "Family Name": "Słupska-Mądry",
+    "E-mail 1 - Value": "m.slupska-madry@cc.pl",
+    "Phone 1 - Value": "531261464",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Dyrektor ds. Relacji"
+  },
+  {
+    "Name": "Marcelina Kowalik Bembenek",
+    "Given Name": "Marcelina",
+    "Family Name": "Kowalik Bembenek",
+    "E-mail 1 - Value": "m.kowalikbembenek@cc.pl",
+    "Phone 1 - Value": "533311739",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Team Leader Działu Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Marcin Frej",
+    "Given Name": "Marcin",
+    "Family Name": "Frej",
+    "E-mail 1 - Value": "m.frej@tc.pl",
+    "Phone 1 - Value": "536374565",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Specjalista ds. Produkcji Filmowych"
+  },
+  {
+    "Name": "Marcin Iżykiewicz",
+    "Given Name": "Marcin",
+    "Family Name": "Iżykiewicz",
+    "E-mail 1 - Value": "m.izykiewicz@tc.pl",
+    "Phone 1 - Value": "517260872",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Specjalista ds. Floty"
+  },
+  {
+    "Name": "Marcin Kaczmar",
+    "Given Name": "Marcin",
+    "Family Name": "Kaczmar",
+    "E-mail 1 - Value": "m.kaczmar@bnipolska.pl",
+    "Phone 1 - Value": "533153961",
+    "Organization 1 - Name": "Call Center",
+    "Organization 1 - Title": "Manager Call Center"
+  },
+  {
+    "Name": "Marcin Kroczak",
+    "Given Name": "Marcin",
+    "Family Name": "Kroczak",
+    "E-mail 1 - Value": "m.kroczak@cc.pl",
+    "Phone 1 - Value": "533043910",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Marcin Krzyżanowski",
+    "Given Name": "Marcin",
+    "Family Name": "Krzyżanowski",
+    "E-mail 1 - Value": "m.krzyzanowski@bnipolska.pl",
+    "Phone 1 - Value": "725539646",
+    "Organization 1 - Name": "Region Lublin",
+    "Organization 1 - Title": "Dyrektor Zarządzający ds. Operacyjnych"
+  },
+  {
+    "Name": "Marcin Szczepański",
+    "Given Name": "Marcin",
+    "Family Name": "Szczepański",
+    "E-mail 1 - Value": "m.szczepanski@bnipolska.pl",
+    "Phone 1 - Value": "533703884",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Relacji BNI+"
+  },
+  {
+    "Name": "Marcin Szczucki",
+    "Given Name": "Marcin",
+    "Family Name": "Szczucki",
+    "E-mail 1 - Value": "m.szczucki@bnipolska.pl",
+    "Phone 1 - Value": "535750500",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Relacji BNI+"
+  },
+  {
+    "Name": "Marcin Turowski",
+    "Given Name": "Marcin",
+    "Family Name": "Turowski",
+    "E-mail 1 - Value": "m.turowski@cc.pl",
+    "Phone 1 - Value": "535893516",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Relacji CC"
+  },
+  {
+    "Name": "Marek Piech",
+    "Given Name": "Marek",
+    "Family Name": "Piech",
+    "E-mail 1 - Value": "m.piech@cc.pl",
+    "Phone 1 - Value": "533756265",
+    "Organization 1 - Name": "CC CEO",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Mariusz Bąkowski",
+    "Given Name": "Mariusz",
+    "Family Name": "Bąkowski",
+    "E-mail 1 - Value": "m.bakowski@tc.pl",
+    "Phone 1 - Value": "535618261",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Digital Project Specialist"
+  },
+  {
+    "Name": "Marta Maliszewska",
+    "Given Name": "Marta",
+    "Family Name": "Maliszewska",
+    "E-mail 1 - Value": "m.maliszewska@tc.pl",
+    "Phone 1 - Value": "537981462",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Adwokat"
+  },
+  {
+    "Name": "Marta Matras",
+    "Given Name": "Marta",
+    "Family Name": "Matras",
+    "E-mail 1 - Value": "m.matras@bnipolska.pl",
+    "Phone 1 - Value": "533875431",
+    "Organization 1 - Name": "Member Service Center",
+    "Organization 1 - Title": "Koordynator w MSC"
+  },
+  {
+    "Name": "Marta Pawłowska",
+    "Given Name": "Marta",
+    "Family Name": "Pawłowska",
+    "E-mail 1 - Value": "m.pawlowska@cc.pl",
+    "Phone 1 - Value": "530339928",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Marta Walikowska",
+    "Given Name": "Marta",
+    "Family Name": "Walikowska",
+    "E-mail 1 - Value": "m.walikowska@bnipolska.pl",
+    "Phone 1 - Value": "533301620",
+    "Organization 1 - Name": "Dział Rozwoju Franczyzy",
+    "Organization 1 - Title": "Koordynator regionalny"
+  },
+  {
+    "Name": "Martyna Matuszak",
+    "Given Name": "Martyna",
+    "Family Name": "Matuszak",
+    "E-mail 1 - Value": "m.matuszak@tc.pl",
+    "Phone 1 - Value": "666653021",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "Talent Acquisition Partner"
+  },
+  {
+    "Name": "Martyna Sieradzka",
+    "Given Name": "Martyna",
+    "Family Name": "Sieradzka",
+    "E-mail 1 - Value": "m.sieradzka@cc.pl",
+    "Phone 1 - Value": "533284906",
+    "Organization 1 - Name": "CC CEO",
+    "Organization 1 - Title": "Młodszy Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Marzena Pławecka",
+    "Given Name": "Marzena",
+    "Family Name": "Pławecka",
+    "E-mail 1 - Value": "m.plawecka@cc.pl",
+    "Phone 1 - Value": "530529840",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Starszy Specjalista ds. administracji"
+  },
+  {
+    "Name": "Marzena Strugińska-Kiełboń",
+    "Given Name": "Marzena",
+    "Family Name": "Strugińska-Kiełboń",
+    "E-mail 1 - Value": "m.struginska-kielbon@cc.pl",
+    "Phone 1 - Value": "666623042",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor Regionu ds. Rozwoju"
+  },
+  {
+    "Name": "Mateusz Bacański",
+    "Given Name": "Mateusz",
+    "Family Name": "Bacański",
+    "E-mail 1 - Value": "mb@cc.pl",
+    "Phone 1 - Value": "791475418",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "CEO"
+  },
+  {
+    "Name": "Matt Leaney",
+    "Given Name": "Matt",
+    "Family Name": "Leaney",
+    "E-mail 1 - Value": "m.leaney@cc-usa.com",
+    "Phone 1 - Value": "1(917)471-0326",
+    "Organization 1 - Name": "CC USA",
+    "Organization 1 - Title": "COO USA"
+  },
+  {
+    "Name": "Michał Czmyr",
+    "Given Name": "Michał",
+    "Family Name": "Czmyr",
+    "E-mail 1 - Value": "m.czmyr@bnipolska.pl",
+    "Phone 1 - Value": "531337491",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Relationship Manager BNI+"
+  },
+  {
+    "Name": "Michał Gerus",
+    "Given Name": "Michał",
+    "Family Name": "Gerus",
+    "E-mail 1 - Value": "m.gerus@thinktanktc.org",
+    "Phone 1 - Value": "666651173",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Junior Analityk"
+  },
+  {
+    "Name": "Michał Jesionowski",
+    "Given Name": "Michał",
+    "Family Name": "Jesionowski",
+    "E-mail 1 - Value": "m.jesionowski@bnipolska.pl",
+    "Phone 1 - Value": "792085698",
+    "Organization 1 - Name": "Region Łódź",
+    "Organization 1 - Title": "Dyrektor Obszaru"
+  },
+  {
+    "Name": "Michał Kuczyński",
+    "Given Name": "Michał",
+    "Family Name": "Kuczyński",
+    "E-mail 1 - Value": "m.kuczynski@bnipolska.pl",
+    "Phone 1 - Value": "574801101",
+    "Organization 1 - Name": "Region Trójmiasto",
+    "Organization 1 - Title": "Dyrektor Makroregionu BNI"
+  },
+  {
+    "Name": "Michał Skierski",
+    "Given Name": "Michał",
+    "Family Name": "Skierski",
+    "E-mail 1 - Value": "m.skierski@thinktanktc.org",
+    "Phone 1 - Value": "537202602",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Dyrektor Marketingu"
+  },
+  {
+    "Name": "Mieszko Turski",
+    "Given Name": "Mieszko",
+    "Family Name": "Turski",
+    "E-mail 1 - Value": "m.turski@bnipolska.pl",
+    "Phone 1 - Value": "735024517",
+    "Organization 1 - Name": "Region Bielsko-Biała",
+    "Organization 1 - Title": "Specjalista ds. marketingu"
+  },
+  {
+    "Name": "Mirosław Promny",
+    "Given Name": "Mirosław",
+    "Family Name": "Promny",
+    "E-mail 1 - Value": "m.promny@cc.pl",
+    "Phone 1 - Value": "666653167",
+    "Organization 1 - Name": "CC CEO",
+    "Organization 1 - Title": "Zastępca Dyrektora Makroregionu CC CEO"
+  },
+  {
+    "Name": "Monika Bogusz",
+    "Given Name": "Monika",
+    "Family Name": "Bogusz",
+    "E-mail 1 - Value": "m.bogusz@tc.pl",
+    "Phone 1 - Value": "533084984",
+    "Organization 1 - Name": "Dział Partnerstw Strategicznych",
+    "Organization 1 - Title": "Dyrektor ds. Partnerstw Strategicznych"
+  },
+  {
+    "Name": "Monika Majewska",
+    "Given Name": "Monika",
+    "Family Name": "Majewska",
+    "E-mail 1 - Value": "m.majewska@bnipolska.pl",
+    "Phone 1 - Value": "533703226",
+    "Organization 1 - Name": "Region Trójmiasto",
+    "Organization 1 - Title": "Dyrektor Regionalny BNI"
+  },
+  {
+    "Name": "Monika Wilkoławska",
+    "Given Name": "Monika",
+    "Family Name": "Wilkoławska",
+    "E-mail 1 - Value": "m.wilkolawska@tc.pl",
+    "Phone 1 - Value": "533656543",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "Senior HR Business Partner"
+  },
+  {
+    "Name": "Natalia Puto",
+    "Given Name": "Natalia",
+    "Family Name": "Puto",
+    "E-mail 1 - Value": "n.puto@cc.pl",
+    "Phone 1 - Value": "535622742",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Starszy Koordynator Operacyjny"
+  },
+  {
+    "Name": "Natalia Rybaniec",
+    "Given Name": "Natalia",
+    "Family Name": "Rybaniec",
+    "E-mail 1 - Value": "n.rybaniec@tc.pl",
+    "Phone 1 - Value": "666653509",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Stażystka"
+  },
+  {
+    "Name": "Natalia Stankiewicz",
+    "Given Name": "Natalia",
+    "Family Name": "Stankiewicz",
+    "E-mail 1 - Value": "n.stankiewicz@tc.pl",
+    "Phone 1 - Value": "530997291",
+    "Organization 1 - Name": "HQ",
+    "Organization 1 - Title": "Project Manager"
+  },
+  {
+    "Name": "Oliwia Partyka",
+    "Given Name": "Oliwia",
+    "Family Name": "Partyka",
+    "E-mail 1 - Value": "o.partyka@tc.pl",
+    "Phone 1 - Value": "534040901",
+    "Organization 1 - Name": "Dział Operacyjny",
+    "Organization 1 - Title": "Recepcjonistka"
+  },
+  {
+    "Name": "Oliwia Zaremba",
+    "Given Name": "Oliwia",
+    "Family Name": "Zaremba",
+    "E-mail 1 - Value": "o.zaremba@cc.pl",
+    "Phone 1 - Value": "533157271",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Młodszy Koordynator Regionalny"
+  },
+  {
+    "Name": "Pamela Byledbał",
+    "Given Name": "Pamela",
+    "Family Name": "Byledbał",
+    "E-mail 1 - Value": "p.byledbal@tc.pl",
+    "Phone 1 - Value": "533061582",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Koordynatorka Biura"
+  },
+  {
+    "Name": "Patrycja Chmielowska",
+    "Given Name": "Patrycja",
+    "Family Name": "Chmielowska",
+    "E-mail 1 - Value": "p.chmielowska@tc.pl",
+    "Phone 1 - Value": "530405156",
+    "Organization 1 - Name": "Dział Finansów",
+    "Organization 1 - Title": "Manager ds. Raportowania i Analiz"
+  },
+  {
+    "Name": "Patrycja Grochola",
+    "Given Name": "Patrycja",
+    "Family Name": "Grochola",
+    "E-mail 1 - Value": "p.grochola@bnipolska.pl",
+    "Phone 1 - Value": "533339198",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Młodszy Koordynator Regionalny"
+  },
+  {
+    "Name": "Patrycja Kozicz",
+    "Given Name": "Patrycja",
+    "Family Name": "Kozicz",
+    "E-mail 1 - Value": "p.kozicz@cc.pl",
+    "Phone 1 - Value": "666653040",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Patryk Komisarczyk",
+    "Given Name": "Patryk",
+    "Family Name": "Komisarczyk",
+    "E-mail 1 - Value": "p.komisarczyk@bnipolska.pl",
+    "Phone 1 - Value": "500281841",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor Regionalny / Członek"
+  },
+  {
+    "Name": "Patryk Wyczółkowski",
+    "Given Name": "Patryk",
+    "Family Name": "Wyczółkowski",
+    "E-mail 1 - Value": "p.wyczolkowski@tc.pl",
+    "Phone 1 - Value": "533311747",
+    "Organization 1 - Name": "Zespół Wsparcia Sprzedaży",
+    "Organization 1 - Title": "Specjalista ds. Szkoleń i Rozwoju Sprzedaży"
+  },
+  {
+    "Name": "Paulina Borys",
+    "Given Name": "Paulina",
+    "Family Name": "Borys",
+    "E-mail 1 - Value": "p.borys@bnipolska.pl",
+    "Phone 1 - Value": "530005279",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Koordynator Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Paulina Gersok",
+    "Given Name": "Paulina",
+    "Family Name": "Gersok",
+    "E-mail 1 - Value": "p.gersok@cc.pl",
+    "Phone 1 - Value": "666653221",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Koordynator ds. Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Paulina Mrotek",
+    "Given Name": "Paulina",
+    "Family Name": "Mrotek",
+    "E-mail 1 - Value": "kujawsko-pomorskie@bnipolska.pl",
+    "Phone 1 - Value": "534051005",
+    "Organization 1 - Name": "Region Bydgoszcz",
+    "Organization 1 - Title": "Manager Biura"
+  },
+  {
+    "Name": "Paulina Piotrowska",
+    "Given Name": "Paulina",
+    "Family Name": "Piotrowska",
+    "E-mail 1 - Value": "p.piotrowska@tc.pl",
+    "Phone 1 - Value": "530221240",
+    "Organization 1 - Name": "Corporate Events",
+    "Organization 1 - Title": "Dyrektor Sprzedaży"
+  },
+  {
+    "Name": "Paweł Kozielec",
+    "Given Name": "Paweł",
+    "Family Name": "Kozielec",
+    "E-mail 1 - Value": "p.kozielec@cc.pl",
+    "Phone 1 - Value": "531914357",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Specjalista ds. administracji"
+  },
+  {
+    "Name": "Paweł Łojek",
+    "Given Name": "Paweł",
+    "Family Name": "Łojek",
+    "E-mail 1 - Value": "p.lojek@bnipolska.pl",
+    "Phone 1 - Value": "531130769",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor Regionu ds. Relacji"
+  },
+  {
+    "Name": "Paweł Świerczyński",
+    "Given Name": "Paweł",
+    "Family Name": "Świerczyński",
+    "E-mail 1 - Value": "p.swierczynski@cc.pl",
+    "Phone 1 - Value": "533061436",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Paweł Woźniak",
+    "Given Name": "Paweł",
+    "Family Name": "Woźniak",
+    "E-mail 1 - Value": "p.wozniak@bnipolska.pl",
+    "Phone 1 - Value": "536766664",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju BNI+"
+  },
+  {
+    "Name": "Paweł Żukowski",
+    "Given Name": "Paweł",
+    "Family Name": "Żukowski",
+    "E-mail 1 - Value": "p.zukowski@tc.pl",
+    "Phone 1 - Value": "530458269",
+    "Organization 1 - Name": "Dział Marketingu",
+    "Organization 1 - Title": "Manager ds. Produkcji Filmowych"
+  },
+  {
+    "Name": "Philippe Morski",
+    "Given Name": "Philippe",
+    "Family Name": "Morski",
+    "E-mail 1 - Value": "p.morski@cc.pl",
+    "Phone 1 - Value": "535462994",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Piotr Grochecki",
+    "Given Name": "Piotr",
+    "Family Name": "Grochecki",
+    "E-mail 1 - Value": "p.grochecki@cc.pl",
+    "Phone 1 - Value": "533261416",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "p.o. Manager Wsparcia Sprzedaży"
+  },
+  {
+    "Name": "Piotr Kasperek",
+    "Given Name": "Piotr",
+    "Family Name": "Kasperek",
+    "E-mail 1 - Value": "p.kasperek@bnipolska.pl",
+    "Phone 1 - Value": "518013663",
+    "Organization 1 - Name": "Region Lublin",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Piotr Patkowski",
+    "Given Name": "Piotr",
+    "Family Name": "Patkowski",
+    "E-mail 1 - Value": "p.patkowski@thinktanktc.org",
+    "Phone 1 - Value": "660297188",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Legal Ekspert"
+  },
+  {
+    "Name": "Piotr Rychlik",
+    "Given Name": "Piotr",
+    "Family Name": "Rychlik",
+    "E-mail 1 - Value": "p.rychlik@cc.pl",
+    "Phone 1 - Value": "531787794",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Relacji"
+  },
+  {
+    "Name": "Piotr Włodarczyk",
+    "Given Name": "Piotr",
+    "Family Name": "Włodarczyk",
+    "E-mail 1 - Value": "p.wlodarczyk@cc.pl",
+    "Phone 1 - Value": "537216394",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju Łódź"
+  },
+  {
+    "Name": "Rafał Kasperek",
+    "Given Name": "Rafał",
+    "Family Name": "Kasperek",
+    "E-mail 1 - Value": "r.kasperek@bnipolska.pl",
+    "Phone 1 - Value": "515513582",
+    "Organization 1 - Name": "Region Lublin",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Rafał Płuciennik",
+    "Given Name": "Rafał",
+    "Family Name": "Płuciennik",
+    "E-mail 1 - Value": "rp@tc.pl",
+    "Phone 1 - Value": "794953601",
+    "Organization 1 - Name": "Zarząd",
+    "Organization 1 - Title": "Członek Zarządu ds. Rozwoju Biznesu"
+  },
+  {
+    "Name": "Rafał Wojciechowski",
+    "Given Name": "Rafał",
+    "Family Name": "Wojciechowski",
+    "E-mail 1 - Value": "r.wojciechowski@thinktanktc.org",
+    "Phone 1 - Value": "536140571",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Head of Legal"
+  },
+  {
+    "Name": "Remigiusz Psonka",
+    "Given Name": "Remigiusz",
+    "Family Name": "Psonka",
+    "E-mail 1 - Value": "r.psonka@cc.pl",
+    "Phone 1 - Value": "574560832",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Robert Kowalczyk",
+    "Given Name": "Robert",
+    "Family Name": "Kowalczyk",
+    "E-mail 1 - Value": "r.kowalczyk@tc.pl",
+    "Phone 1 - Value": "535619286",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Kierowca Zarządu"
+  },
+  {
+    "Name": "Robert Wypych",
+    "Given Name": "Robert",
+    "Family Name": "Wypych",
+    "E-mail 1 - Value": "r.wypych@bnipolska.pl",
+    "Phone 1 - Value": "537275093",
+    "Organization 1 - Name": "Dział Rozwoju Franczyzy",
+    "Organization 1 - Title": "Dyrektor ds. Franczyzy"
+  },
+  {
+    "Name": "Ryszard Chmura",
+    "Given Name": "Ryszard",
+    "Family Name": "Chmura",
+    "E-mail 1 - Value": "rc@tc.pl",
+    "Phone 1 - Value": "533313670",
+    "Organization 1 - Name": "Zarząd",
+    "Organization 1 - Title": "Prezes Zarządu"
+  },
+  {
+    "Name": "Sebastian Gurdek",
+    "Given Name": "Sebastian",
+    "Family Name": "Gurdek",
+    "E-mail 1 - Value": "s.gurdek@cc.pl",
+    "Phone 1 - Value": "533311379",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Specjalista ds. Automatyzacji Procesów"
+  },
+  {
+    "Name": "Sylwia Góralska",
+    "Given Name": "Sylwia",
+    "Family Name": "Góralska",
+    "E-mail 1 - Value": "s.goralska@cc.pl",
+    "Phone 1 - Value": "534503797",
+    "Organization 1 - Name": "Region CC+",
+    "Organization 1 - Title": "Koordynator Wsparcia Sprzedaży CC+"
+  },
+  {
+    "Name": "Sylwia Rosa",
+    "Given Name": "Sylwia",
+    "Family Name": "Rosa",
+    "E-mail 1 - Value": "s.rosa@tc.pl",
+    "Phone 1 - Value": "530876701",
+    "Organization 1 - Name": "Corporate Events",
+    "Organization 1 - Title": "Dyrektor Generalny Corporate Events"
+  },
+  {
+    "Name": "Sylwia Warszawska",
+    "Given Name": "Sylwia",
+    "Family Name": "Warszawska",
+    "E-mail 1 - Value": "s.warszawska@bnipolska.pl",
+    "Phone 1 - Value": "535112229",
+    "Organization 1 - Name": "Dział Rozwoju Franczyzy",
+    "Organization 1 - Title": "Dyrektor"
+  },
+  {
+    "Name": "Szczepan Rudnicki",
+    "Given Name": "Szczepan",
+    "Family Name": "Rudnicki",
+    "E-mail 1 - Value": "s.rudnicki@bnipolska.pl",
+    "Phone 1 - Value": "576666296",
+    "Organization 1 - Name": "Region Wrocław",
+    "Organization 1 - Title": "Koordynator Regionalny BNI+"
+  },
+  {
+    "Name": "Szymon Kujawiak",
+    "Given Name": "Szymon",
+    "Family Name": "Kujawiak",
+    "E-mail 1 - Value": "s.kujawiak@tc.pl",
+    "Phone 1 - Value": "537730518",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Chief of Staff"
+  },
+  {
+    "Name": "Szymon Sieńko",
+    "Given Name": "Szymon",
+    "Family Name": "Sieńko",
+    "E-mail 1 - Value": "s.sienko@bnipolska.pl",
+    "Phone 1 - Value": "534582666",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor Regionalny"
+  },
+  {
+    "Name": "Tomasz Gruszczyk",
+    "Given Name": "Tomasz",
+    "Family Name": "Gruszczyk",
+    "E-mail 1 - Value": "t.gruszczyk@bnipolska.pl",
+    "Phone 1 - Value": "537075062",
+    "Organization 1 - Name": "Region Śląsk",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Tomasz Kachniarz",
+    "Given Name": "Tomasz",
+    "Family Name": "Kachniarz",
+    "E-mail 1 - Value": "t.kachniarz@bnipolska.pl",
+    "Phone 1 - Value": "604611667",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor Regionalny / Członek"
+  },
+  {
+    "Name": "Tomasz Sitarz",
+    "Given Name": "Tomasz",
+    "Family Name": "Sitarz",
+    "E-mail 1 - Value": "t.sitarz@tc.pl",
+    "Phone 1 - Value": "535872426",
+    "Organization 1 - Name": "Dział HR",
+    "Organization 1 - Title": "Dyrektor ds. Szkoleń i Rozwoju"
+  },
+  {
+    "Name": "Tomasz Styczyński",
+    "Given Name": "Tomasz",
+    "Family Name": "Styczyński",
+    "E-mail 1 - Value": "t.styczynski@tc.pl",
+    "Phone 1 - Value": "536404766",
+    "Organization 1 - Name": "HQ",
+    "Organization 1 - Title": "Chief Sales Officer"
+  },
+  {
+    "Name": "Urszula Pałka",
+    "Given Name": "Urszula",
+    "Family Name": "Pałka",
+    "E-mail 1 - Value": "u.palka@tc.pl",
+    "Phone 1 - Value": "531481778",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Executive Assistant"
+  },
+  {
+    "Name": "Weronika Woder",
+    "Given Name": "Weronika",
+    "Family Name": "Woder",
+    "E-mail 1 - Value": "w.woder@bnipolska.pl",
+    "Phone 1 - Value": "578568102",
+    "Organization 1 - Name": "Member Service Center",
+    "Organization 1 - Title": "Opiekun Klienta Biznesowego"
+  },
+  {
+    "Name": "Weronika Wójtowicz",
+    "Given Name": "Weronika",
+    "Family Name": "Wójtowicz",
+    "E-mail 1 - Value": "w.wojtowicz@bnipolska.pl",
+    "Phone 1 - Value": "535277370",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Specjalista ds. administracji"
+  },
+  {
+    "Name": "Wojciech Bałkowski",
+    "Given Name": "Wojciech",
+    "Family Name": "Bałkowski",
+    "E-mail 1 - Value": "w.balkowski@bnipolska.pl",
+    "Phone 1 - Value": "574563978",
+    "Organization 1 - Name": "Region Warszawa",
+    "Organization 1 - Title": "Dyrektor ds. Rozwoju"
+  },
+  {
+    "Name": "Wojciech Borkowski",
+    "Given Name": "Wojciech",
+    "Family Name": "Borkowski",
+    "E-mail 1 - Value": "w.borkowski@tc.pl",
+    "Phone 1 - Value": "530530266",
+    "Organization 1 - Name": "Corporate Events",
+    "Organization 1 - Title": "Project Manager"
+  },
+  {
+    "Name": "Wojciech Czech",
+    "Given Name": "Wojciech",
+    "Family Name": "Czech",
+    "E-mail 1 - Value": "w.czech@cc.pl",
+    "Phone 1 - Value": "517260415",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Dyrektor Regionalny CC"
+  },
+  {
+    "Name": "Zbigniew Ćwikliński",
+    "Given Name": "Zbigniew",
+    "Family Name": "Ćwikliński",
+    "E-mail 1 - Value": "z.cwiklinski@cc.pl",
+    "Phone 1 - Value": "530599065",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Menedżer ds. Finansów"
+  },
+  {
+    "Name": "Zbigniew Kuźma",
+    "Given Name": "Zbigniew",
+    "Family Name": "Kuźma",
+    "E-mail 1 - Value": "z.kuzma@cc.pl",
+    "Phone 1 - Value": "666653429",
+    "Organization 1 - Name": "Region Katowice",
+    "Organization 1 - Title": "Dyrektor ds. Relacji"
+  },
+  {
+    "Name": "Zenda Walker",
+    "Given Name": "Zenda",
+    "Family Name": "Walker",
+    "E-mail 1 - Value": "z.walker@cc-usa.com",
+    "Phone 1 - Value": "1(917)471-0777",
+    "Organization 1 - Name": "CC USA",
+    "Organization 1 - Title": "Office Manager"
+  },
+  {
+    "Name": "Zofia Bohosiewicz",
+    "Given Name": "Zofia",
+    "Family Name": "Bohosiewicz",
+    "E-mail 1 - Value": "z.bohosiewicz@tc.pl",
+    "Phone 1 - Value": "530339891",
+    "Organization 1 - Name": "Biuro Zarządu",
+    "Organization 1 - Title": "Executive Assistant"
+  },
+  {
+    "Name": "Zofia Kosowska",
+    "Given Name": "Zofia",
+    "Family Name": "Kosowska",
+    "E-mail 1 - Value": "z.kosowska@bnipolska.pl",
+    "Phone 1 - Value": "530386475",
+    "Organization 1 - Name": "Member Service Center",
+    "Organization 1 - Title": "Specjalistka ds. Komunikacji"
+  },
+  {
+    "Name": "Zuzanna Dziekońska",
+    "Given Name": "Zuzanna",
+    "Family Name": "Dziekońska",
+    "E-mail 1 - Value": "z.dziekonska@thinktanktc.org",
+    "Phone 1 - Value": "534498053",
+    "Organization 1 - Name": "Think Tank",
+    "Organization 1 - Title": "Project Manager"
+  },
+  {
+    "Name": "Zuzanna Góra",
+    "Given Name": "Zuzanna",
+    "Family Name": "Góra",
+    "E-mail 1 - Value": "z.gora@bnipolska.pl",
+    "Phone 1 - Value": "530335049",
+    "Organization 1 - Name": "Region Kraków",
+    "Organization 1 - Title": "Specjalista ds. administracji"
+  }
+]

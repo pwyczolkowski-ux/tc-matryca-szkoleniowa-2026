@@ -1,0 +1,174 @@
+{
+  "trainings": [
+    {
+      "id": 1775234996399.7651,
+      "date": "2026-04-10",
+      "moduleId": 1,
+      "trainerIds": [
+        1775221280308,
+        1775221285011,
+        1775221295836
+      ],
+      "priority": "wysoki",
+      "uczestnicy": [
+        "Agata Wilczyńska",
+        "Agnieszka Dudek",
+        "Ilona Korycka"
+      ],
+      "time": "10:00"
+    },
+    {
+      "id": 1775242870484,
+      "date": "2026-04-16",
+      "moduleId": 12,
+      "trainerIds": [
+        1775221303349
+      ],
+      "priority": "wysoki",
+      "time": "09:05",
+      "uczestnicy": []
+    }
+  ],
+  "trainers": [
+    {
+      "id": 1775221280308,
+      "name": "Tomasz Styczyński",
+      "color": "#DC143C"
+    },
+    {
+      "id": 1775221285011,
+      "name": "Patryk Wyczółkowski",
+      "color": "#22c55e",
+      "bio": "Próba testu"
+    },
+    {
+      "id": 1775221295836,
+      "name": "Marzena Struglińska-Kiełboń",
+      "color": "#f59e0b"
+    },
+    {
+      "id": 1775221303349,
+      "name": "Krzysztof Mędrala",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": 1775221306431,
+      "name": "Marta Pawłowska",
+      "color": "#06b6d4"
+    }
+  ],
+  "modules": [
+    {
+      "id": 1,
+      "kategoria": "Mindset",
+      "nazwa": "Źródła wewnętrznej motywacji",
+      "opis": "Znajdź swoje DLACZEGO zanim skończy Ci się JAK. Ikigai, Simon Sinek, coachingowe koło wartości — narzędzia do mapowania tego, co napędza Cię do działania.",
+      "korzysci": "adsad\nsdsadda\nsdsdsda",
+      "agenda": "",
+      "czasTrwania": "2h"
+    },
+    {
+      "id": 2,
+      "kategoria": "Mindset",
+      "nazwa": "Praca na swoich mocnych stronach",
+      "opis": "Talenty to nie przypadek — to strategia. Warsztat oparty o CliftonStrengths / VIA: odkryj swoje naturalne zasoby i naucz się przekuwać je w wyniki."
+    },
+    {
+      "id": 3,
+      "kategoria": "Mindset",
+      "nazwa": "Mindset 10x",
+      "opis": "Od incremental thinking do 10x Rule. Jak przestać optymalizować detale i szukać prawdziwych przełomów. Techniki kreatywnego myślenia o skali."
+    },
+    {
+      "id": 4,
+      "kategoria": "Skill",
+      "nazwa": "Domykanie sprzedaży",
+      "opis": "Typowe blokady w finalizacji, techniki pytań zamykających, radzenie sobie z obiekcjami. Ćwiczenia na żywych scenariuszach sprzedażowych."
+    },
+    {
+      "id": 5,
+      "kategoria": "Skill",
+      "nazwa": "Personal branding",
+      "opis": "LinkedIn, storytelling, spójny przekaz. Jak zbudować wizerunek eksperta, który przyciąga a nie odpycha — w sieci i na sali. Praktyczne narzędzia budowy marki osobistej."
+    },
+    {
+      "id": 6,
+      "kategoria": "Skill",
+      "nazwa": "Storytelling w biznesie",
+      "opis": "Struktura narracji, haki, emocje i dane. Jak opowiedzieć historię klienta, grupy i samego siebie tak, żeby słuchacz chciał więcej. Warsztaty narracyjne."
+    },
+    {
+      "id": 7,
+      "kategoria": "Skill",
+      "nazwa": "Komunikacja z różnymi typami osobowości",
+      "opis": "DISC w praktyce — jak dostosować styl rozmowy do D, I, S, C. Mniej konfliktów, więcej domkniętych sprzedaży i lepszy onboarding nowych Członków."
+    },
+    {
+      "id": 8,
+      "kategoria": "Skill",
+      "nazwa": "Techniki asertywnej komunikacji",
+      "opis": "Jak stawiać granice, wyrażać potrzeby i odmawiać bez agresji i bez uległości. Asertywność jako narzędzie lidera — nie tylko osobista kompetencja."
+    },
+    {
+      "id": 9,
+      "kategoria": "Skill",
+      "nazwa": "Sprzedaj wizję The Company",
+      "opis": "Narracja TC w różnych kontekstach — BI, zimna rozmowa, event. Jak nie sprzedawać składki, a sprzedawać ratunek przed samotnością przedsiębiorcy."
+    },
+    {
+      "id": 10,
+      "kategoria": "Skill",
+      "nazwa": "Model sprzedaży CC",
+      "opis": "Specyfika sprzedaży w CC — długie cykle, wysokie składki, kwalifikacja. One-pager do BI, struktura rozmowy, zamknięcie. Pipeline oparty na relacjach."
+    },
+    {
+      "id": 11,
+      "kategoria": "Skill",
+      "nazwa": "Feedback — jak udzielać informacji zwrotnej",
+      "opis": "Feedback jako narzędzie retencji i kultury. SBI model, rozmowa z niezaangażowanym Członkiem, rozmowa z nieefektywnym Zarządem Grupy. Role-play."
+    },
+    {
+      "id": 12,
+      "kategoria": "Skill",
+      "nazwa": "KPI grupy — czytanie danych",
+      "opis": "Frekwencja, aktywność 1-na-1, rekomendacje, risk members — jak zbudować prosty dashboard i reagować zanim stracisz Członka."
+    },
+    {
+      "id": 13,
+      "kategoria": "Skill",
+      "nazwa": "Opieka nad Członkiem od A do Z",
+      "opis": "Cały cykl życia: BI → onboarding → pierwsze 90 dni → aktywizacja → monitoring → odnowienie. Procesy i checklistry dla każdego etapu."
+    },
+    {
+      "id": 14,
+      "kategoria": "Skill",
+      "nazwa": "Member-driven sales",
+      "opis": "Jak angażować Członków w pozyskiwanie leadów. Mechanika member-driven sales, skrypty zapraszania, jak przeprowadzić przez cały proces zaproszenia."
+    },
+    {
+      "id": 15,
+      "kategoria": "Kultura",
+      "nazwa": "Forum CC",
+      "opis": "Praktyczny warsztat dla dyrektorów — struktura Forum w Grupie, moderacja, budowanie głębokiego zaufania między Członkami. Forum jako narzędzie retencji."
+    },
+    {
+      "id": 16,
+      "kategoria": "Kultura",
+      "nazwa": "Praca z Zarządem Grupy",
+      "opis": "Role Prezydenta, VP, Sekretarza i Skarbnika w praktyce. Jak dyrektor wspiera, ale nie zastępuje zarządu. Narzędzia, rytm spotkań, accountability."
+    },
+    {
+      "id": 17,
+      "kategoria": "Kultura",
+      "nazwa": "Member-Driven Organization",
+      "opis": "Czym różni się dyrektor-serwisant od dyrektora-lidera. Jak przesunąć ciężar aktywności na Członków i zbudować samonapędzającą się Grupę."
+    },
+    {
+      "id": 18,
+      "kategoria": "Skill",
+      "nazwa": "Motywacja Członków do działania",
+      "opis": "Psychologia motywacji w środowisku peer-to-peer. Jak rozpoznać typy motywacji w Grupie i dobrać do nich konkretne działania dyrektora."
+    }
+  ],
+  "savedAt": "2026-04-03T19:47:35.149Z"
+}

@@ -1312,8 +1312,8 @@ function deleteCurrentTraining(){
   openDC(`Usunąć szkolenie<br><strong>${mod?escHtml(mod.nazwa):t.date}</strong>?`,()=>{
     const deleted=t;
     trainings=trainings.filter(x=>x.id!==selTrainingId);
-    closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();
-    deleteSessionFromGitHub(deleted);
+    closeTrainingModal();renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();
+    pushToGitHub(true);deleteSessionFromGitHub(deleted);
   });
 }
 function refreshModuleIfOpen(){
@@ -1386,7 +1386,12 @@ function saveTraining(){
   pushToGitHub(true);
   if(savedId)pushSessionToGitHub(savedId);
 }
-function removeTraining(id){trainings=trainings.filter(t=>t.id!==id);renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();saveToStorage();}
+function removeTraining(id){
+  const deleted=trainings.find(t=>t.id===id);
+  trainings=trainings.filter(t=>t.id!==id);
+  renderCalendar();renderDashboard();renderModuleCards();refreshModuleIfOpen();
+  pushToGitHub(true);if(deleted)deleteSessionFromGitHub(deleted);
+}
 
 function trainerAvatar(t,size){
   if(t.photo)return`<img src="${t.photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;

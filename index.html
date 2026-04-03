@@ -922,6 +922,13 @@ function saveToStorage(){
   }catch(e){}
   if(getGhToken())pushToGitHub(false);
 }
+function saveParticipants(trainingId){
+  try{
+    localStorage.setItem(LS_TRAININGS,JSON.stringify(trainings));
+  }catch(e){}
+  pushToGitHub(true);
+  pushSessionToGitHub(trainingId);
+}
 function loadFromStorage(){
   try{
     const t=localStorage.getItem(LS_TRAININGS);
@@ -1286,20 +1293,20 @@ function confirmEmpPicker(){
   if(!t.uczestnicy)t.uczestnicy=[];
   empPickerSelected.forEach(name=>{if(!t.uczestnicy.includes(name))t.uczestnicy.push(name);});
   closeEmpPicker();
-  renderTmParticipants();saveToStorage();refreshModuleIfOpen();renderDashboard();pushSessionToGitHub(selTrainingId);
+  renderTmParticipants();refreshModuleIfOpen();renderDashboard();saveParticipants(selTrainingId);
 }
 function tmAddParticipantName(name){
   const t=trainings.find(x=>x.id===selTrainingId);if(!t)return;
   if(!t.uczestnicy)t.uczestnicy=[];
   if(!t.uczestnicy.includes(name))t.uczestnicy.push(name);
-  renderTmParticipants();saveToStorage();refreshModuleIfOpen();renderDashboard();pushSessionToGitHub(selTrainingId);
+  renderTmParticipants();refreshModuleIfOpen();renderDashboard();saveParticipants(selTrainingId);
 }
 function tmAddParticipant(){}
 function tmRemoveParticipant(idx){
   const t=trainings.find(x=>x.id===selTrainingId);if(!t||!t.uczestnicy)return;
   openDC(`Usunąć uczestnika <strong>${escHtml(t.uczestnicy[idx])}</strong>?`,()=>{
     t.uczestnicy.splice(idx,1);
-    renderTmParticipants();saveToStorage();refreshModuleIfOpen();renderDashboard();pushSessionToGitHub(selTrainingId);
+    renderTmParticipants();refreshModuleIfOpen();renderDashboard();saveParticipants(selTrainingId);
   });
 }
 function deleteCurrentTraining(){
@@ -1837,16 +1844,16 @@ function addParticipant(){
   const t=trainings.find(x=>x.id===participantsDate);if(!t)return;
   if(!t.uczestnicy)t.uczestnicy=[];
   t.uczestnicy.push(name);inp.value='';
-  renderParticipantsList();saveToStorage();
+  renderParticipantsList();
   if(selectedModuleId!==null)renderModuleDetailView(selectedModuleId);
-  pushSessionToGitHub(participantsDate);
+  saveParticipants(participantsDate);
 }
 function removeParticipant(idx){
   const t=trainings.find(x=>x.id===participantsDate);if(!t||!t.uczestnicy)return;
   t.uczestnicy.splice(idx,1);
-  renderParticipantsList();saveToStorage();
+  renderParticipantsList();
   if(selectedModuleId!==null)renderModuleDetailView(selectedModuleId);
-  pushSessionToGitHub(participantsDate);
+  saveParticipants(participantsDate);
 }
 
 let modViewMode='grid';

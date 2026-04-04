@@ -66,5 +66,18 @@
     "specjalizacje": [],
     "zdjecie": null,
     "kolor": "#f97316"
+  },
+  {
+    "id": 1775317057816,
+    "imie": "Patryk",
+    "nazwisko": "Wyczółkowski",
+    "rola": "Specjalista ds. Szkoleń i Rozwoju Sprzedaży",
+    "email": "p.wyczolkowski@tc.pl",
+    "telefon": "533311747",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#f97316"
   }
 ]

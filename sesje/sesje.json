@@ -127,5 +127,17 @@
     "notatki": "",
     "miejsce": "",
     "transkrypcja": ""
+  },
+  {
+    "id": 1775321791609,
+    "szkolenie_id": 1775319063180,
+    "data": "2026-06-01",
+    "godzina": "14:00",
+    "status": "zaplanowana",
+    "trener_ids": [],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "",
+    "transkrypcja": ""
   }
 ]

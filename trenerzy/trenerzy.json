@@ -57,5 +57,18 @@
     "specjalizacje": [],
     "zdjecie": null,
     "kolor": "#06b6d4"
+  },
+  {
+    "id": 1775315142018,
+    "imie": "Krzysztof",
+    "nazwisko": "Mędrala",
+    "rola": "Chief Development Officer",
+    "email": "k.medrala@cc.pl",
+    "telefon": "536315270",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#06b6d4"
   }
 ]

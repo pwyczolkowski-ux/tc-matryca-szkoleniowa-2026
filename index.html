@@ -625,9 +625,10 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       </div>
     </div>
     <label class="form-lbl">Imię</label>
-    <input type="text" class="form-inp" id="tm-imie" placeholder="Imię" maxlength="60">
+    <input type="text" class="form-inp" id="tm-imie" placeholder="Imię" maxlength="60" onblur="trenerAutoFill()">
     <label class="form-lbl">Nazwisko</label>
-    <input type="text" class="form-inp" id="tm-nazwisko" placeholder="Nazwisko" maxlength="60">
+    <input type="text" class="form-inp" id="tm-nazwisko" placeholder="Nazwisko" maxlength="60" onblur="trenerAutoFill()">
+    <div id="tm-match-info" style="display:none;font-size:12px;background:var(--green-soft);border:1px solid var(--green-border);border-radius:8px;padding:8px 12px;margin-bottom:12px;color:#166534;">Znaleziono w bazie pracowników — dane uzupełnione automatycznie</div>
     <label class="form-lbl">Rola / stanowisko</label>
     <input type="text" class="form-inp" id="tm-rola" placeholder="np. Trener biznesowy" maxlength="80">
     <label class="form-lbl">Specjalizacje</label>
@@ -1386,9 +1387,34 @@ function renderTrenerzy(){
     return`<div class="trainer-card" onclick="openTrenerModal(${t.id})">${trenerAvatar(t,46)}<div style="flex:1;min-width:0;"><div class="trainer-card-name">${escHtml(t.imie+' '+t.nazwisko)}</div>${t.rola?`<div class="trainer-card-rola">${escHtml(t.rola)}</div>`:''}<div class="trainer-card-meta">${sesCount} ${sesCount===1?'sesja':sesCount>=2&&sesCount<=4?'sesje':'sesji'}</div>${specs?`<div style="margin-top:4px;">${specs}</div>`:''}</div></div>`;
   }).join('');
 }
+async function trenerAutoFill(){
+  if(editingTrenerId)return; // tylko przy dodawaniu nowego
+  const imie=document.getElementById('tm-imie').value.trim().toLowerCase();
+  const nazwisko=document.getElementById('tm-nazwisko').value.trim().toLowerCase();
+  if(!imie||!nazwisko)return;
+  // załaduj pracowników jeśli jeszcze nie załadowano
+  if(!empLoaded)await loadEmployees();
+  const match=employees.find(e=>{
+    const gn=(e['Given Name']||'').trim().toLowerCase();
+    const fn=(e['Family Name']||'').trim().toLowerCase();
+    return gn===imie&&fn===nazwisko;
+  });
+  const info=document.getElementById('tm-match-info');
+  if(!match){info.style.display='none';return;}
+  // uzupełnij pola tylko jeśli są puste
+  const email=document.getElementById('tm-email');
+  const telefon=document.getElementById('tm-telefon');
+  const rola=document.getElementById('tm-rola');
+  let filled=false;
+  if(!email.value&&match['E-mail 1 - Value']){email.value=match['E-mail 1 - Value'];filled=true;}
+  if(!telefon.value&&match['Phone 1 - Value']){telefon.value=match['Phone 1 - Value'];filled=true;}
+  if(!rola.value&&match['Organization 1 - Title']){rola.value=match['Organization 1 - Title'];filled=true;}
+  if(filled)info.style.display='block';
+}
 function openTrenerModal(id){
   editingTrenerId=id;pendingTrenerPhoto=null;
   const t=id?trenerzy.find(x=>x.id===id):null;
+  const info=document.getElementById('tm-match-info');if(info)info.style.display='none';
   document.getElementById('tm-title').textContent=id?'Edytuj trenera':'Dodaj trenera';
   document.getElementById('tm-imie').value=t?.imie||'';
   document.getElementById('tm-nazwisko').value=t?.nazwisko||'';

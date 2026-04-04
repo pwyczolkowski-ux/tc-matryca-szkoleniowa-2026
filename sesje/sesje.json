@@ -15,5 +15,22 @@
     ],
     "notatki": "",
     "miejsce": "WTT 29"
+  },
+  {
+    "id": 1775302875806,
+    "szkolenie_id": 1775292373979,
+    "data": "2026-04-24",
+    "godzina": null,
+    "status": "zaplanowana",
+    "trener_ids": [
+      1775292341205
+    ],
+    "uczestnicy": [
+      "Wojciech Bałkowski",
+      "Mateusz Bacański",
+      "Justyna Aniśko"
+    ],
+    "notatki": "",
+    "miejsce": "WTT 29"
   }
 ]

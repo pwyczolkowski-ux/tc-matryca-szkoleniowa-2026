@@ -42,5 +42,29 @@
     "agenda": "",
     "czasTrwania": "4h",
     "materialy": []
+  },
+  {
+    "id": 1775306166025,
+    "nazwa": "Praca na mocnych stronach",
+    "kategoria": "Mindset",
+    "typ": "wewnetrzne",
+    "forma": "stacjonarne",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "4h",
+    "materialy": []
+  },
+  {
+    "id": 1775306219854,
+    "nazwa": "Personal branding",
+    "kategoria": "Przywodztwo",
+    "typ": "wewnetrzne",
+    "forma": "stacjonarne",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "4h",
+    "materialy": []
   }
 ]

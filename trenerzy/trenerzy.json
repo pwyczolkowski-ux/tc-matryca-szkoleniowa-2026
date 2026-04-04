@@ -15,5 +15,21 @@
     ],
     "zdjecie": null,
     "kolor": "#DC143C"
+  },
+  {
+    "id": 1775305917354,
+    "imie": "Rafał",
+    "nazwisko": "Płuciennik",
+    "rola": "",
+    "email": "",
+    "telefon": "",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [
+      "Mindset",
+      "Sprzedaz"
+    ],
+    "zdjecie": null,
+    "kolor": "#22c55e"
   }
 ]

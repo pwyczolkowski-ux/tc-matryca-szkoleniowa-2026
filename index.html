@@ -479,7 +479,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
             <div style="display:flex;align-items:flex-end;gap:8px;flex-shrink:0;">
               <button onclick="applyRaportyFilters()" style="background:var(--navy);border:none;border-radius:8px;padding:10px 20px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#fff;cursor:pointer;white-space:nowrap;">Filtruj</button>
               <button onclick="generateListReport()" class="btn btn-red" style="flex:none;padding:10px 20px;white-space:nowrap;">Generuj PDF</button>
-              <button onclick="exportRaportyCSV()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:10px 18px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:400;color:var(--text-muted);cursor:pointer;white-space:nowrap;" onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Eksport CSV</button>
             </div>
           </div>
           <!-- Preview -->
@@ -1928,9 +1927,9 @@ function renderRaportyPreview(){
     const col=KAT_COLORS[szk?.kategoria]||'#aaa';
     const tNames=(s.trener_ids||[]).map(id=>{const t=trenerzy.find(x=>x.id===id);return t?t.imie+' '+t.nazwisko:'';}).filter(Boolean).join(', ');
     const pCount=(s.uczestnicy||[]).length;
-    return`<tr>
+    return`<tr style="cursor:pointer;" onclick="openSesjaModal('${s.data}',${s.szkolenie_id},${s.id})" title="Kliknij aby edytować sesję">
       <td style="white-space:nowrap;">${escHtml(fmtDate(s.data))}</td>
-      <td>${szk?escHtml(szk.nazwa):'—'}</td>
+      <td><span style="color:var(--navy);text-decoration:underline;text-underline-offset:2px;cursor:pointer;" onclick="event.stopPropagation();openSzkolenieModal(${szk?.id||'null'})" title="Edytuj szkolenie">${szk?escHtml(szk.nazwa):'—'}</span></td>
       <td><span style="font-size:11px;font-weight:500;color:${col};">${escHtml(KAT_LABELS[szk?.kategoria]||szk?.kategoria||'—')}</span></td>
       <td>${escHtml(tNames||'—')}</td>
       <td style="text-align:center;">${pCount}</td>

@@ -21,8 +21,12 @@
     "agenda": "",
     "czasTrwania": "4h",
     "typ": "wewnetrzne",
-    "forma": "stacjonarne",
-    "materialy": [{"typ": "inne", "url": "https://pwyczolkowski-ux.github.io/zamykanie-sprzedazy/"}]
+    "materialy": [
+      {
+        "typ": "inne",
+        "url": "https://pwyczolkowski-ux.github.io/zamykanie-sprzedazy/"
+      }
+    ]
   },
   {
     "id": 1775305716565,
@@ -214,6 +218,18 @@
     "korzysci": "Przeprowadzasz efektywny Business Interview odkrywający potrzeby biznesowe rozmówcy\nIdentyfikujesz konkretne możliwości rekomendacji i współpracy\nBudujesz głębsze, bardziej owocne relacje z Członkami grupy",
     "agenda": "",
     "czasTrwania": "1h",
+    "materialy": []
+  },
+  {
+    "id": 1775310933527,
+    "nazwa": "Mercedes-Benz - MSP - część 1",
+    "kategoria": "Procesy",
+    "typ": "zewnetrzne",
+    "forma": "online",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "4h",
     "materialy": []
   }
 ]

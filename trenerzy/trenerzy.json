@@ -63,5 +63,18 @@
     "specjalizacje": [],
     "zdjecie": null,
     "kolor": "#f97316"
+  },
+  {
+    "id": 1775323739795,
+    "imie": "Rafał",
+    "nazwisko": "Płuciennik",
+    "rola": "Członek Zarządu ds. Rozwoju Biznesu",
+    "email": "rp@tc.pl",
+    "telefon": "794953601",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#f97316"
   }
 ]

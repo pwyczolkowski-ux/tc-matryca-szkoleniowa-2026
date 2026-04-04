@@ -70,5 +70,18 @@
     "specjalizacje": [],
     "zdjecie": null,
     "kolor": "#06b6d4"
+  },
+  {
+    "id": 1775316299507,
+    "imie": "Marta",
+    "nazwisko": "Pawłowska",
+    "rola": "Dyrektor ds. Rozwoju",
+    "email": "m.pawlowska@cc.pl",
+    "telefon": "530339928",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#f97316"
   }
 ]

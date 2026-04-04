@@ -1010,6 +1010,7 @@ function openSzkolenieDetail(id){
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button onclick="deleteSzkolenieFromDetail(${id})" class="btn btn-gray" style="padding:7px 14px;font-size:12px;color:var(--red);border-color:rgba(220,20,60,0.3);">Usuń</button>
         <button onclick="openSzkolenieModal(${id})" class="btn btn-gray" style="padding:7px 14px;font-size:12px;">Edytuj</button>
       </div>
     </div>
@@ -1076,6 +1077,16 @@ function saveSzkolenie(){
   renderSzkolenia();renderSbSzkolenia();updateSlots();
   pushSzkoleniaFile();
   if(editingSzkolenieId&&selSzkolenieId===editingSzkolenieId)openSzkolenieDetail(editingSzkolenieId);
+}
+function deleteSzkolenieFromDetail(id){
+  const szk=szkolenia.find(m=>m.id===id);if(!szk)return;
+  openDC(`Usunąć szkolenie<br><strong>${escHtml(szk.nazwa)}</strong>?`,()=>{
+    szkolenia=szkolenia.filter(m=>m.id!==id);
+    sesje=sesje.filter(s=>s.szkolenie_id!==id);
+    selSzkolenieId=null;switchTab('szkolenia');
+    renderSzkolenia();renderSbSzkolenia();renderCalendar();renderDashboard();updateSlots();
+    pushSzkoleniaFile();pushSesjeFile();
+  });
 }
 function deleteSzkolenie(){
   if(!editingSzkolenieId)return;

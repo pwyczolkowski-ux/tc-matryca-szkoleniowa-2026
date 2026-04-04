@@ -439,18 +439,58 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <div class="tab-panel" id="panel-raporty">
       <div class="panel-wrap">
         <div class="panel-title">Raporty</div>
-        <div class="panel-sub">Generuj raporty PDF z sesji szkoleniowych</div>
+        <div class="panel-sub">Filtruj sesje i generuj raporty PDF</div>
+
+        <!-- RAPORT ZBIORCZY -->
         <div class="raporty-section">
-          <div class="raporty-section-title">📄 Raport z sesji</div>
-          <label class="form-lbl">Szkolenie</label>
-          <select class="form-sel" id="rp-szkolenie" onchange="onRpSzkolenieChange()" style="margin-bottom:12px;"></select>
-          <label class="form-lbl">Sesja</label>
-          <select class="form-sel" id="rp-sesja" style="margin-bottom:12px;"></select>
-          <button onclick="generateSesjaReport()" class="btn btn-red" style="flex:none;padding:9px 24px;width:auto;">Generuj PDF</button>
+          <div class="raporty-section-title">📄 Raport ze szkoleń</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+            <div>
+              <label class="form-lbl">Od daty</label>
+              <input type="date" class="form-inp" id="rp-from" style="margin-bottom:0;" value="2026-01-01">
+            </div>
+            <div>
+              <label class="form-lbl">Do daty</label>
+              <input type="date" class="form-inp" id="rp-to" style="margin-bottom:0;" value="2026-12-31">
+            </div>
+            <div>
+              <label class="form-lbl">Kategoria</label>
+              <select class="form-sel" id="rp-kat" style="margin-bottom:0;">
+                <option value="">Wszystkie</option>
+                <option value="Mindset">Mindset</option>
+                <option value="Sprzedaz">Sprzedaz</option>
+                <option value="Komunikacja">Komunikacja</option>
+                <option value="Przywodztwo">Przywodztwo</option>
+                <option value="Procesy">Procesy</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-lbl">Trener</label>
+              <select class="form-sel" id="rp-trener" style="margin-bottom:0;">
+                <option value="">Wszyscy</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:200px;">
+              <label class="form-lbl">Szkolenie</label>
+              <select class="form-sel" id="rp-szkolenie" style="margin-bottom:0;">
+                <option value="">Wszystkie szkolenia</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:8px;flex-shrink:0;">
+              <button onclick="applyRaportyFilters()" style="background:var(--navy);border:none;border-radius:8px;padding:10px 20px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#fff;cursor:pointer;white-space:nowrap;">Filtruj</button>
+              <button onclick="generateListReport()" class="btn btn-red" style="flex:none;padding:10px 20px;white-space:nowrap;">Generuj PDF</button>
+            </div>
+          </div>
+          <!-- Preview -->
+          <div id="rp-preview"></div>
         </div>
-        <div class="raporty-section">
-          <div class="raporty-section-title">📊 Matryca uczestnictwa</div>
-          <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Tabela: pracownicy × szkolenia, z datami sesji w których uczestniczyli.</p>
+
+        <!-- MATRYCA -->
+        <div class="raporty-section" style="margin-top:24px;">
+          <div class="raporty-section-title">📊 Matryca szkoleniowa 2026</div>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Tabela: pracownicy × szkolenia — zaznaczone sesje w których uczestniczyli.</p>
           <button onclick="generateMatrycaPDF()" class="btn btn-red" style="flex:none;padding:9px 24px;width:auto;">Generuj PDF</button>
         </div>
       </div>
@@ -860,7 +900,7 @@ function switchTab(name){
   if(name==='szkolenia')renderSzkolenia();
   if(name==='dashboard')renderDashboard();
   if(name==='employees')loadEmployees();
-  if(name==='raporty')renderRaportySelects();
+  if(name==='raporty')renderRaportyPanel();
   if(name==='calendar'){renderCalendar();renderMonthTabs();}
 }
 function toggleSidebar(){
@@ -1573,91 +1613,202 @@ function openDC(subtitle,cb){
 function closeDC(){document.getElementById('delete-confirm-overlay').classList.remove('open');dcCallback=null;}
 function executeDC(){const cb=dcCallback;closeDC();if(cb)cb();}
 // ── Raporty ────────────────────────────────────────────────────────
-function renderRaportySelects(){
-  const sel=document.getElementById('rp-szkolenie');
-  if(!sel)return;
-  sel.innerHTML='<option value="">— wybierz szkolenie —</option>'+szkolenia.map(m=>`<option value="${m.id}">${escHtml(m.nazwa)}</option>`).join('');
-  document.getElementById('rp-sesja').innerHTML='<option value="">— wybierz sesję —</option>';
+// Pomocnicze: konwertuje tekst na ASCII-safe dla jsPDF (Helvetica nie obsługuje PL)
+function pdfText(s){
+  if(!s)return'';
+  return String(s)
+    .replace(/[ąĄ]/g,m=>m==='ą'?'a':'A').replace(/[ćĆ]/g,m=>m==='ć'?'c':'C')
+    .replace(/[ęĘ]/g,m=>m==='ę'?'e':'E').replace(/[łŁ]/g,m=>m==='ł'?'l':'L')
+    .replace(/[ńŃ]/g,m=>m==='ń'?'n':'N').replace(/[óÓ]/g,m=>m==='ó'?'o':'O')
+    .replace(/[śŚ]/g,m=>m==='ś'?'s':'S').replace(/[źŹ]/g,m=>m==='ź'?'z':'Z')
+    .replace(/[żŻ]/g,m=>m==='ż'?'z':'Z')
+    .replace(/[—–]/g,'-').replace(/[""]/g,'"').replace(/['']/g,"'")
+    .replace(/[^\x00-\xFF]/g,'?');
 }
-function onRpSzkolenieChange(){
-  const szkId=parseInt(document.getElementById('rp-szkolenie').value);
-  const sel=document.getElementById('rp-sesja');
-  if(!szkId){sel.innerHTML='<option value="">— wybierz sesję —</option>';return;}
-  const mySesje=sesje.filter(s=>s.szkolenie_id===szkId).slice().sort((a,b)=>a.data.localeCompare(b.data));
-  sel.innerHTML='<option value="">— wybierz sesję —</option>'+mySesje.map(s=>`<option value="${s.id}">${escHtml(fmtDateLong(s.data))}${s.godzina?' '+s.godzina:''}</option>`).join('');
+function pdfHeader(doc,title){
+  const pw=doc.internal.pageSize.getWidth();
+  const NAVY=[18,22,53],RED=[220,20,60],WHITE=[255,255,255];
+  doc.setFillColor(...NAVY);doc.rect(0,0,pw,16,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...WHITE);
+  doc.text('the company.',10,10.5);
+  doc.setFont('helvetica','normal');doc.text(pdfText(title),pw/2,10.5,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(180,185,200);
+  doc.text(`Wygenerowano: ${new Date().toLocaleDateString('pl-PL')}`,pw-10,10.5,{align:'right'});
+  doc.setFillColor(...RED);doc.rect(0,16,pw,0.6,'F');
 }
-function generateSesjaReport(){
-  const sesjaId=parseInt(document.getElementById('rp-sesja').value);
-  if(!sesjaId){alert('Wybierz sesję');return;}
-  const s=sesje.find(x=>x.id===sesjaId);if(!s)return;
-  const szk=szkolenia.find(m=>m.id===s.szkolenie_id);
-  const tNames=(s.trener_ids||[]).map(id=>{const t=trenerzy.find(x=>x.id===id);return t?t.imie+' '+t.nazwisko:'';}).filter(Boolean);
-  const uczestnicy=s.uczestnicy||[];
-  if(!window.jspdf){alert('Biblioteka PDF niedostępna — sprawdź połączenie z internetem.');return;}
+function pdfFooter(doc){
+  const pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
+  doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(160,165,180);
+  doc.text('the company. — Matryca Szkoleniowa 2026',pw/2,ph-3,{align:'center'});
+}
+const PDF_NAVY=[18,22,53],PDF_WHITE=[255,255,255],PDF_LIGHT=[248,249,252],PDF_MUTED=[130,140,170];
+
+function renderRaportyPanel(){
+  const szkSel=document.getElementById('rp-szkolenie');if(!szkSel)return;
+  szkSel.innerHTML='<option value="">Wszystkie szkolenia</option>'+
+    szkolenia.slice().sort((a,b)=>a.nazwa.localeCompare(b.nazwa,'pl')).map(m=>`<option value="${m.id}">${escHtml(m.nazwa)}</option>`).join('');
+  const trSel=document.getElementById('rp-trener');if(!trSel)return;
+  trSel.innerHTML='<option value="">Wszyscy trenerzy</option>'+
+    trenerzy.filter(t=>t.aktywny!==false).slice().sort((a,b)=>(a.nazwisko||'').localeCompare(b.nazwisko||'','pl')).map(t=>`<option value="${t.id}">${escHtml(t.imie+' '+t.nazwisko)}</option>`).join('');
+  applyRaportyFilters();
+}
+let raportyFiltered=[];
+function applyRaportyFilters(){
+  const from=document.getElementById('rp-from')?.value||'';
+  const to=document.getElementById('rp-to')?.value||'';
+  const kat=document.getElementById('rp-kat')?.value||'';
+  const szkId=parseInt(document.getElementById('rp-szkolenie')?.value||0)||0;
+  const trenerId=parseInt(document.getElementById('rp-trener')?.value||0)||0;
+  raportyFiltered=sesje.filter(s=>{
+    if(from&&s.data<from)return false;
+    if(to&&s.data>to)return false;
+    if(szkId&&s.szkolenie_id!==szkId)return false;
+    const szk=szkolenia.find(m=>m.id===s.szkolenie_id);
+    if(kat&&szk?.kategoria!==kat)return false;
+    if(trenerId&&!(s.trener_ids||[]).includes(trenerId))return false;
+    return true;
+  }).slice().sort((a,b)=>a.data.localeCompare(b.data));
+  renderRaportyPreview();
+}
+function renderRaportyPreview(){
+  const el=document.getElementById('rp-preview');if(!el)return;
+  if(!raportyFiltered.length){
+    el.innerHTML='<div style="font-size:13px;color:var(--text-muted);font-style:italic;padding:12px 0;">Brak sesji spełniających kryteria filtru.</div>';
+    return;
+  }
+  const rows=raportyFiltered.map(s=>{
+    const szk=szkolenia.find(m=>m.id===s.szkolenie_id);
+    const col=KAT_COLORS[szk?.kategoria]||'#aaa';
+    const tNames=(s.trener_ids||[]).map(id=>{const t=trenerzy.find(x=>x.id===id);return t?t.imie+' '+t.nazwisko:'';}).filter(Boolean).join(', ');
+    const pCount=(s.uczestnicy||[]).length;
+    return`<tr>
+      <td style="white-space:nowrap;">${escHtml(fmtDate(s.data))}</td>
+      <td>${szk?escHtml(szk.nazwa):'—'}</td>
+      <td><span style="font-size:11px;font-weight:500;color:${col};">${escHtml(KAT_LABELS[szk?.kategoria]||szk?.kategoria||'—')}</span></td>
+      <td>${escHtml(tNames||'—')}</td>
+      <td style="text-align:center;">${pCount}</td>
+      <td><span class="status-badge status-${s.status||'zaplanowana'}">${s.status||'zaplanowana'}</span></td>
+    </tr>`;
+  }).join('');
+  el.innerHTML=`
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-weight:500;">${raportyFiltered.length} sesji</div>
+    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="background:var(--navy);">
+          <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;">Data</th>
+          <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:.8px;text-transform:uppercase;">Szkolenie</th>
+          <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:.8px;text-transform:uppercase;">Kategoria</th>
+          <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:.8px;text-transform:uppercase;">Trener</th>
+          <th style="padding:9px 12px;text-align:center;font-size:11px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:.8px;text-transform:uppercase;">Ucz.</th>
+          <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:.8px;text-transform:uppercase;">Status</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+function generateListReport(){
+  if(!raportyFiltered.length){alert('Najpierw kliknij Filtruj — brak sesji do raportu.');return;}
+  if(!window.jspdf){alert('Biblioteka PDF niedostepna — sprawdz polaczenie z internetem.');return;}
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
-  const ML=14,MR=14;
-  const NAVY=[18,22,53],RED=[220,20,60],WHITE=[255,255,255],MUTED=[130,140,170],LIGHT=[245,246,250],MID=[228,232,242];
-  doc.setFillColor(...NAVY);doc.rect(0,0,pw,18,'F');
-  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...WHITE);
-  doc.text('the ',ML,12);doc.setFont('helvetica','bold');doc.text('company.',ML+doc.getTextWidth('the '),12);
-  doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.text('RAPORT Z SESJI SZKOLENIOWEJ',pw/2,11,{align:'center'});
-  doc.setFillColor(...RED);doc.rect(0,18,pw,0.8,'F');
-  let y=28;
-  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...NAVY);
-  doc.text(pl(szk?.nazwa||'—'),ML,y);y+=8;
-  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...MUTED);
-  doc.text(pl(fmtDateLong(s.data))+(s.godzina?' | '+s.godzina:''),ML,y);y+=5;
-  doc.text(pl('Trenerzy: '+(tNames.join(', ')||'—')),ML,y);y+=5;
-  doc.text(pl('Status: '+(s.status||'zaplanowana')),ML,y);y+=5;
-  doc.text(pl('Kategoria: '+(KAT_LABELS[szk?.kategoria]||szk?.kategoria||'—')),ML,y);y+=12;
-  if(uczestnicy.length){
-    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...NAVY);
-    doc.text('UCZESTNICY',ML,y);y+=6;
-    doc.autoTable({startY:y,margin:{left:ML,right:MR},head:[['#','Imię i Nazwisko']],body:uczestnicy.map((name,i)=>[i+1,pl(name)]),styles:{font:'helvetica',fontSize:9,cellPadding:{top:3,bottom:3,left:3,right:3},textColor:[30,40,80],lineColor:MID,lineWidth:0.1},headStyles:{fillColor:NAVY,textColor:WHITE,fontStyle:'bold',fontSize:8},alternateRowStyles:{fillColor:LIGHT},columnStyles:{0:{cellWidth:12,halign:'center'}}});
-    y=doc.lastAutoTable.finalY+10;
-  }
-  if(s.notatki&&s.notatki.trim()){
-    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...NAVY);
-    doc.text('NOTATKI',ML,y);y+=6;
-    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(30,40,80);
-    const lines=doc.splitTextToSize(pl(s.notatki),pw-ML-MR);
-    doc.text(lines,ML,y);
-  }
-  doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...MUTED);
-  doc.text('the company. — Raport z sesji szkoleniowej',pw/2,ph-4,{align:'center'});
-  doc.save(pl(`Raport_${szk?.nazwa||'sesja'}_${s.data}.pdf`));
+  const ML=12,MR=12;
+  pdfHeader(doc,'RAPORT ZE SZKOLEN');
+  let y=24;
+  // Grupowanie po szkoleniu
+  const groups=new Map();
+  raportyFiltered.forEach(s=>{
+    const szk=szkolenia.find(m=>m.id===s.szkolenie_id);
+    const key=s.szkolenie_id;
+    if(!groups.has(key))groups.set(key,{szk,sesje:[]});
+    groups.get(key).sesje.push(s);
+  });
+  groups.forEach(({szk,sesje:gSesje})=>{
+    if(y>ph-30){doc.addPage();pdfHeader(doc,'RAPORT ZE SZKOLEN');y=24;}
+    // Nagłówek szkolenia
+    doc.setFillColor(240,241,247);doc.rect(ML,y-4,pw-ML-MR,10,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...PDF_NAVY);
+    doc.text(pdfText(szk?.nazwa||'—'),ML+2,y+2);
+    if(szk?.kategoria){
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...PDF_MUTED);
+      doc.text(pdfText(KAT_LABELS[szk.kategoria]||szk.kategoria),pw-MR-2,y+2,{align:'right'});
+    }
+    y+=10;
+    gSesje.forEach(s=>{
+      if(y>ph-30){doc.addPage();pdfHeader(doc,'RAPORT ZE SZKOLEN');y=24;}
+      const tNames=(s.trener_ids||[]).map(id=>{const t=trenerzy.find(x=>x.id===id);return t?pdfText(t.imie+' '+t.nazwisko):'';}).filter(Boolean).join(', ');
+      const uczestnicy=s.uczestnicy||[];
+      // Wiersz sesji
+      doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...PDF_NAVY);
+      doc.text(pdfText(fmtDateLong(s.data))+(s.godzina?' | '+s.godzina:''),ML+2,y);
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...PDF_MUTED);
+      const meta=['Trener: '+(tNames||'—'),'Status: '+(s.status||'zaplanowana'),'Uczestnicy: '+uczestnicy.length].join('   ');
+      doc.text(pdfText(meta),ML+2,y+4.5);
+      y+=10;
+      if(uczestnicy.length){
+        doc.autoTable({
+          startY:y,margin:{left:ML+4,right:MR},
+          head:[['#','Uczestnik']],
+          body:uczestnicy.map((n,i)=>[i+1,pdfText(n)]),
+          theme:'plain',
+          styles:{font:'helvetica',fontSize:8,cellPadding:{top:2,bottom:2,left:3,right:3},textColor:[30,40,80]},
+          headStyles:{fillColor:PDF_NAVY,textColor:PDF_WHITE,fontStyle:'bold',fontSize:7.5},
+          alternateRowStyles:{fillColor:PDF_LIGHT},
+          columnStyles:{0:{cellWidth:10,halign:'center'}},
+        });
+        y=doc.lastAutoTable.finalY+6;
+      }
+      if(s.notatki?.trim()){
+        doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(...PDF_MUTED);
+        const lines=doc.splitTextToSize(pdfText(s.notatki),pw-ML-MR-8);
+        doc.text(lines,ML+4,y);y+=lines.length*4+4;
+      }
+      y+=3;
+    });
+    y+=4;
+  });
+  pdfFooter(doc);
+  const from=document.getElementById('rp-from')?.value||'';
+  const to=document.getElementById('rp-to')?.value||'';
+  doc.save(pdfText(`Raport_${from}_${to}.pdf`));
 }
 function generateMatrycaPDF(){
-  if(!window.jspdf){alert('Biblioteka PDF niedostępna.');return;}
-  // Find all employees who have sessions
+  if(!window.jspdf){alert('Biblioteka PDF niedostepna.');return;}
   const nameSet=new Set();
   sesje.forEach(s=>(s.uczestnicy||[]).forEach(n=>nameSet.add(n)));
   const names=[...nameSet].sort((a,b)=>a.localeCompare(b,'pl'));
-  if(!names.length){alert('Brak uczestników w sesjach — nie można wygenerować matrycy.');return;}
+  if(!names.length){alert('Brak uczestnikow w sesjach.');return;}
+  if(!szkolenia.length){alert('Brak szkolen.');return;}
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   const pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
-  const ML=14,MR=14;
-  const NAVY=[18,22,53],RED=[220,20,60],WHITE=[255,255,255],MUTED=[130,140,170],LIGHT=[245,246,250],MID=[228,232,242];
-  doc.setFillColor(...NAVY);doc.rect(0,0,pw,18,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(...WHITE);
-  doc.text('the company. — MATRYCA UCZESTNICTWA',pw/2,11,{align:'center'});
-  doc.setFillColor(...RED);doc.rect(0,18,pw,0.8,'F');
-  const cols=['Pracownik',...szkolenia.map(m=>pl(m.nazwa.substring(0,20)))];
+  const ML=10,MR=10;
+  pdfHeader(doc,'MATRYCA SZKOLENIOWA 2026');
+  const szkCols=szkolenia.map(m=>pdfText(m.nazwa.length>18?m.nazwa.substring(0,17)+'…':m.nazwa));
+  const cols=['Pracownik',...szkCols];
   const body=names.map(name=>{
-    const row=[pl(name)];
+    const row=[pdfText(name)];
     szkolenia.forEach(szk=>{
-      const myS=sesje.filter(s=>s.szkolenie_id===szk.id&&(s.uczestnicy||[]).some(u=>u.toLowerCase()===name.toLowerCase()));
-      row.push(myS.length?myS.map(s=>s.data).join(', '):'—');
+      const attended=sesje.some(s=>s.szkolenie_id===szk.id&&(s.uczestnicy||[]).some(u=>u.toLowerCase()===name.toLowerCase()));
+      const dates=sesje.filter(s=>s.szkolenie_id===szk.id&&(s.uczestnicy||[]).some(u=>u.toLowerCase()===name.toLowerCase())).map(s=>s.data.substring(5)).join(', ');
+      row.push(attended?dates:'');
     });
     return row;
   });
-  doc.autoTable({startY:24,margin:{left:ML,right:MR},head:[cols],body,styles:{font:'helvetica',fontSize:7,cellPadding:{top:2,bottom:2,left:2,right:2},textColor:[30,40,80],lineColor:MID,lineWidth:0.1,overflow:'linebreak'},headStyles:{fillColor:NAVY,textColor:WHITE,fontStyle:'bold',fontSize:7},alternateRowStyles:{fillColor:LIGHT}});
-  doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...MUTED);
-  doc.text('the company. — Matryca uczestnictwa 2026',pw/2,ph-4,{align:'center'});
-  doc.save('Matryca_uczestnictwa_2026.pdf');
+  const colW=(pw-ML-MR-40)/(szkolenia.length||1);
+  const colStyles={};
+  szkolenia.forEach((_,i)=>{colStyles[i+1]={cellWidth:Math.max(colW,18),halign:'center'};});
+  doc.autoTable({
+    startY:20,margin:{left:ML,right:MR},
+    head:[cols],body,
+    theme:'grid',
+    styles:{font:'helvetica',fontSize:6.5,cellPadding:{top:2,bottom:2,left:2,right:2},textColor:[30,40,80],overflow:'linebreak'},
+    headStyles:{fillColor:PDF_NAVY,textColor:PDF_WHITE,fontStyle:'bold',fontSize:6.5,halign:'center'},
+    alternateRowStyles:{fillColor:PDF_LIGHT},
+    columnStyles:{0:{cellWidth:38,fontStyle:'bold'},...colStyles},
+  });
+  pdfFooter(doc);
+  doc.save('Matryca_szkoleniowa_2026.pdf');
 }
 // ── Init ───────────────────────────────────────────────────────────
 function renderAll(){

@@ -31,5 +31,44 @@
     ],
     "zdjecie": null,
     "kolor": "#22c55e"
+  },
+  {
+    "id": 1775313588563,
+    "imie": "Tomasz",
+    "nazwisko": "Styczyński",
+    "rola": "Chief Sales Officer",
+    "email": "t.styczynski@tc.pl",
+    "telefon": "536404766",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#f59e0b"
+  },
+  {
+    "id": 1775313991020,
+    "imie": "krzysztof",
+    "nazwisko": "mędrala",
+    "rola": "Chief Development Officer",
+    "email": "k.medrala@cc.pl",
+    "telefon": "536315270",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#8b5cf6"
+  },
+  {
+    "id": 1775314041683,
+    "imie": "Marzena",
+    "nazwisko": "Struglińska-Kiełboń",
+    "rola": "",
+    "email": "",
+    "telefon": "",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#06b6d4"
   }
 ]

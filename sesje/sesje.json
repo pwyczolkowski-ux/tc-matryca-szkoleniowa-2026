@@ -5,7 +5,10 @@
     "data": "2026-04-14",
     "godzina": "09:00",
     "status": "zaplanowana",
-    "trener_ids": [],
+    "trener_ids": [
+      1775305917354,
+      1775317057816
+    ],
     "uczestnicy": [],
     "notatki": "",
     "miejsce": "WTT 29",
@@ -45,8 +48,45 @@
       1775313588563,
       1775315142018,
       1775316247800,
-      1775316299507
+      1775316299507,
+      1775317057816
     ],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "",
+    "transkrypcja": ""
+  },
+  {
+    "id": 1775318601409,
+    "szkolenie_id": 1775292373979,
+    "data": "2026-05-22",
+    "godzina": "10:00",
+    "status": "zaplanowana",
+    "trener_ids": [],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "",
+    "transkrypcja": ""
+  },
+  {
+    "id": 1775318673972,
+    "szkolenie_id": 1775307285649,
+    "data": "2026-07-14",
+    "godzina": "10:00",
+    "status": "zaplanowana",
+    "trener_ids": [],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "",
+    "transkrypcja": ""
+  },
+  {
+    "id": 1775318717893,
+    "szkolenie_id": 1775307285649,
+    "data": "2026-07-17",
+    "godzina": "10:00",
+    "status": "zaplanowana",
+    "trener_ids": [],
     "uczestnicy": [],
     "notatki": "",
     "miejsce": "",

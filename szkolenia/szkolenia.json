@@ -48,7 +48,7 @@
   },
   {
     "id": 1775306166025,
-    "nazwa": "Praca na mocnych stronach",
+    "nazwa": "Praca na swoich mocnych stronach",
     "kategoria": "Mindset",
     "typ": "wewnetrzne",
     "forma": "stacjonarne",
@@ -60,7 +60,7 @@
   },
   {
     "id": 1775306219854,
-    "nazwa": "Personal branding",
+    "nazwa": "Personal branding: budowa marki osobistej",
     "kategoria": "Przywodztwo",
     "typ": "wewnetrzne",
     "forma": "stacjonarne",
@@ -152,6 +152,66 @@
     "korzysci": "",
     "agenda": "",
     "czasTrwania": "3h",
+    "materialy": []
+  },
+  {
+    "id": 1775307625387,
+    "nazwa": "Member-Driven Organization",
+    "kategoria": "Procesy",
+    "typ": "wewnetrzne",
+    "forma": "online",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "1h",
+    "materialy": []
+  },
+  {
+    "id": 1775307815660,
+    "nazwa": "Praca z Zarządem Grupy",
+    "kategoria": "Procesy",
+    "typ": "wewnetrzne",
+    "forma": "online",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "1h",
+    "materialy": []
+  },
+  {
+    "id": 1775307926852,
+    "nazwa": "Jak motywować Członków do działania?",
+    "kategoria": "Przywodztwo",
+    "typ": "wewnetrzne",
+    "forma": "online",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "1h",
+    "materialy": []
+  },
+  {
+    "id": 1775307971935,
+    "nazwa": "Konsultacje Indywidualne",
+    "kategoria": "Procesy",
+    "typ": "wewnetrzne",
+    "forma": "online",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "1h",
+    "materialy": []
+  },
+  {
+    "id": 1775308036933,
+    "nazwa": "Business Interview",
+    "kategoria": "Procesy",
+    "typ": "wewnetrzne",
+    "forma": "stacjonarne",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "1h",
     "materialy": []
   }
 ]

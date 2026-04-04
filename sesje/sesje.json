@@ -34,5 +34,22 @@
     "notatki": "",
     "miejsce": "",
     "transkrypcja": ""
+  },
+  {
+    "id": 1775316748335,
+    "szkolenie_id": 1775303398346,
+    "data": "2026-04-21",
+    "godzina": "14:00",
+    "status": "zaplanowana",
+    "trener_ids": [
+      1775313588563,
+      1775315142018,
+      1775316247800,
+      1775316299507
+    ],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "",
+    "transkrypcja": ""
   }
 ]

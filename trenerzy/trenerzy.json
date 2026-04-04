@@ -1,21 +1,5 @@
 [
   {
-    "id": 1775305917354,
-    "imie": "Rafał",
-    "nazwisko": "Płuciennik",
-    "rola": "Członek Zarządu",
-    "email": "",
-    "telefon": "",
-    "bio": "",
-    "aktywny": true,
-    "specjalizacje": [
-      "Mindset",
-      "Sprzedaz"
-    ],
-    "zdjecie": null,
-    "kolor": "#22c55e"
-  },
-  {
     "id": 1775313588563,
     "imie": "Tomasz",
     "nazwisko": "Styczyński",

@@ -342,6 +342,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           <button class="filter-btn f-Komunikacja" data-sf="Komunikacja" onclick="filterSzkolenia(this)">Komunikacja</button>
           <button class="filter-btn f-Przywodztwo" data-sf="Przywodztwo" onclick="filterSzkolenia(this)">Przywództwo</button>
           <button class="filter-btn f-Procesy" data-sf="Procesy" onclick="filterSzkolenia(this)">Procesy</button>
+          <button class="filter-btn" data-sf="wewnetrzne" onclick="filterSzkolenia(this)" style="border-color:var(--border);">Wewnętrzne</button>
+          <button class="filter-btn" data-sf="zewnetrzne" onclick="filterSzkolenia(this)" style="border-color:var(--border);">Zewnętrzne</button>
         </div>
         <div class="cards-grid" id="szkolenia-cards"></div>
       </div>
@@ -961,7 +963,8 @@ function filterSzkolenia(btn){
 }
 function renderSzkolenia(){
   const el=document.getElementById('szkolenia-cards');if(!el)return;
-  const list=szkTabFilter==='all'?szkolenia:szkolenia.filter(m=>m.kategoria===szkTabFilter);
+  const typFilters=['wewnetrzne','zewnetrzne'];
+  const list=szkTabFilter==='all'?szkolenia:typFilters.includes(szkTabFilter)?szkolenia.filter(m=>(m.typ||'wewnetrzne')===szkTabFilter):szkolenia.filter(m=>m.kategoria===szkTabFilter);
   if(!list.length){el.innerHTML='<div style="color:var(--text-muted);font-size:14px;grid-column:1/-1;padding:20px 0;">Brak szkoleń. Dodaj pierwsze szkolenie!</div>';return;}
   el.innerHTML=list.map(m=>{
     const sCount=sesje.filter(s=>s.szkolenie_id===m.id).length;

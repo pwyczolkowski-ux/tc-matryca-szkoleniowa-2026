@@ -625,9 +625,12 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       </div>
     </div>
     <label class="form-lbl">Imię</label>
-    <input type="text" class="form-inp" id="tm-imie" placeholder="Imię" maxlength="60" onblur="trenerAutoFill()">
+    <input type="text" class="form-inp" id="tm-imie" placeholder="Imię" maxlength="60" oninput="trenerSuggest()" onblur="trenerAutoFill()">
     <label class="form-lbl">Nazwisko</label>
-    <input type="text" class="form-inp" id="tm-nazwisko" placeholder="Nazwisko" maxlength="60" onblur="trenerAutoFill()">
+    <div style="position:relative;">
+      <input type="text" class="form-inp" id="tm-nazwisko" placeholder="Nazwisko" maxlength="60" oninput="trenerSuggest()" onblur="trenerAutoFill()" style="width:100%;box-sizing:border-box;">
+      <div id="tm-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);margin-top:2px;overflow:hidden;"></div>
+    </div>
     <div id="tm-match-info" style="display:none;font-size:12px;background:var(--green-soft);border:1px solid var(--green-border);border-radius:8px;padding:8px 12px;margin-bottom:12px;color:#166534;">Znaleziono w bazie pracowników — dane uzupełnione automatycznie</div>
     <label class="form-lbl">Rola / stanowisko</label>
     <input type="text" class="form-inp" id="tm-rola" placeholder="np. Trener biznesowy" maxlength="80">
@@ -1387,34 +1390,82 @@ function renderTrenerzy(){
     return`<div class="trainer-card" onclick="openTrenerModal(${t.id})">${trenerAvatar(t,46)}<div style="flex:1;min-width:0;"><div class="trainer-card-name">${escHtml(t.imie+' '+t.nazwisko)}</div>${t.rola?`<div class="trainer-card-rola">${escHtml(t.rola)}</div>`:''}<div class="trainer-card-meta">${sesCount} ${sesCount===1?'sesja':sesCount>=2&&sesCount<=4?'sesje':'sesji'}</div>${specs?`<div style="margin-top:4px;">${specs}</div>`:''}</div></div>`;
   }).join('');
 }
-async function trenerAutoFill(){
-  if(editingTrenerId)return; // tylko przy dodawaniu nowego
+function trenerHideSuggestions(){
+  const box=document.getElementById('tm-suggestions');
+  if(box)box.style.display='none';
+}
+function trenerApplyEmployee(emp){
+  document.getElementById('tm-imie').value=emp['Given Name']||'';
+  document.getElementById('tm-nazwisko').value=emp['Family Name']||'';
+  const email=document.getElementById('tm-email');
+  const telefon=document.getElementById('tm-telefon');
+  const rola=document.getElementById('tm-rola');
+  let filled=false;
+  if(!email.value&&emp['E-mail 1 - Value']){email.value=emp['E-mail 1 - Value'];filled=true;}
+  if(!telefon.value&&emp['Phone 1 - Value']){telefon.value=emp['Phone 1 - Value'];filled=true;}
+  if(!rola.value&&emp['Organization 1 - Title']){rola.value=emp['Organization 1 - Title'];filled=true;}
+  const info=document.getElementById('tm-match-info');
+  if(filled&&info)info.style.display='block';
+  trenerHideSuggestions();
+}
+async function trenerSuggest(){
+  if(editingTrenerId)return;
   const imie=document.getElementById('tm-imie').value.trim().toLowerCase();
   const nazwisko=document.getElementById('tm-nazwisko').value.trim().toLowerCase();
+  if(!imie&&!nazwisko){trenerHideSuggestions();return;}
+  if(!empLoaded)await loadEmployees();
+  const matches=employees.filter(e=>{
+    const gn=(e['Given Name']||'').trim().toLowerCase();
+    const fn=(e['Family Name']||'').trim().toLowerCase();
+    const matchImie=!imie||gn.startsWith(imie);
+    const matchNaz=!nazwisko||fn.startsWith(nazwisko);
+    return matchImie&&matchNaz;
+  }).slice(0,8);
+  const box=document.getElementById('tm-suggestions');
+  if(!matches.length){box.style.display='none';return;}
+  // jeśli jedyne trafienie jest dokładne, nie pokazuj listy
+  if(matches.length===1){
+    const e=matches[0];
+    if((e['Given Name']||'').trim().toLowerCase()===imie&&(e['Family Name']||'').trim().toLowerCase()===nazwisko){
+      trenerApplyEmployee(e);return;
+    }
+  }
+  box.innerHTML=matches.map((e,i)=>{
+    const name=`${e['Given Name']||''} ${e['Family Name']||''}`.trim();
+    const sub=e['Organization 1 - Title']||e['E-mail 1 - Value']||'';
+    return`<div onmousedown="event.preventDefault()" onclick="trenerPickSuggestion(${i})" style="padding:10px 14px;cursor:pointer;display:flex;flex-direction:column;gap:2px;border-bottom:1px solid var(--border);" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">`+
+      `<span style="font-size:13px;font-weight:500;">${escHtml(name)}</span>`+
+      (sub?`<span style="font-size:11px;color:var(--text-muted);">${escHtml(sub)}</span>`:'')+
+    `</div>`;
+  }).join('');
+  box._matches=matches;
+  box.style.display='block';
+}
+function trenerPickSuggestion(i){
+  const box=document.getElementById('tm-suggestions');
+  if(!box._matches)return;
+  trenerApplyEmployee(box._matches[i]);
+}
+async function trenerAutoFill(){
+  if(editingTrenerId)return;
+  const imie=document.getElementById('tm-imie').value.trim().toLowerCase();
+  const nazwisko=document.getElementById('tm-nazwisko').value.trim().toLowerCase();
+  trenerHideSuggestions();
   if(!imie||!nazwisko)return;
-  // załaduj pracowników jeśli jeszcze nie załadowano
   if(!empLoaded)await loadEmployees();
   const match=employees.find(e=>{
     const gn=(e['Given Name']||'').trim().toLowerCase();
     const fn=(e['Family Name']||'').trim().toLowerCase();
     return gn===imie&&fn===nazwisko;
   });
-  const info=document.getElementById('tm-match-info');
-  if(!match){info.style.display='none';return;}
-  // uzupełnij pola tylko jeśli są puste
-  const email=document.getElementById('tm-email');
-  const telefon=document.getElementById('tm-telefon');
-  const rola=document.getElementById('tm-rola');
-  let filled=false;
-  if(!email.value&&match['E-mail 1 - Value']){email.value=match['E-mail 1 - Value'];filled=true;}
-  if(!telefon.value&&match['Phone 1 - Value']){telefon.value=match['Phone 1 - Value'];filled=true;}
-  if(!rola.value&&match['Organization 1 - Title']){rola.value=match['Organization 1 - Title'];filled=true;}
-  if(filled)info.style.display='block';
+  if(!match)return;
+  trenerApplyEmployee(match);
 }
 function openTrenerModal(id){
   editingTrenerId=id;pendingTrenerPhoto=null;
   const t=id?trenerzy.find(x=>x.id===id):null;
   const info=document.getElementById('tm-match-info');if(info)info.style.display='none';
+  trenerHideSuggestions();
   document.getElementById('tm-title').textContent=id?'Edytuj trenera':'Dodaj trenera';
   document.getElementById('tm-imie').value=t?.imie||'';
   document.getElementById('tm-nazwisko').value=t?.nazwisko||'';

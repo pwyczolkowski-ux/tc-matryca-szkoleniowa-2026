@@ -577,7 +577,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
         <option value="45">45 min</option>
       </select>
     </div>
-    <div class="modal-actions">
+    <label class="form-lbl">Materiały (link)</label>
+    <input type="url" class="form-inp" id="szkm-materialy" placeholder="https://…">
       <button class="btn btn-gray" onclick="closeSzkolenieModal()">Anuluj</button>
       <button id="szkm-delete-btn" class="btn btn-gray" style="display:none;color:var(--red);border-color:rgba(220,20,60,0.3);" onclick="deleteSzkolenie()">Usuń</button>
 
@@ -1003,6 +1004,7 @@ function openSzkolenieDetail(id){
         <div style="font-size:28px;font-weight:300;color:var(--text);margin-bottom:8px;">${escHtml(szk.nazwa)}</div>
         <span style="display:inline-flex;align-items:center;gap:6px;background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:400;color:var(--text-muted);margin-bottom:12px;">${szk.forma==='online'?'Online':'Stacjonarne'}</span>
         ${szk.czasTrwania?`<span style="display:inline-flex;align-items:center;gap:6px;background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:400;color:var(--text-muted);margin-bottom:12px;">⏱ ${escHtml(szk.czasTrwania)}</span>`:''}
+        ${szk.materialy?`<a href="${escHtml(szk.materialy)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:400;color:var(--navy);margin-bottom:12px;text-decoration:none;" onmouseover="this.style.borderColor='var(--navy)'" onmouseout="this.style.borderColor='var(--border)'">Materiały →</a>`:''}
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
           ${planned?`<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(18,22,53,0.07);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--navy);">📅 ${planned} zaplanowane</span>`:''}
           ${done?`<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,0.1);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--green);">✓ ${done} zrealizowane</span>`:''}
@@ -1052,6 +1054,7 @@ function openSzkolenieModal(id){
   const _hm=_ct.match(/(\d+)h\s*(\d+)?m?/);
   document.getElementById('szkm-czas-h').value=_hm?_hm[1]:'1';
   document.getElementById('szkm-czas-m').value=(_hm&&_hm[2])?String(Math.round(parseInt(_hm[2])/15)*15):'0';
+  document.getElementById('szkm-materialy').value=szk?.materialy||'';
   document.getElementById('szkm-delete-btn').style.display=id?'block':'none';
   document.getElementById('szkolenie-overlay').classList.add('open');
 }
@@ -1067,11 +1070,12 @@ function saveSzkolenie(){
   const _h=parseInt(document.getElementById('szkm-czas-h').value)||0;
   const _m=parseInt(document.getElementById('szkm-czas-m').value)||0;
   const czasTrwania=_h&&_m?`${_h}h ${_m}min`:_h?`${_h}h`:_m?`${_m}min`:'';
+  const materialy=document.getElementById('szkm-materialy').value.trim();
   if(editingSzkolenieId){
     const existing=szkolenia.find(m=>m.id===editingSzkolenieId);
-    if(existing)Object.assign(existing,{nazwa,kategoria:kat,forma,opis,korzysci,agenda,czasTrwania});
+    if(existing)Object.assign(existing,{nazwa,kategoria:kat,forma,opis,korzysci,agenda,czasTrwania,materialy});
   }else{
-    szkolenia.push({id:Date.now(),nazwa,kategoria:kat,forma,opis,korzysci,agenda,czasTrwania});
+    szkolenia.push({id:Date.now(),nazwa,kategoria:kat,forma,opis,korzysci,agenda,czasTrwania,materialy});
   }
   closeSzkolenieModal();
   renderSzkolenia();renderSbSzkolenia();updateSlots();

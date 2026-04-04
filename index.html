@@ -580,7 +580,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeSzkolenieModal()">Anuluj</button>
       <button id="szkm-delete-btn" class="btn btn-gray" style="display:none;color:var(--red);border-color:rgba(220,20,60,0.3);" onclick="deleteSzkolenie()">Usuń</button>
-      <button id="szkm-duplikuj-btn" class="btn btn-gray" style="display:none;" onclick="closeSzkolenieModal();duplikujSzkolenie(editingSzkolenieId)">Duplikuj</button>
+
       <button class="btn btn-red" onclick="saveSzkolenie()">Zapisz</button>
     </div>
   </div>
@@ -959,7 +959,6 @@ function renderSzkolenia(){
       <div class="szk-opis">${escHtml(m.opis||'')}</div>
       <div class="szk-footer">
         <span class="szk-count">${sCount} ${sCount===1?'sesja':sCount>=2&&sCount<=4?'sesje':'sesji'}</span>
-        <button onclick="event.stopPropagation();duplikujSzkolenie(${m.id})" style="background:none;border:none;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;padding:0;" onmouseover="this.style.color='var(--navy)'" onmouseout="this.style.color='var(--text-muted)'">Duplikuj</button>
         <span class="szk-arrow">›</span>
       </div>
     </div>`;
@@ -988,6 +987,7 @@ function openSzkolenieDetail(id){
       <div class="sess-parts">👥 ${pCount}</div>
       <div class="sess-btns">
         ${sts}
+        <button class="sess-btn" onclick="event.stopPropagation();duplikujSesje(${s.id})">Duplikuj</button>
         <button class="sess-btn" onclick="event.stopPropagation();openSesjaModal('${s.data}',${s.szkolenie_id},${s.id})">Edytuj</button>
         <button class="sess-btn" style="color:var(--red);border-color:rgba(220,20,60,0.2);" onclick="event.stopPropagation();openDC('Usunąć tę sesję?',()=>deleteSesjaById(${s.id}))">Usuń</button>
       </div>
@@ -1006,7 +1006,6 @@ function openSzkolenieDetail(id){
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-shrink:0;">
-        <button onclick="duplikujSzkolenie(${id})" class="btn btn-gray" style="padding:7px 14px;font-size:12px;">Duplikuj</button>
         <button onclick="openSzkolenieModal(${id})" class="btn btn-gray" style="padding:7px 14px;font-size:12px;">Edytuj</button>
       </div>
     </div>
@@ -1023,13 +1022,13 @@ function openSzkolenieDetail(id){
 }
 // ── Szkolenie Modal ────────────────────────────────────────────────
 let editingSzkolenieId=null;
-function duplikujSzkolenie(id){
-  const szk=szkolenia.find(m=>m.id===id);if(!szk)return;
-  const kopia={...szk,id:Date.now(),nazwa:szk.nazwa+' (kopia)'};
-  szkolenia.push(kopia);
-  renderSzkolenia();updateSlots();
-  pushSzkoleniaFile();
-  openSzkolenieModal(kopia.id);
+function duplikujSesje(id){
+  const s=sesje.find(x=>x.id===id);if(!s)return;
+  const kopia={...s,id:Date.now(),status:'zaplanowana'};
+  sesje.push(kopia);
+  renderCalendar();renderDashboard();updateSlots();
+  if(selSzkolenieId)openSzkolenieDetail(selSzkolenieId);
+  pushSesjeFile();
 }
 function openSzkolenieModal(id){
   editingSzkolenieId=id;
@@ -1049,7 +1048,6 @@ function openSzkolenieModal(id){
   document.getElementById('szkm-czas-h').value=_hm?_hm[1]:'1';
   document.getElementById('szkm-czas-m').value=(_hm&&_hm[2])?String(Math.round(parseInt(_hm[2])/15)*15):'0';
   document.getElementById('szkm-delete-btn').style.display=id?'block':'none';
-  document.getElementById('szkm-duplikuj-btn').style.display=id?'block':'none';
   document.getElementById('szkolenie-overlay').classList.add('open');
 }
 function closeSzkolenieModal(){document.getElementById('szkolenie-overlay').classList.remove('open');editingSzkolenieId=null;}

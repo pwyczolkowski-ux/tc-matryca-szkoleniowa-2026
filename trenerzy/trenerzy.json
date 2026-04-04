@@ -1,22 +1,5 @@
 [
   {
-    "id": 1775292341205,
-    "imie": "Patryk",
-    "nazwisko": "Wyczółkowski",
-    "rola": "Trener",
-    "email": "p.wyczolkowski@tc.pl",
-    "telefon": "+48 533 311 747",
-    "bio": "",
-    "aktywny": false,
-    "specjalizacje": [
-      "Mindset",
-      "Komunikacja",
-      "Procesy"
-    ],
-    "zdjecie": null,
-    "kolor": "#DC143C"
-  },
-  {
     "id": 1775305917354,
     "imie": "Rafał",
     "nazwisko": "Płuciennik",

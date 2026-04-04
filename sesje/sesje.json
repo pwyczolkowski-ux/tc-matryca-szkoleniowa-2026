@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "id": 1775292429151,
+    "szkolenie_id": 1775292373979,
+    "data": "2026-04-17",
+    "godzina": "12:46",
+    "status": "zaplanowana",
+    "trener_ids": [
+      1775292341205
+    ],
+    "uczestnicy": [
+      "Kacper Bartel",
+      "Klaudia Banaszek"
+    ],
+    "notatki": ""
+  }
+]

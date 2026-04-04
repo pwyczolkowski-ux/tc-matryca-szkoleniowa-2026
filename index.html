@@ -260,6 +260,10 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
   .overlay.open{align-items:flex-end;}
   .dash-stats{grid-template-columns:repeat(2,1fr);}
 }
+@keyframes _spin{to{transform:rotate(360deg);}}
+#save-overlay{display:none;position:fixed;inset:0;background:rgba(10,14,40,0.55);z-index:8000;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+#save-overlay.active{display:flex;}
+#save-overlay .spinner{width:52px;height:52px;border:5px solid rgba(255,255,255,0.2);border-top-color:#fff;border-radius:50%;animation:_spin .75s linear infinite;}
 </style>
 </head>
 <body>
@@ -696,6 +700,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </div>
   </div>
 </div>
+<!-- SAVE OVERLAY z-index:8000 -->
+<div id="save-overlay"><div class="spinner"></div></div>
 <!-- DELETE CONFIRM z-index:1000 -->
 <div class="overlay" id="delete-confirm-overlay" style="z-index:1000;" onclick="if(event.target.id==='delete-confirm-overlay')closeDC()">
   <div class="modal" style="width:400px;">
@@ -875,14 +881,18 @@ function setSyncStatus(state,msg){
   else if(state==='err'){el.style.background='#DC143C';el.style.color='#fff';el.textContent='✗ '+msg;el.style.maxWidth='340px';}
   else{el.style.background='#121635';el.style.color='#fff';el.textContent='⏳ '+msg;}
 }
+// ── Spinner zapisu ──────────────────────────────────────────────────
+let _saveActive=0;
+function showSaveOverlay(){if(++_saveActive>0)document.getElementById('save-overlay').classList.add('active');}
+function hideSaveOverlay(){if(--_saveActive<=0){_saveActive=0;document.getElementById('save-overlay').classList.remove('active');}}
 // Kolejkowanie zapisów — jeden push na ścieżkę naraz, najnowsze dane zawsze wygrywają
 const _pushQ={};
 async function pushJsonFile(path,data,commitMsg){
   if(!_pushQ[path])_pushQ[path]={inProgress:false,pending:null};
   const q=_pushQ[path];
-  // Jeśli trwa zapis — zaktualizuj pending i wróć (nowe dane zostaną wysłane po zakończeniu)
   if(q.inProgress){q.pending={data:JSON.parse(JSON.stringify(data)),commitMsg};return true;}
   q.inProgress=true;
+  showSaveOverlay();
   let lastOk=false;
   try{
     let d=JSON.parse(JSON.stringify(data)),m=commitMsg;
@@ -892,26 +902,31 @@ async function pushJsonFile(path,data,commitMsg){
       if(q.pending){d=q.pending.data;m=q.pending.commitMsg;}
       else break;
     }while(true);
-  }finally{q.inProgress=false;}
+  }finally{q.inProgress=false;hideSaveOverlay();}
   return lastOk;
 }
-async function _pushWithRetry(path,data,commitMsg,attempt){
-  attempt=attempt||1;
+async function _pushWithRetry(path,data,commitMsg){
   const token=getGhToken();if(!token)return false;
   const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
   const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
-  let sha=null;
-  try{const r=await fetch(`${apiUrl}?ref=${GH_BRANCH}`,{headers});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
-  const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
-  const body={message:commitMsg,content,branch:GH_BRANCH};if(sha)body.sha=sha;
-  let ok=false;
-  try{const r=await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});ok=r.ok||r.status===201;}catch(e){}
-  if(!ok&&attempt<5){
-    setSyncStatus('pending',`Ponawiam zapis… (${attempt}/5)`);
-    await new Promise(res=>setTimeout(res,attempt*1500));
-    return _pushWithRetry(path,data,commitMsg,attempt+1);
+  let attempt=0;
+  while(true){
+    attempt++;
+    let sha=null;
+    try{const r=await fetch(`${apiUrl}?ref=${GH_BRANCH}`,{headers});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+    const body={message:commitMsg,content,branch:GH_BRANCH};if(sha)body.sha=sha;
+    let ok=false,authErr=false;
+    try{const r=await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
+      if(r.status===401||r.status===403)authErr=true;
+      else ok=r.ok||r.status===201;
+    }catch(e){}
+    if(ok)return true;
+    if(authErr){setSyncStatus('err','Token nieważny — kliknij 🔑');return false;}
+    const delay=Math.min(attempt*2000,12000);
+    setSyncStatus('pending',`Ponawiam… (próba ${attempt})`);
+    await new Promise(res=>setTimeout(res,delay));
   }
-  return ok;
 }
 async function pushSzkoleniaFile(){
   const token=getGhToken();if(!token){setSyncStatus('err','Brak tokena — kliknij 🔑');return;}

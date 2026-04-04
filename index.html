@@ -519,6 +519,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
       <button onclick="openEmpPicker()" style="width:100%;background:none;border:1px dashed var(--border);border-radius:8px;padding:9px 14px;font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-muted);cursor:pointer;transition:all .2s;margin-bottom:12px;text-align:left;" onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">+ Wybierz uczestników z listy</button>
       <label class="form-lbl">Notatki</label>
       <textarea class="form-textarea" id="sm-notatki" placeholder="Notatki ze szkolenia…"></textarea>
+      <label class="form-lbl">Transkrypcja</label>
+      <textarea class="form-textarea" id="sm-transkrypcja" placeholder="Wklej transkrypcję sesji…" style="min-height:100px;"></textarea>
     </div>
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeSesjaModal()">Anuluj</button>
@@ -544,8 +546,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </select>
     <label class="form-lbl">Opis</label>
     <textarea class="form-textarea" id="szkm-opis" placeholder="Opis szkolenia…" style="min-height:80px;"></textarea>
-    <label class="form-lbl">Materiały (link)</label>
-    <input type="url" class="form-inp" id="szkm-materialy" placeholder="https://…">
+    <label class="form-lbl" style="display:flex;align-items:center;justify-content:space-between;">Materiały <button type="button" onclick="szkAddMat()" style="background:none;border:none;font-size:12px;color:var(--navy);cursor:pointer;font-family:'Roboto',sans-serif;font-weight:500;padding:0;">+ Dodaj</button></label>
+    <div id="szkm-mat-list" style="margin-bottom:10px;display:flex;flex-direction:column;gap:6px;"></div>
     <label class="form-lbl">Cel szkolenia</label>
     <textarea class="form-textarea" id="szkm-korzysci" placeholder="Co uczestnik osiągnie po szkoleniu…"></textarea>
     <label class="form-lbl">Program szkolenia (każda linijka = osobny punkt)</label>
@@ -1004,7 +1006,7 @@ function openSzkolenieDetail(id){
         <div style="font-size:28px;font-weight:300;color:var(--text);margin-bottom:8px;">${escHtml(szk.nazwa)}</div>
         <span style="display:inline-flex;align-items:center;gap:6px;background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:400;color:var(--text-muted);margin-bottom:12px;">${szk.forma==='online'?'Online':'Stacjonarne'}</span>
         ${szk.czasTrwania?`<span style="display:inline-flex;align-items:center;gap:6px;background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:400;color:var(--text-muted);margin-bottom:12px;">⏱ ${escHtml(szk.czasTrwania)}</span>`:''}
-        ${szk.materialy?`<a href="${escHtml(szk.materialy)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:400;color:var(--navy);margin-bottom:12px;text-decoration:none;" onmouseover="this.style.borderColor='var(--navy)'" onmouseout="this.style.borderColor='var(--border)'">Materiały →</a>`:''}
+        ${(Array.isArray(szk.materialy)&&szk.materialy.length)?szk.materialy.map(m=>`<a href="${escHtml(m.url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;background:var(--offwhite);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:400;color:var(--navy);margin-bottom:8px;margin-right:6px;text-decoration:none;" onmouseover="this.style.borderColor='var(--navy)'" onmouseout="this.style.borderColor='var(--border)'">${escHtml(MAT_TYPY[m.typ]||m.typ)} →</a>`).join(''):''}
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
           ${planned?`<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(18,22,53,0.07);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--navy);">📅 ${planned} zaplanowane</span>`:''}
           ${done?`<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,0.1);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--green);">✓ ${done} zrealizowane</span>`:''}
@@ -1028,6 +1030,26 @@ function openSzkolenieDetail(id){
     </div>`;
 }
 // ── Szkolenie Modal ────────────────────────────────────────────────
+const MAT_TYPY={prezentacja:'Prezentacja',trener:'Materiały dla trenera',wideo:'Materiał wideo',inne:'Inne'};
+function szkAddMat(typ,url){
+  const list=document.getElementById('szkm-mat-list');if(!list)return;
+  const row=document.createElement('div');row.style.cssText='display:flex;gap:6px;align-items:center;';
+  row.innerHTML=`<select style="flex:0 0 170px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:Roboto,sans-serif;font-size:13px;color:var(--text);background:var(--white);">
+    <option value="prezentacja"${typ==='prezentacja'?' selected':''}>Prezentacja</option>
+    <option value="trener"${typ==='trener'?' selected':''}>Mat. dla trenera</option>
+    <option value="wideo"${typ==='wideo'?' selected':''}>Materiał wideo</option>
+    <option value="inne"${(!typ||typ==='inne')?' selected':''}>Inne</option>
+  </select>
+  <input type="url" value="${url||''}" placeholder="https://…" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:Roboto,sans-serif;font-size:13px;color:var(--text);">
+  <button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;font-size:18px;color:var(--text-muted);cursor:pointer;line-height:1;flex-shrink:0;">×</button>`;
+  list.appendChild(row);
+}
+function szkGetMats(){
+  return Array.from(document.querySelectorAll('#szkm-mat-list>div')).map(row=>{
+    const sel=row.querySelector('select');const inp=row.querySelector('input');
+    return{typ:sel?.value||'inne',url:(inp?.value||'').trim()};
+  }).filter(m=>m.url);
+}
 let editingSzkolenieId=null;
 function duplikujSesje(id){
   const s=sesje.find(x=>x.id===id);if(!s)return;
@@ -1054,7 +1076,9 @@ function openSzkolenieModal(id){
   const _hm=_ct.match(/(\d+)h\s*(\d+)?m?/);
   document.getElementById('szkm-czas-h').value=_hm?_hm[1]:'1';
   document.getElementById('szkm-czas-m').value=(_hm&&_hm[2])?String(Math.round(parseInt(_hm[2])/15)*15):'0';
-  document.getElementById('szkm-materialy').value=szk?.materialy||'';
+  const matList=document.getElementById('szkm-mat-list');if(matList)matList.innerHTML='';
+  const mats=Array.isArray(szk?.materialy)?szk.materialy:(szk?.materialy?[{typ:'inne',url:szk.materialy}]:[]);
+  mats.forEach(m=>szkAddMat(m.typ,m.url));
   document.getElementById('szkm-delete-btn').style.display=id?'block':'none';
   document.getElementById('szkolenie-overlay').classList.add('open');
 }
@@ -1070,7 +1094,7 @@ function saveSzkolenie(){
   const _h=parseInt(document.getElementById('szkm-czas-h').value)||0;
   const _m=parseInt(document.getElementById('szkm-czas-m').value)||0;
   const czasTrwania=_h&&_m?`${_h}h ${_m}min`:_h?`${_h}h`:_m?`${_m}min`:'';
-  const materialy=document.getElementById('szkm-materialy').value.trim();
+  const materialy=szkGetMats();
   if(editingSzkolenieId){
     const existing=szkolenia.find(m=>m.id===editingSzkolenieId);
     if(existing)Object.assign(existing,{nazwa,kategoria:kat,forma,opis,korzysci,agenda,czasTrwania,materialy});
@@ -1144,6 +1168,7 @@ function openSesjaModal(ds,szkId,sesjaId){
     document.getElementById('sm-status').value=existing?.status||'zaplanowana';
     document.getElementById('sm-notatki').value=existing?.notatki||'';
     document.getElementById('sm-miejsce').value=existing?.miejsce||'';
+    document.getElementById('sm-transkrypcja').value=existing?.transkrypcja||'';
     smPendingUczestnicy=existing?(existing.uczestnicy||[]).slice():[];
     renderSmTrainers(existing);
     renderSmParticipants();
@@ -1230,12 +1255,13 @@ function saveSesja(){
   const status=document.getElementById('sm-status').value||'zaplanowana';
   const notatki=document.getElementById('sm-notatki').value.trim();
   const miejsce=document.getElementById('sm-miejsce').value.trim();
+  const transkrypcja=document.getElementById('sm-transkrypcja').value.trim();
   const trenerIds=Array.from(document.querySelectorAll('#sm-trainers-list input[type=checkbox]:checked')).map(cb=>parseInt(cb.value));
   if(selSesjaId){
     const existing=sesje.find(s=>s.id===selSesjaId);
-    if(existing){Object.assign(existing,{data:ds,szkolenie_id:szkId,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki,miejsce});}
+    if(existing){Object.assign(existing,{data:ds,szkolenie_id:szkId,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki,miejsce,transkrypcja});}
   }else{
-    sesje.push({id:Date.now(),szkolenie_id:szkId,data:ds,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki,miejsce});
+    sesje.push({id:Date.now(),szkolenie_id:szkId,data:ds,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki,miejsce,transkrypcja});
   }
   closeSesjaModal();
   renderCalendar();renderDashboard();renderMonthlySummary();updateSlots();

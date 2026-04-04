@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": 1775292341205,
+    "imie": "Adam",
+    "nazwisko": "Kowalski",
+    "rola": "",
+    "email": "",
+    "telefon": "",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#DC143C"
+  }
+]

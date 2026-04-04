@@ -189,5 +189,17 @@
     "agenda": "",
     "czasTrwania": "1h",
     "materialy": []
+  },
+  {
+    "id": 1775307971935,
+    "nazwa": "Konsultacje Indywidualne",
+    "kategoria": "Procesy",
+    "typ": "wewnetrzne",
+    "forma": "online",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "1h",
+    "materialy": []
   }
 ]

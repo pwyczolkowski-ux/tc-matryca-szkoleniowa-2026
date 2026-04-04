@@ -544,6 +544,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </select>
     <label class="form-lbl">Opis</label>
     <textarea class="form-textarea" id="szkm-opis" placeholder="Opis szkolenia…" style="min-height:80px;"></textarea>
+    <label class="form-lbl">Materiały (link)</label>
+    <input type="url" class="form-inp" id="szkm-materialy" placeholder="https://…">
     <label class="form-lbl">Cel szkolenia</label>
     <textarea class="form-textarea" id="szkm-korzysci" placeholder="Co uczestnik osiągnie po szkoleniu…"></textarea>
     <label class="form-lbl">Program szkolenia (każda linijka = osobny punkt)</label>
@@ -577,8 +579,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
         <option value="45">45 min</option>
       </select>
     </div>
-    <label class="form-lbl">Materiały (link)</label>
-    <input type="url" class="form-inp" id="szkm-materialy" placeholder="https://…">
       <button class="btn btn-gray" onclick="closeSzkolenieModal()">Anuluj</button>
       <button id="szkm-delete-btn" class="btn btn-gray" style="display:none;color:var(--red);border-color:rgba(220,20,60,0.3);" onclick="deleteSzkolenie()">Usuń</button>
 

@@ -546,7 +546,25 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <label class="form-lbl">Agenda (każda linijka = osobny punkt)</label>
     <textarea class="form-textarea" id="szkm-agenda" placeholder="Plan szkolenia…"></textarea>
     <label class="form-lbl">Czas trwania</label>
-    <input type="text" class="form-inp" id="szkm-czas" placeholder="np. 4h lub 2h 30min">
+    <div style="display:flex;gap:8px;align-items:center;">
+      <select class="form-sel" id="szkm-czas-h" style="flex:1;margin-bottom:0;">
+        <option value="0">0 godz.</option>
+        <option value="1">1 godz.</option>
+        <option value="2">2 godz.</option>
+        <option value="3">3 godz.</option>
+        <option value="4">4 godz.</option>
+        <option value="5">5 godz.</option>
+        <option value="6">6 godz.</option>
+        <option value="7">7 godz.</option>
+        <option value="8">8 godz.</option>
+      </select>
+      <select class="form-sel" id="szkm-czas-m" style="flex:1;margin-bottom:0;">
+        <option value="0">0 min</option>
+        <option value="15">15 min</option>
+        <option value="30">30 min</option>
+        <option value="45">45 min</option>
+      </select>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeSzkolenieModal()">Anuluj</button>
       <button id="szkm-delete-btn" class="btn btn-gray" style="display:none;color:var(--red);border-color:rgba(220,20,60,0.3);" onclick="deleteSzkolenie()">Usuń</button>
@@ -994,7 +1012,10 @@ function openSzkolenieModal(id){
   document.getElementById('szkm-opis').value=szk?.opis||'';
   document.getElementById('szkm-korzysci').value=szk?.korzysci||'';
   document.getElementById('szkm-agenda').value=szk?.agenda||'';
-  document.getElementById('szkm-czas').value=szk?.czasTrwania||'';
+  const _ct=szk?.czasTrwania||'';
+  const _hm=_ct.match(/(\d+)h\s*(\d+)?m?/);
+  document.getElementById('szkm-czas-h').value=_hm?_hm[1]:'1';
+  document.getElementById('szkm-czas-m').value=(_hm&&_hm[2])?String(Math.round(parseInt(_hm[2])/15)*15):'0';
   document.getElementById('szkm-delete-btn').style.display=id?'block':'none';
   document.getElementById('szkolenie-overlay').classList.add('open');
 }
@@ -1006,7 +1027,9 @@ function saveSzkolenie(){
   const opis=document.getElementById('szkm-opis').value.trim();
   const korzysci=document.getElementById('szkm-korzysci').value;
   const agenda=document.getElementById('szkm-agenda').value;
-  const czasTrwania=document.getElementById('szkm-czas').value.trim();
+  const _h=parseInt(document.getElementById('szkm-czas-h').value)||0;
+  const _m=parseInt(document.getElementById('szkm-czas-m').value)||0;
+  const czasTrwania=_h&&_m?`${_h}h ${_m}min`:_h?`${_h}h`:_m?`${_m}min`:'';
   if(editingSzkolenieId){
     const existing=szkolenia.find(m=>m.id===editingSzkolenieId);
     if(existing)Object.assign(existing,{nazwa,kategoria:kat,opis,korzysci,agenda,czasTrwania});

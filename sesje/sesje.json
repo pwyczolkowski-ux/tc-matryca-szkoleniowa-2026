@@ -55,5 +55,17 @@
     "notatki": "",
     "miejsce": "",
     "transkrypcja": ""
+  },
+  {
+    "id": 1775318601409,
+    "szkolenie_id": 1775292373979,
+    "data": "2026-05-22",
+    "godzina": "10:00",
+    "status": "zaplanowana",
+    "trener_ids": [],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "",
+    "transkrypcja": ""
   }
 ]

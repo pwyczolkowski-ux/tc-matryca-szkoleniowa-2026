@@ -169,5 +169,17 @@
     "notatki": "",
     "miejsce": "",
     "transkrypcja": ""
+  },
+  {
+    "id": 1775325154057,
+    "szkolenie_id": 1775307238333,
+    "data": "2026-09-18",
+    "godzina": "09:00",
+    "status": "zaplanowana",
+    "trener_ids": [],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "WTT 29",
+    "transkrypcja": ""
   }
 ]

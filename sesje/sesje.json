@@ -43,5 +43,17 @@
     "notatki": "",
     "miejsce": "WTT 29",
     "transkrypcja": ""
+  },
+  {
+    "id": 1775311190891,
+    "szkolenie_id": 1775310933527,
+    "data": "2026-04-28",
+    "godzina": "09:00",
+    "status": "zaplanowana",
+    "trener_ids": [],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "",
+    "transkrypcja": ""
   }
 ]

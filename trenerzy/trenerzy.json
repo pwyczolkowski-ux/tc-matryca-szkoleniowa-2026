@@ -31,5 +31,18 @@
     ],
     "zdjecie": null,
     "kolor": "#22c55e"
+  },
+  {
+    "id": 1775313536957,
+    "imie": "Tomasz",
+    "nazwisko": "Styczyński",
+    "rola": "",
+    "email": "",
+    "telefon": "",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#f59e0b"
   }
 ]

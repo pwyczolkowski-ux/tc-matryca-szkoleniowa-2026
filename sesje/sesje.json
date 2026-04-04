@@ -1,35 +1,5 @@
 [
   {
-    "id": 1775302412855,
-    "szkolenie_id": 1775292373979,
-    "data": "2026-04-24",
-    "godzina": null,
-    "status": "zaplanowana",
-    "trener_ids": [
-      1775292341205
-    ],
-    "uczestnicy": [
-      "Wojciech Bałkowski",
-      "Mateusz Bacański",
-      "Justyna Aniśko"
-    ],
-    "notatki": "",
-    "miejsce": "WTT 29"
-  },
-  {
-    "id": 1775304202157,
-    "szkolenie_id": 1775303398346,
-    "data": "2026-04-24",
-    "godzina": "14:00",
-    "status": "zaplanowana",
-    "trener_ids": [
-      1775292341205
-    ],
-    "uczestnicy": [],
-    "notatki": "",
-    "miejsce": "WTT 29, Sala Szkoleniowa"
-  },
-  {
     "id": 1775305890232,
     "szkolenie_id": 1775305716565,
     "data": "2026-04-14",

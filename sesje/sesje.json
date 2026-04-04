@@ -103,5 +103,17 @@
     "notatki": "",
     "miejsce": "",
     "transkrypcja": ""
+  },
+  {
+    "id": 1775321041453,
+    "szkolenie_id": 1775310933527,
+    "data": "2026-04-27",
+    "godzina": "14:00",
+    "status": "zaplanowana",
+    "trener_ids": [],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "",
+    "transkrypcja": ""
   }
 ]

@@ -862,8 +862,27 @@ function setSyncStatus(state,msg){
   else if(state==='err'){el.style.background='#DC143C';el.style.color='#fff';el.textContent='✗ '+msg;el.style.maxWidth='340px';}
   else{el.style.background='#121635';el.style.color='#fff';el.textContent='⏳ '+msg;}
 }
-async function pushJsonFile(path,data,commitMsg,_attempt){
-  const attempt=_attempt||1;
+// Kolejkowanie zapisów — jeden push na ścieżkę naraz, najnowsze dane zawsze wygrywają
+const _pushQ={};
+async function pushJsonFile(path,data,commitMsg){
+  if(!_pushQ[path])_pushQ[path]={inProgress:false,pending:null};
+  const q=_pushQ[path];
+  // Jeśli trwa zapis — zaktualizuj pending i wróć (nowe dane zostaną wysłane po zakończeniu)
+  if(q.inProgress){q.pending={data,commitMsg};return true;}
+  q.inProgress=true;
+  try{
+    let d=data,m=commitMsg;
+    do{
+      q.pending=null;
+      await _pushWithRetry(path,d,m);
+      if(q.pending){d=q.pending.data;m=q.pending.commitMsg;}
+      else break;
+    }while(true);
+  }finally{q.inProgress=false;}
+  return true;
+}
+async function _pushWithRetry(path,data,commitMsg,attempt){
+  attempt=attempt||1;
   const token=getGhToken();if(!token)return false;
   const apiUrl=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
   const headers={'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
@@ -876,7 +895,7 @@ async function pushJsonFile(path,data,commitMsg,_attempt){
   if(!ok&&attempt<5){
     setSyncStatus('pending',`Ponawiam zapis… (${attempt}/5)`);
     await new Promise(res=>setTimeout(res,attempt*1500));
-    return pushJsonFile(path,data,commitMsg,attempt+1);
+    return _pushWithRetry(path,data,commitMsg,attempt+1);
   }
   return ok;
 }

@@ -769,7 +769,9 @@ let selSesjaId=null;
 let selSesjaDate=null;
 let selSesjaSzkolenieId=null;
 let pendingSmPhotoData=null;
-let smPendingUczestnicy=[];  // tymczasowi uczestnicy w nowej/edytowanej sesji
+let smPendingUczestnicy=[];
+let currentTab='dashboard';
+let _sesjaReturnTab=null;
 // Szkolenie detail
 let selSzkolenieId=null;
 // Trener modal
@@ -975,6 +977,7 @@ async function loadFromGitHub(){
 // ── Navigation ─────────────────────────────────────────────────────
 const TAB_MAP={dashboard:'dashboard',szkolenia:'szkolenia','szkolenie-detail':'szkolenia',calendar:'calendar',trenerzy:'trenerzy',employees:'employees',raporty:'raporty'};
 function switchTab(name){
+  currentTab=name;
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   const panel=document.getElementById('panel-'+name);
@@ -1065,6 +1068,8 @@ function renderSzkolenia(){
       </div>`;
     }).join('');
   }
+  // przycisk "Dodaj" na dole listy
+  el.innerHTML+=`<div style="grid-column:1/-1;display:flex;justify-content:center;padding:16px 0 4px;"><button onclick="openSzkolenieModal(null)" style="background:none;border:2px dashed var(--border);border-radius:10px;padding:12px 32px;font-family:'Roboto',sans-serif;font-size:14px;font-weight:300;color:var(--text-muted);cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">+ Dodaj szkolenie</button></div>`;
 }
 function openSzkolenieDetail(id){
   selSzkolenieId=id;
@@ -1232,6 +1237,7 @@ function deleteSzkolenie(){
 }
 // ── Sesja Modal ────────────────────────────────────────────────────
 function openSesjaModal(ds,szkId,sesjaId){
+  _sesjaReturnTab=currentTab;
   selSesjaDate=ds;
   selSesjaId=sesjaId||null;
   selSesjaSzkolenieId=szkId||null;
@@ -1366,7 +1372,8 @@ function saveSesja(){
   }
   closeSesjaModal();
   renderCalendar();renderDashboard();renderMonthlySummary();updateSlots();
-  if(selSzkolenieId)openSzkolenieDetail(selSzkolenieId);
+  if(_sesjaReturnTab==='szkolenie-detail'&&selSzkolenieId)openSzkolenieDetail(selSzkolenieId);
+  else if(_sesjaReturnTab)switchTab(_sesjaReturnTab);
   pushSesjeFile();
 }
 function deleteSesja(){
@@ -1377,7 +1384,8 @@ function deleteSesja(){
     sesje=sesje.filter(x=>x.id!==idToDelete);
     closeSesjaModal();
     renderCalendar();renderDashboard();updateSlots();
-    if(selSzkolenieId)openSzkolenieDetail(selSzkolenieId);
+    if(_sesjaReturnTab==='szkolenie-detail'&&selSzkolenieId)openSzkolenieDetail(selSzkolenieId);
+    else if(_sesjaReturnTab)switchTab(_sesjaReturnTab);
     pushSesjeFile();
   });
 }

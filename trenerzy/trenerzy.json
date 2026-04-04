@@ -70,5 +70,18 @@
     "specjalizacje": [],
     "zdjecie": null,
     "kolor": "#06b6d4"
+  },
+  {
+    "id": 1775315204643,
+    "imie": "Kajetan",
+    "nazwisko": "Homka",
+    "rola": "Dyrektor Wsparcia Sprzedaży CC",
+    "email": "k.homka@tc.pl",
+    "telefon": "534216443",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#f97316"
   }
 ]

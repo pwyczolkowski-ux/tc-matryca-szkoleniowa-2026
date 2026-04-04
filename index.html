@@ -683,6 +683,7 @@ let selSesjaId=null;
 let selSesjaDate=null;
 let selSesjaSzkolenieId=null;
 let pendingSmPhotoData=null;
+let smPendingUczestnicy=[];  // tymczasowi uczestnicy w nowej/edytowanej sesji
 // Szkolenie detail
 let selSzkolenieId=null;
 // Trener modal
@@ -1072,6 +1073,7 @@ function openSesjaModal(ds,szkId,sesjaId){
     document.getElementById('sm-time').value=existing?.godzina||'';
     document.getElementById('sm-status').value=existing?.status||'zaplanowana';
     document.getElementById('sm-notatki').value=existing?.notatki||'';
+    smPendingUczestnicy=existing?(existing.uczestnicy||[]).slice():[];
     renderSmTrainers(existing);
     renderSmParticipants();
   }
@@ -1085,7 +1087,7 @@ function openSesjaModal(ds,szkId,sesjaId){
 }
 function closeSesjaModal(){
   document.getElementById('sesja-overlay').classList.remove('open');
-  selSesjaDate=null;selSesjaId=null;selSesjaSzkolenieId=null;
+  selSesjaDate=null;selSesjaId=null;selSesjaSzkolenieId=null;smPendingUczestnicy=[];
 }
 function onSmSzkolenieChange(){
   const val=document.getElementById('sm-szkolenie').value;
@@ -1144,10 +1146,9 @@ function updateSmTrainerChips(){
 }
 function renderSmParticipants(){
   const el=document.getElementById('sm-part-list');if(!el)return;
-  const existing=selSesjaId?sesje.find(s=>s.id===selSesjaId):null;
-  const list=existing?.uczestnicy||[];
+  const list=smPendingUczestnicy;
   if(!list.length){el.innerHTML='<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:4px 0 8px;">Brak uczestników</div>';return;}
-  el.innerHTML=`<div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">${list.length} uczestników: ${list.slice(0,3).map(escHtml).join(', ')}${list.length>3?` +${list.length-3} więcej`:''}</div>`;
+  el.innerHTML=`<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">${list.length} uczestników: ${list.slice(0,3).map(escHtml).join(', ')}${list.length>3?` +${list.length-3} więcej`:''}</div>`;
 }
 function saveSesja(){
   const ds=selSesjaDate||document.getElementById('sm-date').value;
@@ -1160,9 +1161,9 @@ function saveSesja(){
   const trenerIds=Array.from(document.querySelectorAll('#sm-trainers-list input[type=checkbox]:checked')).map(cb=>parseInt(cb.value));
   if(selSesjaId){
     const existing=sesje.find(s=>s.id===selSesjaId);
-    if(existing){Object.assign(existing,{data:ds,szkolenie_id:szkId,godzina,status,trener_ids:trenerIds,notatki});}
+    if(existing){Object.assign(existing,{data:ds,szkolenie_id:szkId,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki});}
   }else{
-    sesje.push({id:Date.now(),szkolenie_id:szkId,data:ds,godzina,status,trener_ids:trenerIds,uczestnicy:[],notatki});
+    sesje.push({id:Date.now(),szkolenie_id:szkId,data:ds,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki});
   }
   closeSesjaModal();
   renderCalendar();renderDashboard();renderMonthlySummary();updateSlots();
@@ -1354,8 +1355,7 @@ function closeEmpPicker(){document.getElementById('emp-picker-overlay').classLis
 function renderEmpPicker(){
   const q=(document.getElementById('ep-search')?.value||'').toLowerCase();
   const org=document.getElementById('ep-org-filter')?.value||'';
-  const existing=selSesjaId?sesje.find(s=>s.id===selSesjaId):null;
-  const existingNames=new Set((existing?.uczestnicy||[]).map(n=>n.toLowerCase()));
+  const existingNames=new Set(smPendingUczestnicy.map(n=>n.toLowerCase()));
   let list=employees.filter(e=>{
     if(org&&e['Organization 1 - Name']!==org)return false;
     if(q){const hay=[e['Name'],e['Given Name'],e['Family Name'],e['Organization 1 - Title'],e['Organization 1 - Name']].join(' ').toLowerCase();if(!hay.includes(q))return false;}
@@ -1381,13 +1381,9 @@ function epToggle(cb){const name=cb.dataset.name;if(cb.checked)empPickerSelected
 function updateEpAddBtn(){const n=empPickerSelected.size;const btn=document.getElementById('ep-add-btn');btn.textContent=n?`Dodaj zaznaczonych (${n})`:'Dodaj zaznaczonych';btn.disabled=n===0;}
 function confirmEmpPicker(){
   if(!empPickerSelected.size)return;
-  if(!selSesjaId)return;
-  const s=sesje.find(x=>x.id===selSesjaId);if(!s)return;
-  if(!s.uczestnicy)s.uczestnicy=[];
-  empPickerSelected.forEach(name=>{if(!s.uczestnicy.includes(name))s.uczestnicy.push(name);});
+  empPickerSelected.forEach(name=>{if(!smPendingUczestnicy.includes(name))smPendingUczestnicy.push(name);});
   closeEmpPicker();
   renderSmParticipants();
-  pushSesjeFile();
 }
 // ── Calendar ───────────────────────────────────────────────────────
 function renderMonthTabs(){

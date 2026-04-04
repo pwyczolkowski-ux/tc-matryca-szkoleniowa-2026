@@ -1,21 +1,5 @@
 [
   {
-    "id": 1775305917354,
-    "imie": "Rafał",
-    "nazwisko": "Płuciennik",
-    "rola": "Członek Zarządu",
-    "email": "",
-    "telefon": "",
-    "bio": "",
-    "aktywny": true,
-    "specjalizacje": [
-      "Mindset",
-      "Sprzedaz"
-    ],
-    "zdjecie": null,
-    "kolor": "#22c55e"
-  },
-  {
     "id": 1775313588563,
     "imie": "Tomasz",
     "nazwisko": "Styczyński",
@@ -74,6 +58,19 @@
     "rola": "Specjalista ds. Szkoleń i Rozwoju Sprzedaży",
     "email": "p.wyczolkowski@tc.pl",
     "telefon": "533311747",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#f97316"
+  },
+  {
+    "id": 1775323739795,
+    "imie": "Rafał",
+    "nazwisko": "Płuciennik",
+    "rola": "Członek Zarządu ds. Rozwoju Biznesu",
+    "email": "rp@tc.pl",
+    "telefon": "794953601",
     "bio": "",
     "aktywny": true,
     "specjalizacje": [],

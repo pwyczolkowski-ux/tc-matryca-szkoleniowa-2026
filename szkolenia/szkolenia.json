@@ -234,7 +234,7 @@
   },
   {
     "id": 1775319063180,
-    "nazwa": "Mercedes-Benz - Member Succes Program część 2",
+    "nazwa": "Mercedes-Benz - MSP - część 2",
     "kategoria": "Procesy",
     "typ": "zewnetrzne",
     "forma": "online",
@@ -242,6 +242,18 @@
     "korzysci": "",
     "agenda": "",
     "czasTrwania": "4h",
+    "materialy": []
+  },
+  {
+    "id": 1775322735309,
+    "nazwa": "Mercedes-Benz - MSP - Follow-up",
+    "kategoria": "Procesy",
+    "typ": "zewnetrzne",
+    "forma": "online",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "1h 30min",
     "materialy": []
   }
 ]

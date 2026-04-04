@@ -1024,13 +1024,14 @@ function saveSzkolenie(){
 function deleteSzkolenie(){
   if(!editingSzkolenieId)return;
   const szk=szkolenia.find(m=>m.id===editingSzkolenieId);if(!szk)return;
+  const idToDelete=editingSzkolenieId;
   openDC(`Usunąć szkolenie<br><strong>${escHtml(szk.nazwa)}</strong>?`,()=>{
-    szkolenia=szkolenia.filter(m=>m.id!==editingSzkolenieId);
-    sesje=sesje.filter(s=>s.szkolenie_id!==editingSzkolenieId);
+    szkolenia=szkolenia.filter(m=>m.id!==idToDelete);
+    sesje=sesje.filter(s=>s.szkolenie_id!==idToDelete);
     closeSzkolenieModal();
+    if(selSzkolenieId===idToDelete){selSzkolenieId=null;switchTab('szkolenia');}
     renderSzkolenia();renderSbSzkolenia();renderCalendar();renderDashboard();updateSlots();
     pushSzkoleniaFile();pushSesjeFile();
-    switchTab('szkolenia');
   });
 }
 // ── Sesja Modal ────────────────────────────────────────────────────
@@ -1171,8 +1172,9 @@ function saveSesja(){
 function deleteSesja(){
   if(!selSesjaId)return;
   const s=sesje.find(x=>x.id===selSesjaId);if(!s)return;
+  const idToDelete=selSesjaId;
   openDC('Usunąć tę sesję?',()=>{
-    sesje=sesje.filter(x=>x.id!==selSesjaId);
+    sesje=sesje.filter(x=>x.id!==idToDelete);
     closeSesjaModal();
     renderCalendar();renderDashboard();updateSlots();
     if(selSzkolenieId)openSzkolenieDetail(selSzkolenieId);
@@ -1254,9 +1256,10 @@ function saveTrener(){
 function deleteTrener(){
   if(!editingTrenerId)return;
   const t=trenerzy.find(x=>x.id===editingTrenerId);if(!t)return;
+  const idToDelete=editingTrenerId;
   openDC(`Usunąć trenera<br><strong>${escHtml(t.imie+' '+t.nazwisko)}</strong>?`,()=>{
-    trenerzy=trenerzy.filter(x=>x.id!==editingTrenerId);
-    sesje.forEach(s=>{s.trener_ids=(s.trener_ids||[]).filter(id=>id!==editingTrenerId);});
+    trenerzy=trenerzy.filter(x=>x.id!==idToDelete);
+    sesje.forEach(s=>{s.trener_ids=(s.trener_ids||[]).filter(id=>id!==idToDelete);});
     closeTrenerModal();renderTrenerzy();pushTrenerzyFile();pushSesjeFile();
   });
 }

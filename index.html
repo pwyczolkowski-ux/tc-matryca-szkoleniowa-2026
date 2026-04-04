@@ -580,6 +580,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <div class="modal-actions">
       <button class="btn btn-gray" onclick="closeSzkolenieModal()">Anuluj</button>
       <button id="szkm-delete-btn" class="btn btn-gray" style="display:none;color:var(--red);border-color:rgba(220,20,60,0.3);" onclick="deleteSzkolenie()">Usuń</button>
+      <button id="szkm-duplikuj-btn" class="btn btn-gray" style="display:none;" onclick="closeSzkolenieModal();duplikujSzkolenie(editingSzkolenieId)">Duplikuj</button>
       <button class="btn btn-red" onclick="saveSzkolenie()">Zapisz</button>
     </div>
   </div>
@@ -950,11 +951,15 @@ function renderSzkolenia(){
     const sCount=sesje.filter(s=>s.szkolenie_id===m.id).length;
     const col=KAT_COLORS[m.kategoria]||'#aaa';
     return`<div class="szkolenie-card cat-${m.kategoria}" onclick="openSzkolenieDetail(${m.id})">
-      <span class="kat-badge ${m.kategoria}" style="background:${col}20;color:${col};">${escHtml(KAT_LABELS[m.kategoria]||m.kategoria)}</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <span class="kat-badge ${m.kategoria}" style="background:${col}20;color:${col};">${escHtml(KAT_LABELS[m.kategoria]||m.kategoria)}</span>
+        <span style="font-size:11px;font-weight:400;color:var(--text-muted);background:var(--offwhite);border:1px solid var(--border);border-radius:20px;padding:2px 9px;">${m.forma==='online'?'Online':'Stacjonarne'}</span>
+      </div>
       <div class="szk-name">${escHtml(m.nazwa)}</div>
       <div class="szk-opis">${escHtml(m.opis||'')}</div>
       <div class="szk-footer">
         <span class="szk-count">${sCount} ${sCount===1?'sesja':sCount>=2&&sCount<=4?'sesje':'sesji'}</span>
+        <button onclick="event.stopPropagation();duplikujSzkolenie(${m.id})" style="background:none;border:none;font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);cursor:pointer;padding:0;" onmouseover="this.style.color='var(--navy)'" onmouseout="this.style.color='var(--text-muted)'">Duplikuj</button>
         <span class="szk-arrow">›</span>
       </div>
     </div>`;
@@ -1044,6 +1049,7 @@ function openSzkolenieModal(id){
   document.getElementById('szkm-czas-h').value=_hm?_hm[1]:'1';
   document.getElementById('szkm-czas-m').value=(_hm&&_hm[2])?String(Math.round(parseInt(_hm[2])/15)*15):'0';
   document.getElementById('szkm-delete-btn').style.display=id?'block':'none';
+  document.getElementById('szkm-duplikuj-btn').style.display=id?'block':'none';
   document.getElementById('szkolenie-overlay').classList.add('open');
 }
 function closeSzkolenieModal(){document.getElementById('szkolenie-overlay').classList.remove('open');editingSzkolenieId=null;}

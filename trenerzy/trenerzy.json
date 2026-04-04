@@ -46,19 +46,6 @@
     "kolor": "#f59e0b"
   },
   {
-    "id": 1775313991020,
-    "imie": "krzysztof",
-    "nazwisko": "mędrala",
-    "rola": "Chief Development Officer",
-    "email": "k.medrala@cc.pl",
-    "telefon": "536315270",
-    "bio": "",
-    "aktywny": true,
-    "specjalizacje": [],
-    "zdjecie": null,
-    "kolor": "#8b5cf6"
-  },
-  {
     "id": 1775314041683,
     "imie": "Marzena",
     "nazwisko": "Struglińska-Kiełboń",
@@ -70,5 +57,31 @@
     "specjalizacje": [],
     "zdjecie": null,
     "kolor": "#06b6d4"
+  },
+  {
+    "id": 1775315142018,
+    "imie": "Krzysztof",
+    "nazwisko": "Mędrala",
+    "rola": "Chief Development Officer",
+    "email": "k.medrala@cc.pl",
+    "telefon": "536315270",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#06b6d4"
+  },
+  {
+    "id": 1775315204643,
+    "imie": "Kajetan",
+    "nazwisko": "Homka",
+    "rola": "Dyrektor Wsparcia Sprzedaży CC",
+    "email": "k.homka@tc.pl",
+    "telefon": "534216443",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#f97316"
   }
 ]

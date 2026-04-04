@@ -829,6 +829,10 @@ function setSyncStatus(state,msg){
   if(!wrap){
     wrap=document.createElement('div');wrap.id='gh-sync-wrap';
     Object.assign(wrap.style,{position:'fixed',bottom:'14px',right:'14px',display:'flex',alignItems:'center',gap:'8px',zIndex:'9999',fontFamily:'Roboto,sans-serif'});
+    const refBtn=document.createElement('button');refBtn.title='Odśwież dane z GitHub';
+    refBtn.textContent='↻';Object.assign(refBtn.style,{background:'#1e293b',border:'none',borderRadius:'6px',padding:'5px 10px',fontSize:'16px',cursor:'pointer',lineHeight:'1',color:'#fff'});
+    refBtn.onclick=()=>{setSyncStatus('pending','Odświeżanie…');empLoaded=false;loadFromGitHub().then(ok=>{if(ok){renderAll();}else setSyncStatus('err','Błąd odświeżania');});};
+    wrap.appendChild(refBtn);
     const cfgBtn=document.createElement('button');cfgBtn.title='GitHub Token';
     cfgBtn.textContent='🔑';Object.assign(cfgBtn.style,{background:'#1e293b',border:'none',borderRadius:'6px',padding:'5px 8px',fontSize:'14px',cursor:'pointer',lineHeight:'1'});
     cfgBtn.onclick=openGhTokenModal;

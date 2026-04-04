@@ -151,5 +151,17 @@
     "notatki": "",
     "miejsce": "",
     "transkrypcja": ""
+  },
+  {
+    "id": 1775323089205,
+    "szkolenie_id": 1775322735309,
+    "data": "2026-09-08",
+    "godzina": "09:00",
+    "status": "zaplanowana",
+    "trener_ids": [],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "",
+    "transkrypcja": ""
   }
 ]

@@ -277,10 +277,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </div>
     <div class="sb-content">
       <!-- TAB SLOTS -->
-      <div class="sb-ribbon">
-        <button class="sb-ribbon-btn active" data-sbt="slots" onclick="switchSbTab('slots')">Sloty</button>
-        <button class="sb-ribbon-btn" data-sbt="szkolenia" onclick="switchSbTab('szkolenia')">Szkolenia</button>
-      </div>
       <div class="sb-tab-panel active" id="sbt-slots">
         <div class="sb-section">
           <div class="sb-title">Rok 2026</div>
@@ -309,20 +305,6 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
               <div class="sb-mini-lbl">Trenerów</div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="sb-tab-panel" id="sbt-szkolenia">
-        <div class="sb-section" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
-          <div class="sb-title">Szkolenia</div>
-          <div class="sb-filter" id="sb-filter-btns">
-            <button class="sf-btn active" data-cat="all" onclick="filterSb(this)">Wszystkie</button>
-            <button class="sf-btn" data-cat="Mindset" onclick="filterSb(this)">Mindset</button>
-            <button class="sf-btn" data-cat="Sprzedaz" onclick="filterSb(this)">Sprzedaż</button>
-            <button class="sf-btn" data-cat="Komunikacja" onclick="filterSb(this)">Komunik.</button>
-            <button class="sf-btn" data-cat="Przywodztwo" onclick="filterSb(this)">Przyw.</button>
-            <button class="sf-btn" data-cat="Procesy" onclick="filterSb(this)">Procesy</button>
-          </div>
-          <div class="sb-mods" id="sb-mods"></div>
         </div>
       </div>
     </div>
@@ -909,34 +891,8 @@ function toggleSidebar(){
   sb.classList.toggle('collapsed');
   btn.textContent=sb.classList.contains('collapsed')?'›':'‹';
 }
-function switchSbTab(name){
-  document.querySelectorAll('.sb-ribbon-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.sb-tab-panel').forEach(p=>p.classList.remove('active'));
-  const btn=document.querySelector(`.sb-ribbon-btn[data-sbt="${name}"]`);
-  if(btn)btn.classList.add('active');
-  const panel=document.getElementById('sbt-'+name);
-  if(panel)panel.classList.add('active');
-}
 function closeIfBg(e,id){if(e.target.id===id)document.getElementById(id).classList.remove('open');}
-// ── Sidebar Szkolenia ─────────────────────────────────────────────
-function filterSb(btn){
-  sbFilter=btn.dataset.cat;
-  document.querySelectorAll('.sf-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderSbSzkolenia();
-}
-function renderSbSzkolenia(){
-  const el=document.getElementById('sb-mods');if(!el)return;
-  const list=sbFilter==='all'?szkolenia:szkolenia.filter(m=>m.kategoria===sbFilter);
-  if(!list.length){el.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,0.3);text-align:center;padding:12px 0;">Brak szkoleń</div>';return;}
-  el.innerHTML=list.map(m=>{
-    const cls=`sb-mod cat-${m.kategoria}`;
-    return`<div class="${cls}" draggable="true" ondragstart="sbDragStart(event,${m.id})" onclick="openSzkolenieDetail(${m.id})">
-      <div class="sb-mod-name">${escHtml(m.nazwa)}</div>
-      <div class="sb-mod-cat">${escHtml(KAT_LABELS[m.kategoria]||m.kategoria)}</div>
-    </div>`;
-  }).join('');
-}
+function renderSbSzkolenia(){}
 let draggedSzkolenieId=null;
 function sbDragStart(event,id){
   draggedSzkolenieId=id;

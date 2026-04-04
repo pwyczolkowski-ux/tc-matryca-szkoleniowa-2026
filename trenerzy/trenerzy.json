@@ -7,7 +7,7 @@
     "email": "p.wyczolkowski@tc.pl",
     "telefon": "+48 533 311 747",
     "bio": "",
-    "aktywny": true,
+    "aktywny": false,
     "specjalizacje": [
       "Mindset",
       "Komunikacja",

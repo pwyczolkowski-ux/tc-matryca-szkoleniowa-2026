@@ -881,18 +881,19 @@ async function pushJsonFile(path,data,commitMsg){
   if(!_pushQ[path])_pushQ[path]={inProgress:false,pending:null};
   const q=_pushQ[path];
   // Jeśli trwa zapis — zaktualizuj pending i wróć (nowe dane zostaną wysłane po zakończeniu)
-  if(q.inProgress){q.pending={data,commitMsg};return true;}
+  if(q.inProgress){q.pending={data:JSON.parse(JSON.stringify(data)),commitMsg};return true;}
   q.inProgress=true;
+  let lastOk=false;
   try{
-    let d=data,m=commitMsg;
+    let d=JSON.parse(JSON.stringify(data)),m=commitMsg;
     do{
       q.pending=null;
-      await _pushWithRetry(path,d,m);
+      lastOk=await _pushWithRetry(path,d,m);
       if(q.pending){d=q.pending.data;m=q.pending.commitMsg;}
       else break;
     }while(true);
   }finally{q.inProgress=false;}
-  return true;
+  return lastOk;
 }
 async function _pushWithRetry(path,data,commitMsg,attempt){
   attempt=attempt||1;
@@ -1413,6 +1414,8 @@ async function trenerSuggest(){
   const nazwisko=document.getElementById('tm-nazwisko').value.trim().toLowerCase();
   if(!imie&&!nazwisko){trenerHideSuggestions();return;}
   if(!empLoaded)await loadEmployees();
+  // modal mógł zostać zamknięty podczas ładowania pracowników
+  if(!document.getElementById('trener-overlay').classList.contains('open')){trenerHideSuggestions();return;}
   const matches=employees.filter(e=>{
     const gn=(e['Given Name']||'').trim().toLowerCase();
     const fn=(e['Family Name']||'').trim().toLowerCase();
@@ -1455,6 +1458,7 @@ async function trenerAutoFill(){
   trenerHideSuggestions();
   if(!imie||!nazwisko)return;
   if(!empLoaded)await loadEmployees();
+  if(!document.getElementById('trener-overlay').classList.contains('open'))return;
   const match=employees.find(e=>{
     const gn=(e['Given Name']||'').trim().toLowerCase();
     const fn=(e['Family Name']||'').trim().toLowerCase();

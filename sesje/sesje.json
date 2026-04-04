@@ -98,7 +98,9 @@
     "data": "2026-04-27",
     "godzina": "09:00",
     "status": "zaplanowana",
-    "trener_ids": [],
+    "trener_ids": [
+      1775317057816
+    ],
     "uczestnicy": [],
     "notatki": "",
     "miejsce": "",

@@ -28,5 +28,19 @@
     "uczestnicy": [],
     "notatki": "",
     "miejsce": "WTT 29, Sala Szkoleniowa"
+  },
+  {
+    "id": 1775305890232,
+    "szkolenie_id": 1775305716565,
+    "data": "2026-04-14",
+    "godzina": "09:00",
+    "status": "zaplanowana",
+    "trener_ids": [
+      1775292341205
+    ],
+    "uczestnicy": [],
+    "notatki": "",
+    "miejsce": "WTT 29",
+    "transkrypcja": ""
   }
 ]

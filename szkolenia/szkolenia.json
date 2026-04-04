@@ -5,8 +5,11 @@
     "kategoria": "Mindset",
     "opis": "",
     "korzysci": "",
-    "agenda": "",
-    "czasTrwania": "4h"
+    "agenda": "Metody kreatywnego poszukiwania pomysłów: 6 kapeluszy myślowych Edwarda de Bono",
+    "czasTrwania": "4h",
+    "typ": "wewnetrzne",
+    "forma": "stacjonarne",
+    "materialy": []
   },
   {
     "id": 1775303398346,
@@ -77,6 +80,78 @@
     "korzysci": "",
     "agenda": "",
     "czasTrwania": "4h",
+    "materialy": []
+  },
+  {
+    "id": 1775306589435,
+    "nazwa": "Komunikacja z różnymi typami osobowości w procesie sprzedaży",
+    "kategoria": "Komunikacja",
+    "typ": "wewnetrzne",
+    "forma": "stacjonarne",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "3h",
+    "materialy": []
+  },
+  {
+    "id": 1775306644295,
+    "nazwa": "Techniki asertywnej komunikacji",
+    "kategoria": "Komunikacja",
+    "typ": "wewnetrzne",
+    "forma": "stacjonarne",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "3h",
+    "materialy": []
+  },
+  {
+    "id": 1775306929314,
+    "nazwa": "Jak udzielać informacji zwrotnej?",
+    "kategoria": "Komunikacja",
+    "typ": "wewnetrzne",
+    "forma": "stacjonarne",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "3h",
+    "materialy": []
+  },
+  {
+    "id": 1775307185254,
+    "nazwa": "KPI Grupy - jak tworzyć, analizować i reagować",
+    "kategoria": "Procesy",
+    "typ": "wewnetrzne",
+    "forma": "online",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "1h",
+    "materialy": []
+  },
+  {
+    "id": 1775307238333,
+    "nazwa": "Jak pozyskiwać leady od Członków?",
+    "kategoria": "Sprzedaz",
+    "typ": "wewnetrzne",
+    "forma": "online",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "1h",
+    "materialy": []
+  },
+  {
+    "id": 1775307285649,
+    "nazwa": "Forum CC",
+    "kategoria": "Mindset",
+    "typ": "wewnetrzne",
+    "forma": "stacjonarne",
+    "opis": "",
+    "korzysci": "",
+    "agenda": "",
+    "czasTrwania": "3h",
     "materialy": []
   }
 ]

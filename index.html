@@ -463,6 +463,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
             <div style="display:flex;align-items:flex-end;gap:8px;flex-shrink:0;">
               <button onclick="applyRaportyFilters()" style="background:var(--navy);border:none;border-radius:8px;padding:10px 20px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#fff;cursor:pointer;white-space:nowrap;">Filtruj</button>
               <button onclick="generateListReport()" class="btn btn-red" style="flex:none;padding:10px 20px;white-space:nowrap;">Generuj PDF</button>
+              <button onclick="exportRaportyCSV()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:10px 18px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:400;color:var(--text-muted);cursor:pointer;white-space:nowrap;" onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Eksport CSV</button>
             </div>
           </div>
           <!-- Preview -->
@@ -497,6 +498,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <div id="sm-expanded" style="display:none;">
       <label class="form-lbl">Godzina (opcjonalnie)</label>
       <input type="time" class="form-inp" id="sm-time">
+      <label class="form-lbl">Miejsce</label>
+      <input type="text" class="form-inp" id="sm-miejsce" placeholder="Sala, adres lub link do spotkania online…">
       <label class="form-lbl">Status</label>
       <select class="form-sel" id="sm-status">
         <option value="zaplanowana">Zaplanowana</option>
@@ -541,10 +544,10 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </select>
     <label class="form-lbl">Opis</label>
     <textarea class="form-textarea" id="szkm-opis" placeholder="Opis szkolenia…" style="min-height:80px;"></textarea>
-    <label class="form-lbl">Korzyści (każda linijka = osobna)</label>
-    <textarea class="form-textarea" id="szkm-korzysci" placeholder="Korzyści ze szkolenia…"></textarea>
-    <label class="form-lbl">Agenda (każda linijka = osobny punkt)</label>
-    <textarea class="form-textarea" id="szkm-agenda" placeholder="Plan szkolenia…"></textarea>
+    <label class="form-lbl">Cel szkolenia</label>
+    <textarea class="form-textarea" id="szkm-korzysci" placeholder="Co uczestnik osiągnie po szkoleniu…"></textarea>
+    <label class="form-lbl">Program szkolenia (każda linijka = osobny punkt)</label>
+    <textarea class="form-textarea" id="szkm-agenda" placeholder="Punkty programu szkolenia…"></textarea>
     <label class="form-lbl">Forma</label>
     <div style="display:flex;gap:8px;margin-bottom:14px;">
       <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px;color:var(--text);transition:border-color .15s;" id="szkm-forma-sta-lbl">
@@ -976,6 +979,7 @@ function openSzkolenieDetail(id){
       <div class="sess-date">${escHtml(fmtDateLong(s.data))}</div>
       <div class="sess-time">${escHtml(s.godzina||'')}</div>
       <div class="sess-trainer">${tr?'👤 '+escHtml(tr):'—'}</div>
+      ${s.miejsce?`<div class="sess-date" style="font-size:11px;color:var(--text-muted);margin-top:1px;">📍 ${escHtml(s.miejsce)}</div>`:''}
       <div class="sess-parts">👥 ${pCount}</div>
       <div class="sess-btns">
         ${sts}
@@ -997,12 +1001,13 @@ function openSzkolenieDetail(id){
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button onclick="duplikujSzkolenie(${id})" class="btn btn-gray" style="padding:7px 14px;font-size:12px;">Duplikuj</button>
         <button onclick="openSzkolenieModal(${id})" class="btn btn-gray" style="padding:7px 14px;font-size:12px;">Edytuj</button>
       </div>
     </div>
     <div style="margin-bottom:20px;"><div class="cat-hdr"><span>Opis</span></div><div style="font-size:14px;font-weight:300;color:var(--text);line-height:1.7;">${escHtml(szk.opis||'')}</div></div>
-    ${korz?`<div style="margin-bottom:20px;"><div class="cat-hdr"><span>Korzyści</span></div>${korz.split('\n').filter(l=>l.trim()).map(l=>`<div style="display:flex;gap:8px;margin-bottom:6px;"><span style="color:var(--green);font-weight:500;flex-shrink:0;">✓</span><span style="font-size:14px;font-weight:300;color:var(--text);">${escHtml(l.trim())}</span></div>`).join('')}</div>`:''}
-    ${agenda?`<div style="margin-bottom:20px;"><div class="cat-hdr"><span>Agenda</span></div>${agenda.split('\n').filter(l=>l.trim()).map((l,i)=>`<div style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:var(--red);font-weight:500;flex-shrink:0;min-width:20px;">${i+1}.</span><span style="font-size:14px;font-weight:300;color:var(--text);">${escHtml(l.trim())}</span></div>`).join('')}</div>`:''}
+    ${korz?`<div style="margin-bottom:20px;"><div class="cat-hdr"><span>Cel szkolenia</span></div>${korz.split('\n').filter(l=>l.trim()).map(l=>`<div style="display:flex;gap:8px;margin-bottom:6px;"><span style="color:var(--green);font-weight:500;flex-shrink:0;">✓</span><span style="font-size:14px;font-weight:300;color:var(--text);">${escHtml(l.trim())}</span></div>`).join('')}</div>`:''}
+    ${agenda?`<div style="margin-bottom:20px;"><div class="cat-hdr"><span>Program szkolenia</span></div>${agenda.split('\n').filter(l=>l.trim()).map((l,i)=>`<div style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:var(--red);font-weight:500;flex-shrink:0;min-width:20px;">${i+1}.</span><span style="font-size:14px;font-weight:300;color:var(--text);">${escHtml(l.trim())}</span></div>`).join('')}</div>`:''}
     <div style="margin-top:24px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
         <div class="cat-hdr" style="margin-bottom:0;flex:1;"><span>Sesje</span></div>
@@ -1013,6 +1018,14 @@ function openSzkolenieDetail(id){
 }
 // ── Szkolenie Modal ────────────────────────────────────────────────
 let editingSzkolenieId=null;
+function duplikujSzkolenie(id){
+  const szk=szkolenia.find(m=>m.id===id);if(!szk)return;
+  const kopia={...szk,id:Date.now(),nazwa:szk.nazwa+' (kopia)'};
+  szkolenia.push(kopia);
+  renderSzkolenia();updateSlots();
+  pushSzkoleniaFile();
+  openSzkolenieModal(kopia.id);
+}
 function openSzkolenieModal(id){
   editingSzkolenieId=id;
   const szk=id?szkolenia.find(m=>m.id===id):null;
@@ -1107,6 +1120,7 @@ function openSesjaModal(ds,szkId,sesjaId){
     document.getElementById('sm-time').value=existing?.godzina||'';
     document.getElementById('sm-status').value=existing?.status||'zaplanowana';
     document.getElementById('sm-notatki').value=existing?.notatki||'';
+    document.getElementById('sm-miejsce').value=existing?.miejsce||'';
     smPendingUczestnicy=existing?(existing.uczestnicy||[]).slice():[];
     renderSmTrainers(existing);
     renderSmParticipants();
@@ -1192,12 +1206,13 @@ function saveSesja(){
   const godzina=document.getElementById('sm-time').value||null;
   const status=document.getElementById('sm-status').value||'zaplanowana';
   const notatki=document.getElementById('sm-notatki').value.trim();
+  const miejsce=document.getElementById('sm-miejsce').value.trim();
   const trenerIds=Array.from(document.querySelectorAll('#sm-trainers-list input[type=checkbox]:checked')).map(cb=>parseInt(cb.value));
   if(selSesjaId){
     const existing=sesje.find(s=>s.id===selSesjaId);
-    if(existing){Object.assign(existing,{data:ds,szkolenie_id:szkId,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki});}
+    if(existing){Object.assign(existing,{data:ds,szkolenie_id:szkId,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki,miejsce});}
   }else{
-    sesje.push({id:Date.now(),szkolenie_id:szkId,data:ds,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki});
+    sesje.push({id:Date.now(),szkolenie_id:szkId,data:ds,godzina,status,trener_ids:trenerIds,uczestnicy:smPendingUczestnicy.slice(),notatki,miejsce});
   }
   closeSesjaModal();
   renderCalendar();renderDashboard();renderMonthlySummary();updateSlots();
@@ -1699,6 +1714,35 @@ function renderRaportyPreview(){
         <tbody>${rows}</tbody>
       </table>
     </div>`;
+}
+function exportRaportyCSV(){
+  if(!raportyFiltered.length){alert('Najpierw kliknij Filtruj — brak sesji do eksportu.');return;}
+  const rows=[['Data','Szkolenie','Kategoria','Forma','Miejsce','Trener','Uczestnicy','Status']];
+  raportyFiltered.forEach(s=>{
+    const szk=szkolenia.find(m=>m.id===s.szkolenie_id);
+    const tNames=(s.trener_ids||[]).map(id=>{const t=trenerzy.find(x=>x.id===id);return t?t.imie+' '+t.nazwisko:'';}).filter(Boolean).join('; ');
+    rows.push([
+      s.data,
+      szk?.nazwa||'',
+      KAT_LABELS[szk?.kategoria]||szk?.kategoria||'',
+      szk?.forma||'stacjonarne',
+      s.miejsce||'',
+      tNames,
+      (s.uczestnicy||[]).join('; '),
+      s.status||'zaplanowana'
+    ]);
+    // One row per participant too — append participant rows
+    (s.uczestnicy||[]).forEach(u=>{
+      rows.push([s.data,szk?.nazwa||'','','','','',u,'']);
+    });
+  });
+  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  const from=document.getElementById('rp-from')?.value||'';
+  const to=document.getElementById('rp-to')?.value||'';
+  a.download=`Raport_${from}_${to}.csv`;
+  a.click();
 }
 function generateListReport(){
   if(!raportyFiltered.length){alert('Najpierw kliknij Filtruj — brak sesji do raportu.');return;}

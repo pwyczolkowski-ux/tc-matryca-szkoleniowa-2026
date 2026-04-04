@@ -57,5 +57,18 @@
     "specjalizacje": [],
     "zdjecie": null,
     "kolor": "#8b5cf6"
+  },
+  {
+    "id": 1775314041683,
+    "imie": "Marzena",
+    "nazwisko": "Struglińska-Kiełboń",
+    "rola": "",
+    "email": "",
+    "telefon": "",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#06b6d4"
   }
 ]

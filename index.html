@@ -471,9 +471,9 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
           </div>
           <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
             <div style="flex:1;min-width:200px;">
-              <label class="form-lbl">Szkolenie</label>
-              <select class="form-sel" id="rp-szkolenie" style="margin-bottom:0;">
-                <option value="">Wszystkie szkolenia</option>
+              <label class="form-lbl">Sesja</label>
+              <select class="form-sel" id="rp-sesja" style="margin-bottom:0;">
+                <option value="">Wszystkie sesje</option>
               </select>
             </div>
             <div style="display:flex;align-items:flex-end;gap:8px;flex-shrink:0;">
@@ -1890,9 +1890,14 @@ function pdfFooter(doc){
 const PDF_NAVY=[18,22,53],PDF_WHITE=[255,255,255],PDF_LIGHT=[248,249,252],PDF_MUTED=[130,140,170];
 
 function renderRaportyPanel(){
-  const szkSel=document.getElementById('rp-szkolenie');if(!szkSel)return;
-  szkSel.innerHTML='<option value="">Wszystkie szkolenia</option>'+
-    szkolenia.slice().sort((a,b)=>a.nazwa.localeCompare(b.nazwa,'pl')).map(m=>`<option value="${m.id}">${escHtml(m.nazwa)}</option>`).join('');
+  const sesjaSel=document.getElementById('rp-sesja');if(!sesjaSel)return;
+  const sortedSesje=sesje.slice().sort((a,b)=>a.data.localeCompare(b.data));
+  sesjaSel.innerHTML='<option value="">Wszystkie sesje</option>'+
+    sortedSesje.map(s=>{
+      const szk=szkolenia.find(m=>m.id===s.szkolenie_id);
+      const label=`${fmtDate(s.data)} — ${szk?szk.nazwa:'?'}`;
+      return`<option value="${s.id}">${escHtml(label)}</option>`;
+    }).join('');
   const trSel=document.getElementById('rp-trener');if(!trSel)return;
   trSel.innerHTML='<option value="">Wszyscy trenerzy</option>'+
     trenerzy.filter(t=>t.aktywny!==false).slice().sort((a,b)=>(a.nazwisko||'').localeCompare(b.nazwisko||'','pl')).map(t=>`<option value="${t.id}">${escHtml(t.imie+' '+t.nazwisko)}</option>`).join('');
@@ -1903,12 +1908,12 @@ function applyRaportyFilters(){
   const from=document.getElementById('rp-from')?.value||'';
   const to=document.getElementById('rp-to')?.value||'';
   const kat=document.getElementById('rp-kat')?.value||'';
-  const szkId=parseInt(document.getElementById('rp-szkolenie')?.value||0)||0;
+  const sesjaId=parseInt(document.getElementById('rp-sesja')?.value||0)||0;
   const trenerId=parseInt(document.getElementById('rp-trener')?.value||0)||0;
   raportyFiltered=sesje.filter(s=>{
     if(from&&s.data<from)return false;
     if(to&&s.data>to)return false;
-    if(szkId&&s.szkolenie_id!==szkId)return false;
+    if(sesjaId&&s.id!==sesjaId)return false;
     const szk=szkolenia.find(m=>m.id===s.szkolenie_id);
     if(kat&&szk?.kategoria!==kat)return false;
     if(trenerId&&!(s.trener_ids||[]).includes(trenerId))return false;

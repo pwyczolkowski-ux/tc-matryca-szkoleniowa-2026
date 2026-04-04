@@ -16,5 +16,22 @@
       "Mateusz Bacański"
     ],
     "notatki": ""
+  },
+  {
+    "id": 1775300213414,
+    "szkolenie_id": 1775292373979,
+    "data": "2026-04-24",
+    "godzina": "14:56",
+    "status": "zaplanowana",
+    "trener_ids": [
+      1775292341205
+    ],
+    "uczestnicy": [
+      "Kacper Bartel",
+      "Klaudia Banaszek",
+      "Wojciech Bałkowski",
+      "Mateusz Bacański"
+    ],
+    "notatki": ""
   }
 ]

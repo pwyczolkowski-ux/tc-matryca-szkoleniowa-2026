@@ -1,22 +1,5 @@
 [
   {
-    "id": 1775292341205,
-    "imie": "Patryk",
-    "nazwisko": "Wyczółkowski",
-    "rola": "Trener",
-    "email": "p.wyczolkowski@tc.pl",
-    "telefon": "+48 533 311 747",
-    "bio": "",
-    "aktywny": false,
-    "specjalizacje": [
-      "Mindset",
-      "Komunikacja",
-      "Procesy"
-    ],
-    "zdjecie": null,
-    "kolor": "#DC143C"
-  },
-  {
     "id": 1775305917354,
     "imie": "Rafał",
     "nazwisko": "Płuciennik",
@@ -46,19 +29,6 @@
     "kolor": "#f59e0b"
   },
   {
-    "id": 1775314041683,
-    "imie": "Marzena",
-    "nazwisko": "Struglińska-Kiełboń",
-    "rola": "",
-    "email": "",
-    "telefon": "",
-    "bio": "",
-    "aktywny": true,
-    "specjalizacje": [],
-    "zdjecie": null,
-    "kolor": "#06b6d4"
-  },
-  {
     "id": 1775315142018,
     "imie": "Krzysztof",
     "nazwisko": "Mędrala",
@@ -72,12 +42,25 @@
     "kolor": "#06b6d4"
   },
   {
-    "id": 1775315204643,
-    "imie": "Kajetan",
-    "nazwisko": "Homka",
-    "rola": "Dyrektor Wsparcia Sprzedaży CC",
-    "email": "k.homka@tc.pl",
-    "telefon": "534216443",
+    "id": 1775316247800,
+    "imie": "Marzena",
+    "nazwisko": "Strugińska-Kiełboń",
+    "rola": "Dyrektor Regionu ds. Rozwoju",
+    "email": "m.struginska-kielbon@cc.pl",
+    "telefon": "666623042",
+    "bio": "",
+    "aktywny": true,
+    "specjalizacje": [],
+    "zdjecie": null,
+    "kolor": "#06b6d4"
+  },
+  {
+    "id": 1775316299507,
+    "imie": "Marta",
+    "nazwisko": "Pawłowska",
+    "rola": "Dyrektor ds. Rozwoju",
+    "email": "m.pawlowska@cc.pl",
+    "telefon": "530339928",
     "bio": "",
     "aktywny": true,
     "specjalizacje": [],

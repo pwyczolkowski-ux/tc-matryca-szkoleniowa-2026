@@ -627,10 +627,7 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     <label class="form-lbl">Imię</label>
     <input type="text" class="form-inp" id="tm-imie" placeholder="Imię" maxlength="60" oninput="trenerSuggest()" onblur="trenerAutoFill()">
     <label class="form-lbl">Nazwisko</label>
-    <div style="position:relative;">
-      <input type="text" class="form-inp" id="tm-nazwisko" placeholder="Nazwisko" maxlength="60" oninput="trenerSuggest()" onblur="trenerAutoFill()" style="width:100%;box-sizing:border-box;">
-      <div id="tm-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);margin-top:2px;overflow:hidden;"></div>
-    </div>
+    <input type="text" class="form-inp" id="tm-nazwisko" placeholder="Nazwisko" maxlength="60" oninput="trenerSuggest()" onblur="trenerAutoFill()">
     <div id="tm-match-info" style="display:none;font-size:12px;background:var(--green-soft);border:1px solid var(--green-border);border-radius:8px;padding:8px 12px;margin-bottom:12px;color:#166534;">Znaleziono w bazie pracowników — dane uzupełnione automatycznie</div>
     <label class="form-lbl">Rola / stanowisko</label>
     <input type="text" class="form-inp" id="tm-rola" placeholder="np. Trener biznesowy" maxlength="80">
@@ -659,6 +656,8 @@ header{background:var(--navy);padding:0 32px;display:flex;align-items:center;jus
     </div>
   </div>
 </div>
+<!-- TRENER AUTOCOMPLETE SUGGESTIONS -->
+<div id="tm-suggestions" style="display:none;position:fixed;z-index:1500;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);overflow:hidden;min-width:200px;"></div>
 <!-- EMP PICKER OVERLAY -->
 <div class="overlay" id="emp-picker-overlay" onclick="closeIfBg(event,'emp-picker-overlay')">
   <div class="modal" style="width:700px;max-width:96vw;max-height:88vh;display:flex;flex-direction:column;">
@@ -1430,6 +1429,9 @@ async function trenerSuggest(){
       trenerApplyEmployee(e);return;
     }
   }
+  // pozycjonuj dropdown pod polem nazwisko
+  const inp=document.getElementById('tm-nazwisko');
+  if(inp){const r=inp.getBoundingClientRect();box.style.left=r.left+'px';box.style.top=(r.bottom+2)+'px';box.style.width=r.width+'px';}
   box.innerHTML=matches.map((e,i)=>{
     const name=`${e['Given Name']||''} ${e['Family Name']||''}`.trim();
     const sub=e['Organization 1 - Title']||e['E-mail 1 - Value']||'';
@@ -1480,7 +1482,7 @@ function openTrenerModal(id){
   prev.innerHTML=t?.zdjecie?`<img src="${t.zdjecie}" style="width:100%;height:100%;object-fit:cover;">`:'<span style="font-size:26px;">📷</span>';
   document.getElementById('trener-overlay').classList.add('open');
 }
-function closeTrenerModal(){document.getElementById('trener-overlay').classList.remove('open');editingTrenerId=null;pendingTrenerPhoto=null;}
+function closeTrenerModal(){document.getElementById('trener-overlay').classList.remove('open');editingTrenerId=null;pendingTrenerPhoto=null;trenerHideSuggestions();}
 function handleTrenerPhoto(input){
   const file=input.files[0];if(!file)return;
   if(file.size>5*1024*1024){alert('Maks. 5 MB.');return;}

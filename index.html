@@ -1144,7 +1144,7 @@ function renderSmParticipants(){
   const el=document.getElementById('sm-part-list');if(!el)return;
   const list=smPendingUczestnicy;
   if(!list.length){el.innerHTML='<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:4px 0 8px;">Brak uczestników</div>';return;}
-  el.innerHTML=`<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">${list.length} uczestników: ${list.slice(0,3).map(escHtml).join(', ')}${list.length>3?` +${list.length-3} więcej`:''}</div>`;
+  el.innerHTML=`<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">${list.length} uczestników</div>`;
 }
 function saveSesja(){
   const ds=selSesjaDate||document.getElementById('sm-date').value;
